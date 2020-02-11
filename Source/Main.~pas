@@ -1,0 +1,3107 @@
+unit Main;
+
+
+interface
+
+
+uses
+     //
+     SysRecords,
+     SysConsts,
+     SysVars,
+     SysUnits,
+
+
+     //MyFunctions,
+     //FcConsts,
+     NodeEditConsts,
+     NodeSearch,
+     ACBaseUnits,
+     XMLFlowChartUnit,
+     XMLNSChartUnit,
+     XMLTreeViewUnits,
+     XMLUnits,
+     XMLGenCodeRecords,
+     SysOption,
+     //各语言代码生成
+     XMLPascal,
+     XMLCpp,
+     XMLJava,
+     XMLCSharp,
+     XMLJavaScript,
+
+     //导出
+     ExportWord,
+     ExportVisio,
+     ExportSVG,
+
+     //
+     EncryptIt,
+     EXECryptor,
+     SynEdit, SynEditHighlighter,
+     SynHighlighterPas, SynHighlighterCpp, SynHighlighterJScript, SynHighlighterPHP, SynHighlighterJava,
+     NxPropertyItemClasses, NxPropertyItems, NxScrollControl, NxInspector,
+
+     //
+     XMLDoc,XMLIntf,Clipbrd,XPMan, ShellAPI,
+     Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+     Dialogs, ExtCtrls, ComCtrls, ToolWin, ImgList, Menus, ActnMan,
+     ActnColorMaps,  StdCtrls, TabNotBk, Tabs, ADODB, DB, Buttons,
+     Mask, Spin, Types,  Grids,Math,ComObj,IniFiles,FileCtrl, ActnList,
+  ExtDlgs;
+
+type
+  TMainForm = class(TForm)
+    ColorDialog: TColorDialog;
+    ImageList_Modes: TImageList;
+    OpenDialog: TOpenDialog;
+    ImageList_ToolBar: TImageList;
+    Panel_ToolBar: TPanel;
+    ToolBar: TToolBar;
+    ToolButton_Open: TToolButton;
+    ToolButton1: TToolButton;
+    ToolButton_GenerateCode: TToolButton;
+    ToolButton_Save: TToolButton;
+    ToolButton_Expand: TToolButton;
+    ToolButton_Collapse: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton_Up: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton_Down: TToolButton;
+    ToolButton_Help: TToolButton;
+    MainMenu: TMainMenu;
+    MenuItem_File: TMenuItem;
+    MenuItem_New: TMenuItem;
+    MenuItem_OpenProject: TMenuItem;
+    MenuItem_Save: TMenuItem;
+    N2: TMenuItem;
+    MenuItem_Exit: TMenuItem;
+    MenuItem_Edit: TMenuItem;
+    MenuItem_GenerateCurr: TMenuItem;
+    MenuItem_RefreshTree: TMenuItem;
+    N10: TMenuItem;
+    MenuItem_ExpandAll: TMenuItem;
+    MenuItem_ShrinkAll: TMenuItem;
+    MenuItem_Option: TMenuItem;
+    MenuItem_Help: TMenuItem;
+    MenuItem_Content: TMenuItem;
+    N7: TMenuItem;
+    MenuItem_HomePage: TMenuItem;
+    MenuItem_BuyNow: TMenuItem;
+    N11: TMenuItem;
+    MenuItem_InputRegisterCode: TMenuItem;
+    N3: TMenuItem;
+    MenuItem_About: TMenuItem;
+    PopupMenu_TreeView: TPopupMenu;
+    PopMenu_NewFunction: TMenuItem;
+    PopMenu_NewSET: TMenuItem;
+    PopMenu_NewIF: TMenuItem;
+    PopMenu_NewFOR: TMenuItem;
+    PopMenu_NewCODE: TMenuItem;
+    N15: TMenuItem;
+    PopMenu_NewCASE: TMenuItem;
+    PopMenu_NewCASEItem: TMenuItem;
+    N16: TMenuItem;
+    PopMenu_NewWHILE: TMenuItem;
+    PopMenu_NewREPEAT: TMenuItem;
+    N17: TMenuItem;
+    PopMenu_NewBREAK: TMenuItem;
+    PopMenu_NewCONTINUE: TMenuItem;
+    PopMenu_NewEXIT: TMenuItem;
+    N18: TMenuItem;
+    PopMenu_Copy: TMenuItem;
+    PopMenu_Paste: TMenuItem;
+    PopMenu_Delete: TMenuItem;
+    ToolButton_NewProject: TToolButton;
+    PopMenu_NewTry: TMenuItem;
+    StatusBar: TStatusBar;
+    Splitter_Left: TSplitter;
+    ToolButton7: TToolButton;
+    N20: TMenuItem;
+    Delete1: TMenuItem;
+    MenuItem_RunMenu: TMenuItem;
+    MeuItem_Generatefile: TMenuItem;
+    Panel_Left: TPanel;
+    TreeView: TTreeView;
+    Splitter_Bottom: TSplitter;
+    SaveDialog: TSaveDialog;
+    NextInspector: TNextInspector;
+    NxTextItem_Comment: TNxTextItem;
+    NxTextItem_NodeType: TNxTextItem;
+    NxComboBoxItem_Enable: TNxComboBoxItem;
+    PopMenu_Cut: TMenuItem;
+    NxMemoItem_Caption: TNxMemoItem;
+    ToolButton_ZoomIn: TToolButton;
+    ToolButton_ZoomOut: TToolButton;
+    ComboBox_Language: TComboBox;
+    N4: TMenuItem;
+    PopMenu_SetRoot: TMenuItem;
+    Cut1: TMenuItem;
+    ToolButton_Option: TToolButton;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    ScrollBox: TScrollBox;
+    Image: TImage;
+    SynJavaSyn: TSynJavaSyn;
+    SynCppSyn: TSynCppSyn;
+    SynPHPSyn: TSynPHPSyn;
+    SynPasSyn: TSynPasSyn;
+    SynJScriptSyn: TSynJScriptSyn;
+    SynEdit: TSynEdit;
+    Other1: TMenuItem;
+    ToolButton2: TToolButton;
+    ToolButton_ExportToFile: TToolButton;
+    ToolButton_SaveToWord: TToolButton;
+    ToolButton_SaveToVisio: TToolButton;
+    ToolButton_SaveToSVG: TToolButton;
+    ToolButton_SaveToBmp: TToolButton;
+    NxMemoItem_Source: TNxMemoItem;
+    ImageList_24: TImageList;
+    SaveDialog_ExportToFile: TSaveDialog;
+    Panel_Register: TPanel;
+    SavePictureDialog: TSavePictureDialog;
+    SaveVisioDialog: TSaveDialog;
+    SaveDialog_SVG: TSaveDialog;
+    SaveDialog_Word: TSaveDialog;
+    procedure PopMenu_DeleteClick(Sender: TObject);
+    procedure TreeViewCustomDrawItem(Sender: TCustomTreeView;
+      Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure TreeViewDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure TreeViewDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure FormCreate(Sender: TObject);
+    procedure PopMenu_CopyClick(Sender: TObject);
+    procedure PopMenu_PasteClick(Sender: TObject);
+    procedure MenuItem_SearchNextClick(Sender: TObject);
+    procedure MenuItem_ExpandAllClick(Sender: TObject);
+    procedure MenuItem_CloseAllClick(Sender: TObject);
+    procedure MenuItem_ExpandSelClick(Sender: TObject);
+    procedure ToolButton_GenerateCodeClick(Sender: TObject);
+    procedure PopupMenu_TreeViewPopup(Sender: TObject);
+    procedure PopMenu_NewFunctionClick(Sender: TObject);
+    procedure PopMenu_NewIFClick(Sender: TObject);
+    procedure PopMenu_NewFORClick(Sender: TObject);
+    procedure PopMenu_NewCODEClick(Sender: TObject);
+    procedure PopMenu_NewWHILEClick(Sender: TObject);
+    procedure PopMenu_NewREPEATClick(Sender: TObject);
+    procedure PopMenu_NewCASEClick(Sender: TObject);
+    procedure TreeViewMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure PopMenu_NewCASEItemClick(Sender: TObject);
+    procedure MenuItem_ExitClick(Sender: TObject);
+    procedure PopMenu_NewBREAKClick(Sender: TObject);
+    procedure PopMenu_NewCONTINUEClick(Sender: TObject);
+    procedure PopMenu_NewEXITClick(Sender: TObject);
+    procedure TreeViewClick(Sender: TObject);
+    procedure PopMenu_NewTryClick(Sender: TObject);
+    procedure ToolButton_ExpandClick(Sender: TObject);
+    procedure ToolButton_CollapseClick(Sender: TObject);
+    procedure ToolButton_UpClick(Sender: TObject);
+    procedure ToolButton_DownClick(Sender: TObject);
+    procedure ToolButton_SaveClick(Sender: TObject);
+    procedure ToolButton_OpenClick(Sender: TObject);
+    procedure ImageDblClick(Sender: TObject);
+    procedure ImageMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure ImageMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure NextInspectorChange(Sender: TObject; Item: TNxPropertyItem;
+      Value: WideString);
+    procedure PopMenu_CutClick(Sender: TObject);
+    procedure PopMenu_SetRootClick(Sender: TObject);
+    procedure PopMenu_NewSETClick(Sender: TObject);
+    procedure TreeViewMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure ToolButton_ZoomInClick(Sender: TObject);
+    procedure ToolButton_ZoomOutClick(Sender: TObject);
+    procedure ImageClick(Sender: TObject);
+    procedure ToolButton_NewProjectClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure ToolButton_OptionClick(Sender: TObject);
+    procedure ComboBox_LanguageChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ToolButton_ExportToFileClick(Sender: TObject);
+    procedure ToolButton_SaveToBmpClick(Sender: TObject);
+    procedure ToolButton_SaveToWordClick(Sender: TObject);
+    procedure ToolButton_SaveToVisioClick(Sender: TObject);
+    procedure ToolButton_SaveToSVGClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure MenuItem_InputRegisterCodeClick(Sender: TObject);
+    procedure MenuItem_BuyNowClick(Sender: TObject);
+    procedure MenuItem_OptionClick(Sender: TObject);
+    procedure MenuItem_HomePageClick(Sender: TObject);
+    procedure MenuItem_AboutClick(Sender: TObject);
+     private
+          iMoveX         : Integer;
+          iMoveY         : Integer;
+          SelectRect     : TRect;            //标志当前流程图中选择的区域(灰色)
+          SelectRectNode : TTreeNode;        //SelectRect对应的节点
+          bIsCreating    : Boolean;          //标志是否正在生成树的,用于控制节点转换时是否绘制流程图
+          bClose         : Boolean;
+          bDelete        : Boolean;
+          gxnNode        : IXMLNode;         //
+          gxnCopySource  : IXMLNode;         //复制为nil，剪切时为源节点
+          giSourceMode   : Integer;          //源节点类型
+          gtnCurNode     : TTreeNode;        //鼠标按下时的树节点，用于右键选中
+          gxnRootNode    : IXMLNode;         //用于绘制流程图的根节点
+          //
+          gsDragSrcText  : string;           //待复制/剪切节点的Text
+          gsDragSrcMode  : string;           //待复制/剪切节点的类型
+          gxdCopy        : TXMLDocument;     //待复制/剪切节点构成的XML
+     public
+          procedure ShowNodeAttributes(Node:TTreeNode);
+          function  GetNewMode(SourceMode,DestMode: Integer): TBlockCopyMode;
+          function  GetNodeFromPos(mX,mY:Integer):TTreeNode;  //根据鼠标位置得到节点
+          procedure SetUpDownEnable;
+          procedure CheckXMLNode(xnNode:IXMLNode);
+          procedure UpdateChart;        //用于流程图刷新后重绘流程图
+     end;
+
+var
+     MainForm       : TMainForm;
+     //
+     gsMainDir      : string;      //主程序目录
+
+     //用于在浏览中切换到以前查看来的节点
+     gbAutoChange   : Boolean=False;
+     giNodeChange   : Integer;
+     graNodeChange  : array of TNodeChange;
+
+     //
+     SearchMode     : Integer=-1;  //查找测试项目用的变量
+     SearchKey      : string='';   //查找测试项目时用的关键字
+
+     //
+     gxdXML         : TXMLDocument;     //对应的XML
+     gbModified     : Boolean = False;  //文件是否已被修改
+
+     //
+     gsFileName     : string = '';      //当前文件名(含全路径)
+implementation
+
+uses InputRegCode, About;
+
+
+{$R *.dfm}
+
+
+procedure TMainForm.PopMenu_DeleteClick(Sender: TObject);
+var
+     iPID,I    : Integer;
+     iIndex    : Integer;
+     tnNode    : TTreeNode;
+     xnPar     : IXMLNode;
+begin
+     //<异常检查
+     //检查XML节点不能为nil
+     if gxnNode=nil then begin
+          ShowMessage('Please selected a node at first!');
+          Exit;
+     end;
+
+     //不允许删除根节点
+     if gxnNode=gxdXML.DocumentElement then begin
+          ShowMessage('Cannot delete the root node!');
+          Exit;
+     end;
+
+     //不允许删除一些特定节点
+     if InModes(gxnNode.Attributes['Mode'],[rtIF_Yes,rtIF_Else,rtFOR_Body,rtTRY_Body,rtTry_Except,rtTry_Finally]) then begin
+          ShowMessage('Cannot delete the neccessary node!');
+          Exit;
+     end;
+     //>
+
+     //得到相应的树节点
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+
+     //确认删除
+     if MessageDlg(#13+'Are you really want to delete the node named "' +tnNode.Text+'" ?'+#13,
+               mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+     begin
+          Exit;
+     end;
+
+     //删除树节点
+     if tnNode.Selected then begin
+          tnNode.Parent.Selected   := True;
+     end;
+     tnNode.Destroy;
+
+     //删除XML节点， 并设其父节点为当前节点
+     xnPar     := gxnNode.ParentNode;
+     xnPar.ChildNodes.Remove(gxnNode);
+     gxnNode   := xnPar;
+
+     //
+     ShowNodeAttributes(GetTreeNodeFromXMLNode(TreeView,gxnRootNode));
+     UpdateChart;
+
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+//------------------------------删除节点同时删除相应的数据库记录----------------------------------//
+procedure TMainForm.ShowNodeAttributes(Node: TTreeNode);
+var
+     xnNode    : IXMLNode;
+begin
+     try
+          if Node= nil then Exit;
+
+
+          //得到XML节点
+          xnNode    := GetXMLNodeFromTreeNode(gxdXML,Node);
+          gxnNode   := xnNode;
+
+          //检测
+          if xnNode=nil then begin
+               ShowMessage('Error because GetXMLNodeFromTreeNode return nil when TreeViewChange');
+               Exit;
+          end;
+
+          //
+          bIsCreating    := True;
+
+          //根据节点类型显示属性
+          NxTextItem_NodeType.Value     := RTToStr(xnNode.Attributes['Mode']);
+          NxMemoItem_Caption.Value      := xnNode.Attributes['Caption'];
+          NxTextItem_Comment.Value      := xnNode.Attributes['Comment'];
+          NxMemoItem_Source.Value       := xnNode.Attributes['Source'];
+          if (xnNode.Attributes['Enabled']=null)or(xnNode.Attributes['Enabled']) then begin
+               NxComboBoxItem_Enable.Value   := 'True';
+          end else begin
+               NxComboBoxItem_Enable.Value   := 'False';
+          end;
+          case xnNode.Attributes['Mode'] of
+               rtIF_Yes,rtIF_Else,rtBlock_Body : begin
+                    //NxMemoItem_Caption.Enabled    := False;
+               end;
+               rtBlock_Code : begin
+               end;
+          else
+          end;
+          //
+          bIsCreating    := False;
+     except
+     end;
+end;
+
+
+procedure TMainForm.TreeViewCustomDrawItem(Sender: TCustomTreeView;
+  Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
+var
+     tnRoot    : TTreeNode;
+     xnCur     : IXMLNode;
+begin
+
+     //
+     if gxnRootNode=nil then begin
+          Exit;
+     end;
+
+     //如果是流程图根节点， 则做标识
+     tnRoot    := GetTreeNodeFromXMLNode(TreeView,gxnRootNode);
+     if Node = tnRoot then begin
+          TreeView.Canvas.Font.Style    := [fsBold];
+          TreeView.Canvas.Brush.Color   := clBlack;
+          TreeView.Canvas.Font.Color    := clWhite;
+     end;
+
+     //如果当前节点禁用,则显示禁用图标
+     xnCur     := GetXMLNodeFromTreeNode(gxdXML,Node);
+     if xnCur=nil then begin
+          ShowMessage(Node.Text);
+     end;
+     if xnCur.HasAttribute('Enabled') then begin
+          if not xnCur.Attributes['Enabled'] then begin
+               Node.StateIndex     := 12;
+          end else begin
+               Node.StateIndex     := -1;
+          end;
+     end else begin
+          Node.StateIndex     := -1;
+     end;
+     //end;
+end;
+
+procedure TMainForm.TreeViewDragOver(Sender, Source: TObject; X,
+  Y: Integer; State: TDragState; var Accept: Boolean);
+var
+     tnTar     : TTreeNode;
+     tnSrc     : TTreeNode;
+     //
+     xnTar     : IXMLNode;
+     xnSrc     : IXMLNode;
+     //
+     iTarMode  : Integer;
+     iSrcMode  : Integer;
+     //
+     bParent   : Boolean;
+     xnNode    : IXMLNode;
+
+     I,iMode   : Integer;
+     Node      : TTreeNode;
+     TarNode   : TTreeNode;
+     SrcNode   : TTreeNode;
+     iSrcID    : Integer;
+begin
+     try
+
+          //得到相应树节点
+          tnSrc     := TreeView.Selected;         //得到源节点
+          tnTar     := TreeView.GetNodeAt(X,Y);   //得到目的节点
+          if (tnSrc=nil)or(tnTar=nil) then begin
+               Accept    := False;
+               Exit;   //异常处理
+          end;
+
+          //得到XML节点
+          xnSrc     := GetXMLNodeFromTreeNode(gxdXML,tnSrc);
+          xnTar     := GetXMLNodeFromTreeNode(gxdXML,tnTar);
+          if (xnSrc=nil)or(xnTar=nil) then begin
+               Accept    := False;
+               Exit;   //异常处理
+          end;
+          iSrcMode  := xnSrc.Attributes['Mode'];
+          iTarMode  := xnTar.Attributes['Mode'];
+
+
+          //-------------------------源和目的的类型处理------------------------------------------------//
+          //默认可以
+          Accept    := True;
+          //不能拖动特殊节点
+          if InModes(iSrcMode,[rtFile,rtIF_Yes,rtIF_Else,rtTRY_Body,rtTry_Except,rtBlock_Body,rtCase_Default]) then begin
+               Accept    := False;
+               Exit;
+          end;
+
+          //不能拖动父节点子节点
+          bParent   := False;
+          xnNode    := xnTar;
+          while True do begin
+               if xnNode=xnSrc then begin
+                    bParent   := True;
+                    Break;
+               end else begin
+                    xnNode    := xnNode.ParentNode;
+                    if xnNode=nil then begin
+                         Break;
+                    end;
+               end;
+          end;
+          if bParent then begin
+               Accept    := False;
+               Exit;
+          end;
+
+          //不能拖动CaseItem到非Case,CaseItem,CaseDefault中
+          if iSrcMode=rtCase_Item then begin
+               if not InModes(iTarMode,[rtCase,rtCase_Item,rtCase_Default]) then begin
+                    Accept    := False;
+               end;
+               Exit;
+          end;
+
+          //不能拖动Function到非File和Function节点
+          if iSrcMode=rtFunc then begin
+               if not InModes(iTarMode,[rtFile,rtFunc]) then begin
+                    Accept    := False;
+               end;
+               Exit;
+          end;
+
+
+     except
+     end;
+end;
+
+procedure TMainForm.TreeViewDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+     tnTar     : TTreeNode;
+     tnSrc     : TTreeNode;
+     //
+     xnTar     : IXMLNode;
+     xnSrc     : IXMLNode;
+     xnNew     : IXMLNode;
+     iIndex    : Integer;
+
+     //
+     rDragMode : TBlockCopyMode;
+begin
+
+     //得到相应树节点
+     tnSrc     := TreeView.Selected;         //得到源节点
+     tnTar     := TreeView.GetNodeAt(X,Y);   //得到目的节点
+     if (tnSrc=nil)or(tnTar=nil) then Exit;   //异常处理
+
+     //得到XML节点
+     xnSrc     := GetXMLNodeFromTreeNode(gxdXML,tnSrc);
+     xnTar     := GetXMLNodeFromTreeNode(gxdXML,tnTar);
+     if (xnSrc=nil)or(xnTar=nil) then Exit;   //异常处理
+
+
+     //取得拖动节点的模式
+     rDragMode := GetNewMode(xnSrc.Attributes['Mode'],xnTar.Attributes['Mode']);
+
+     case rDragMode.AddMode of
+          nmChild : begin     //成为子项
+               if MessageDlg('Do you really want to move node '+#13+#13+'['+tnSrc.Text+']'+#13+#13+' inside '+#13+#13
+                         +'['+tnTar.Text+']'+'?',
+                         mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+               begin
+                    //更改XML
+                    xnNew     := xnTar.AddChild(xnSrc.NodeName);
+                    CopyXMLNode(xnSrc,xnNew);
+                    iIndex    := GetXMLNodeIndex(xnSrc);
+                    xnSrc.ParentNode.ChildNodes.Delete(iIndex);
+
+                    //设置当前活动XML节点
+                    gxnNode   := xnNew;
+
+                    //更改TreeView
+                    TreeView.Items.BeginUpdate;
+                    tnSrc.MoveTo(tnTar,naAddChild);
+                    TreeView.Items.EndUpdate;
+               end;
+          end;
+          nmAppend : begin    //同级
+               if MessageDlg('Do you really want to move node  '+#13+#13+'"'+tnSrc.Text+'"'+#13+#13+' after '+#13+#13
+                         +'['+tnTar.Text+']'+' ?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+               begin
+                    //拖动XML节点
+                    iIndex    := GetXMLNodeIndex(xnTar);
+                    xnNew     := xnTar.ParentNode.AddChild(xnSrc.NodeName,iIndex+1);
+                    CopyXMLNode(xnSrc,xnNew);
+                    iIndex    := GetXMLNodeIndex(xnSrc);
+                    xnSrc.ParentNode.ChildNodes.Delete(iIndex);
+
+                    //设置当前活动XML节点
+                    gxnNode   := xnNew;
+
+                    //拖动树节点
+                    TreeView.Items.BeginUpdate;
+                    if tnTar.getNextSibling=nil then begin
+                         tnSrc.MoveTo(tnTar.Parent,naAddChild);
+                    end else begin
+                         tnSrc.MoveTo(tnTar.getNextSibling,naInsert);
+                    end;
+                    TreeView.Items.EndUpdate;
+               end;
+          end;
+          nmInsert : begin    //在目的节点前插入
+               if MessageDlg('Do you really want to move node '+#13+#13+'['+tnSrc.Text+']'+#13+#13+' before '+#13+#13
+                         +'['+tnTar.Text+']'+'?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+               begin
+                    //拖动XML节点
+                    iIndex    := GetXMLNodeIndex(xnTar);
+                    xnNew     := xnTar.ParentNode.AddChild(xnSrc.NodeName,iIndex);
+                    CopyXMLNode(xnSrc,xnNew);
+                    iIndex    := GetXMLNodeIndex(xnSrc);
+                    xnSrc.ParentNode.ChildNodes.Delete(iIndex);
+
+                    //设置当前活动XML节点
+                    gxnNode   := xnNew;
+
+                    //拖动树节点
+                    TreeView.Items.BeginUpdate;
+                    tnSrc.MoveTo(tnTar,naInsert);
+                    TreeView.Items.EndUpdate;
+               end;
+          end;
+     end;
+     //
+     UpdateChart;
+     //
+     gbModified     := True;
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+var
+     xnNew     : IXMLNode;
+begin
+     gsMainDir := ExtractFilePath(Application.ExeName);
+
+     //
+     LoadFromFile(gsMainDir+'Options.ini');
+
+     //
+     gxdXML    := TXMLDocument.Create(self);
+     gxdXML.Active  := True;
+     gxdXML.Version      := '1.0';
+     gxdXML.Encoding     := 'UTF-8';
+     //添加根节点
+     xnNew     := gxdXML.AddChild('Root');
+     xnNew.Attributes['Mode']      := rtFile;
+     xnNew.Attributes['Caption']   := 'New file';
+     xnNew.Attributes['Source']    := 'Newfile.c';
+     xnNew.Attributes['Comment']   := '';
+
+     //
+     gxnRootNode    := xnNew;
+     gxnNode        := xnNew;
+     ShowNodeAttributes(TreeView.Items[0]);
+
+     //
+     UpdateChart;
+
+     //创建复制用的XML以备用
+     gxdCopy   := TXMLDocument.Create(self);
+     gxdCopy.Active      := True;
+     gxdCopy.Version     := '1.0';
+     gxdCopy.Encoding    := 'UTF-8';
+
+
+
+end;
+
+procedure TMainForm.PopMenu_CopyClick(Sender: TObject);
+begin
+
+     //
+     if gxnNode=nil then begin
+          ShowMessage('Please selected a node at first!');
+          Exit;
+     end;
+
+     //将源节点保存到XML中
+     gxdCopy.ChildNodes.Clear;
+     gxdCopy.AddChild('Copy');
+     CopyXMLNode(gxnNode,gxdCopy.DocumentElement);
+
+
+//     //
+//     if gxnNode=gxdXML.DocumentElement then begin
+//          ClipBoard.AsText    := FormatXMLData(gxnNode.XML);
+//     end else begin
+//          ClipBoard.AsText    := '<?xml version="1.0" encoding="UTF-8"?>'#13#10+FormatXMLData(gxnNode.XML);
+//     end;
+     giSourceMode        := gxnNode.Attributes['Mode'];
+     gxnCopySource       := nil;
+
+end;
+
+procedure TMainForm.PopMenu_PasteClick(Sender: TObject);
+var
+     bAllow    : Boolean;
+     rNewMode  : TBlockCopyMode;
+     xnNew     : IXMLNode;
+     tnNode    : TTreeNode;
+     tnNew     : TTreeNode;
+     iIndex    : Integer;
+begin
+     //<检查可复制性
+     bAllow    := True;
+
+     //如果源节点是目标节点的子节点或同节点,则退出
+     if gxnCopySource<>nil then begin
+          xnNew     := gxnNode;
+          while xnNew<>gxdXML.DocumentElement do begin
+               if xnNew=gxnCopySource then begin
+                    bAllow    := False;
+                    Break;
+               end else begin
+                    xnNew     := xnNew.ParentNode;
+               end;
+          end;
+     end;
+     if not bAllow then begin
+          ShowMessage('Cannot paste from source node to dest node!');
+          Exit;
+     end;
+     //>
+
+     //得到当前节点的Index
+     iIndex    := GetXMLNodeIndex(gxnNode);
+
+     //取得相应树节点
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+
+     //取得粘贴节点的模式
+     rNewMode  := GetNewMode(giSourceMode,gxnNode.Attributes['Mode']);
+
+     //
+     TreeView.Items.BeginUpdate;
+     case rNewMode.AddMode of
+          nmAppend : begin    //追加模式
+               xnNew     := gxnNode.ParentNode.AddChild('Temp',iIndex+1);
+               //CopyXMLNodeFromText(xnNew,gxdCopy.DocumentElement.XML);
+               CopyXMLNode(gxdCopy.DocumentElement,xnNew);
+               if rNewMode.Source=1 then begin
+                    xnNew.Attributes['Mode']      := rtBlock_Set;
+                    xnNew.Attributes['Caption']   := 'Set';
+               end;
+
+               //添加树节点
+               tnNew     := TreeView.Items.Add(tnNode,xnNew.Attributes['Caption']);
+               tnNew.ImageIndex    := ModeToImageIndex(xnNew.Attributes['Mode']);
+               tnNew.SelectedIndex := tnNew.ImageIndex;
+               //调整位置
+               if tnNode.getNextSibling<>nil then begin
+                    tnNew.MoveTo(tnNode.getNextSibling,naInsert);
+               end;
+               //根据粘贴过来的XML节点生成树
+               AddXmlNodeToTV(xnNew,tnNew);
+          end;
+          nmChild : begin     //子块模式
+               xnNew     := gxnNode.AddChild('Temp');
+               //CopyXMLNodeFromText(xnNew,gxdCopy.DocumentElement.XML);
+               CopyXMLNode(gxdCopy.DocumentElement,xnNew);
+
+               if rNewMode.Source=1 then begin
+                    xnNew.Attributes['Mode'] := rtBlock_Set;
+                    xnNew.Attributes['Caption']   := 'Set';
+               end;
+
+
+               //添加树节点
+               tnNew     := TreeView.Items.AddChild(tnNode,xnNew.Attributes['Caption']);
+               tnNew.ImageIndex    := ModeToImageIndex(xnNew.Attributes['Mode']);
+               tnNew.SelectedIndex := tnNew.ImageIndex;
+               //根据粘贴过来的XML节点生成树
+               AddXmlNodeToTV(xnNew,tnNew);
+          end;
+          nmInsert : begin    //插入模式
+               xnNew     := gxnNode.ParentNode.AddChild('Temp',iIndex);
+               //CopyXMLNodeFromText(xnNew,gxdCopy.DocumentElement.XML);
+               CopyXMLNode(gxdCopy.DocumentElement,xnNew);
+               if rNewMode.Source=1 then begin
+                    xnNew.Attributes['Mode']      := rtBlock_Set;
+                    xnNew.Attributes['Caption']   := 'Set';
+               end;
+
+               //添加树节点
+               tnNew     := TreeView.Items.Add(tnNode,xnNew.Attributes['Caption']);
+               tnNew.ImageIndex    := ModeToImageIndex(xnNew.Attributes['Mode']);
+               tnNew.SelectedIndex := tnNew.ImageIndex;
+               //调整位置
+               tnNew.MoveTo(tnNode,naInsert);
+               //根据粘贴过来的XML节点生成树
+               AddXmlNodeToTV(xnNew,tnNew);
+          end;
+     end;
+     TreeView.Items.EndUpdate;
+
+     //如果是剪切,则删除老节点
+     if gxnCopySource<>nil then begin
+          //
+          tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnCopySource);
+          tnNode.Destroy;
+
+          //删除XML节点
+          iIndex    := GetXMLNodeIndex(gxnCopySource);
+          gxnCopySource.ParentNode.ChildNodes.Delete(iIndex);
+     end;
+
+     //设置新粘贴的节点为当前节点
+     gxnNode   := xnNew;
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+     tnNode.MakeVisible;
+     
+     //
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.MenuItem_SearchNextClick(Sender: TObject);
+var
+     I    : Integer;
+begin
+     if SearchMode<0 then begin
+          //Form_Search.ShowModal;
+     end;
+     //
+     for I:=TreeView.Selected.AbsoluteIndex+1 to TreeView.Items.Count-1 do begin
+          if TreeView.Items[I].ImageIndex=SearchMode then begin
+               if (SearchKey='')or(Pos(SearchKey,TreeView.Items[I].Text)>0) then begin
+                    TreeView.Items[I].Selected    := True;
+                    break;
+               end;
+          end;
+     end; 
+
+end;
+
+procedure TMainForm.MenuItem_ExpandAllClick(Sender: TObject);
+begin
+     if TreeView.Items.Count>0 then begin
+          TreeView.Items.BeginUpdate;
+          TreeView.Items[0].Expand(True);
+          TreeView.Items.EndUpdate;
+     end;
+end;
+
+procedure TMainForm.MenuItem_CloseAllClick(Sender: TObject);
+begin
+     if TreeView.Items.Count>0 then begin
+          TreeView.Items.BeginUpdate;
+          TreeView.Items[0].Collapse(True);
+          TreeView.Items[0].Expand(False);
+          TreeView.Items.EndUpdate;
+     end;
+end;
+
+procedure TMainForm.MenuItem_ExpandSelClick(Sender: TObject);
+begin
+     if TreeView.Selected<>nil then begin
+          TreeView.Items.BeginUpdate;
+          TreeView.Selected.Expand(True);
+          TreeView.Items.EndUpdate;
+     end;
+end;
+
+procedure TMainForm.ToolButton_GenerateCodeClick(Sender: TObject);
+var
+     oNode     : TTreeNode;
+     oOldNode  : TTreeNode;
+     slCode    : TStringList;
+     iLanguage : Integer;         
+     sLang     : string;
+begin                           
+     //得到语言ID
+     sLang     := Trim(ComboBox_Language.Text);
+     if sLang = 'Java' then begin
+          iLanguage     := loJava;
+     end else if  sLang = 'C/Cpp' then begin
+          iLanguage     := loCpp;
+     end else if  sLang = 'CSharp' then begin
+          iLanguage     := loCSharp;
+     end else if  sLang = 'Delphi' then begin
+          iLanguage     := loDelphi;
+     end else if  sLang = 'JavaScript' then begin
+          iLanguage     := loJavaScript;
+     end;
+
+     //生成代码
+     grOption.AddCaption := grConfig.AddCaption;
+     grOption.AddComment := grConfig.AddComment;
+     grOption.Indent     := grConfig.Indent;
+     case iLanguage of
+          loJava : begin
+               SynEdit.Text    := GenXMLToJava(gxdXML,grOption);
+          end;
+          loDelphi : begin
+               SynEdit.Text    := GenXMLToPascal(gxdXML,grOption);
+          end;
+          loC,loCpp,loCSharp : begin
+               SynEdit.Text    := GenXMLToCpp(gxdXML,grOption);
+          end;
+          loJavaScript : begin
+               SynEdit.Text    := GenXMLToJavaScript(gxdXML,grOption);
+          end;
+     end;
+     PageControl1.ActivePageIndex  := 1;
+
+
+end;
+
+
+procedure TMainForm.PopupMenu_TreeViewPopup(Sender: TObject);
+var
+     I         : Integer;
+     iMode     : Integer;
+     iLevel    : Integer;
+     ModeSet   : Set of Byte;
+     TarNode   : TTreeNode;
+
+begin
+
+     //-----------------------------出错处理------------------------------------------------------//
+     if TreeView.Selected=nil then begin
+          TreeView.Items[0].Selected    := True;
+     end;
+
+     //----------------------------动态菜单处理---------------------------------------------------//
+     //取得当前节点类型
+     iMode     := gxnNode.Attributes['Mode'];
+
+     //非CASE检测
+     PopMenu_NewCASEItem.Visible   := InModes(iMode,[rtCase,rtCase_Item,rtCase_Default]);
+
+     //粘贴
+     PopMenu_Paste.Enabled    := gxdCopy.DocumentElement<>nil;
+
+     //删除
+     PopMenu_Delete.Enabled   := gxnNode<>gxdXML.DocumentElement;
+
+     //剪切
+     PopMenu_Cut.Enabled      := gxnNode<>gxdXML.DocumentElement;
+
+
+     //源节点不能剪切到其子节点
+
+end;
+
+procedure TMainForm.PopMenu_NewFunctionClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+
+     //新增XML节点
+     xnNew     := xnPar.AddChild('FUNCTION');
+     xnNew.Attributes['Mode']      := rtFunc;
+     xnNew.Attributes['Caption']   := 'NewFunction';
+     xnNew.Attributes['Source']      := 'void NewFunction();';
+     xnNew.Attributes['Comment']   := '';
+
+     //新增树节点
+     tnNew     := TreeView.Items.AddChild(tnPar,'NewFunction');
+     tnNew.ImageIndex    := ModeToImageIndex(rtFunc);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     //
+     gxnNode   := xnNew;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+
+//返回填 0:追加,1:子块,2:插入
+//本模块不仅要得到模式（追加/插入/子块）,而且需要计算出新块的Mode
+function TMainForm.GetNewMode(SourceMode,DestMode: Integer): TBlockCopyMode;
+var
+     iCurMode  : Integer;
+     bCtrl     : Boolean;
+     bShift    : Boolean;
+begin
+     //处理的几个原则：
+     //源节点内容:
+     //(1) 如果源节点类型是rtIF_Yes/rtIF_Else/rtFOR_Body/rtTry_Body/rtTry_Except等固定搭配的,
+     //则如果复制源节点的所有子节点到指定位置
+     //(2) 如果源节点类型是rtCASE_ITEM, 且目标节点是rtCASE,则复制到目标节点的最后一个非default子节点
+     //(3) 如果源节点类型是rtCASE_ITEM, 且目标节点是rtCASE_ITEM,则复制到目标节点的前或后(默认为后)
+     //(4) 如果源节点类型是rtCASE_ITEM, 且目标节点是rtCASE_default,则复制到目标节点的前
+     //(5) 如果源节点类型是rtCASE_ITEM, 且目标节点是非以上CASE,则复制源节点的所有子节点到指定位置
+     //
+     //
+     //位置:
+     //(a)如果情况(1),如果目标节点是强制子块型, 则复制为子节点
+     //               如果是有子块型, 如果bCtrl, 则复制为NextSibling;
+     //                               否则, 复制为Child
+     //               如果是无子块型, 如果bShift, 则复制为PrevSibling
+     //                               否则, 复制为NextSibling;
+     //(b)如果情况(2), 复制到目标节点的最后一个非default子节点
+     //(c)如果情况(3), 如果bShift, 则复制到目标节点的前一个节点
+     //                否则, 复制为目标节点的后一个节点
+     //(d)如果情况(4), 参照(a)
+
+     //设置默认返回值
+     Result.Source  := 0;
+     Result.AddMode := nmAppend;
+
+     //获得当前键盘状态
+     bCtrl     := ((integer(GetKeyState(VK_Control))and integer($80))<>0);
+     bShift    := ((integer(GetKeyState(VK_Shift))and integer($80))<>0);
+
+     //<处理源节点是rtFile
+     //if SourceMode = rtFile then begin
+     //     Result.Source  := 1;
+     //     if DestMode = rtFile then begin
+     //          Result.AddMode := nmChild;
+     //     end else begin
+     //          if bCtrl then begin
+     //               Result.AddMode := nmAppend;
+     //          end else if bShift then begin
+     //               Result.AddMode := nmInsert;
+     //          end;
+     //     end
+     //     Exit;
+     //end;
+     //>
+
+     //<处理源节点是rtFunc
+     //if SourceMode = rtFunc then begin
+     //     if DestMode = rtFile then begin
+     //          Result.AddMode := nmAppend;
+     //     end else begin
+     //          Result.AddMode := nmFuncAppend;
+     //     end;
+     //     Exit;
+     //end;
+     //>
+
+     //<处理源节点是固定搭配的子项
+     if InModes(SourceMode,[rtIF_Yes,rtIF_Else,rtFOR_Body,rtTry_Body,rtTry_Except,rtTry_Finally,rtBlock_Body,rtCase_Default,rtFile]) then begin
+          //复制子块,并将MODE改为rtBlock_Set
+          Result.Source  := 1;
+          //
+          if InModes(DestMode,gForceChildSet) then begin
+               Result.AddMode := nmChild;
+          end else if InModes(DestMode,gForceChildSet) then begin
+               if bCtrl then begin
+                    Result.AddMode := nmAppend;
+               end else if bShift then begin
+                    Result.AddMode := nmInsert;
+               end else begin
+                    Result.AddMode := nmChild;
+               end;
+          end else begin
+               if bShift then begin
+                    Result.AddMode := nmInsert;
+               end;
+          end;
+          Exit;
+     end;
+     //>
+
+     //<处理Case
+     if SourceMode=rtCase_Item then begin
+          if DestMode = rtCase then begin
+               Result.AddMode := nmLastPrev;
+          end else if DestMode = rtCase_Item then begin
+               if bShift then begin
+                    Result.AddMode := nmInsert;
+               end;
+          end else if DestMode = rtCase_default then begin
+               Result.AddMode := nmInsert;
+          end else begin
+               //
+               Result.Source  := 1;
+               //
+               if InModes(DestMode,gForceChildSet) then begin
+                    Result.AddMode := nmChild;
+               end else if InModes(DestMode,gForceChildSet) then begin
+                    if bCtrl then begin
+                         Result.AddMode := nmAppend;
+                    end else if bShift then begin
+                         Result.AddMode := nmInsert;
+                    end else begin
+                         Result.AddMode := nmChild;
+                    end;
+               end else begin
+                    if bShift then begin
+                         Result.AddMode := nmInsert;
+                    end;
+               end;
+          end;
+          Exit;
+     end;
+     //>
+
+
+     //<处理其它情况
+     //
+     if InModes(DestMode,gForceChildSet) then begin
+          Result.AddMode := nmChild;
+     end else if InModes(DestMode,gHasChildSet) then begin
+          if bCtrl then begin
+               Result.AddMode := nmAppend;
+          end else if bShift then begin
+               Result.AddMode := nmInsert;
+          end else begin
+               Result.AddMode := nmChild;
+          end;
+     end else begin
+          if bShift then begin
+               Result.AddMode := nmInsert;
+          end;
+     end;
+     Exit;
+     //>
+end;
+
+procedure TMainForm.PopMenu_NewIFClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //IF
+     xnNew     := xnPar.AddChild('IF');
+     xnNew.Attributes['Mode']      := rtIF;
+     xnNew.Attributes['Caption']   := 'TRUE';
+     xnNew.Attributes['Source']:= 'TRUE';
+     xnNew.Attributes['Comment']   := '';
+     //YES
+     xnNew     := xnPar.ChildNodes.Last.AddChild('YES');
+     xnNew.Attributes['Mode']      := rtIF_YES;
+     xnNew.Attributes['Caption']   := 'YES';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //YES
+     xnNew     := xnPar.ChildNodes.Last.AddChild('NO');
+     xnNew.Attributes['Mode']      := rtIF_ELSE;
+     xnNew.Attributes['Caption']   := 'NO';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //IF
+     tnNew     := TreeView.Items.AddChild(tnPar,'TRUE');
+     tnNew.ImageIndex    := ModeToImageIndex(rtIF);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //YES
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'YES');
+     tnNew.ImageIndex    := ModeToImageIndex(rtIF_YES);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //NO
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'NO');
+     tnNew.ImageIndex    := ModeToImageIndex(rtIF_ELSE);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+     
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewFORClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //FOR
+     xnNew     := xnPar.AddChild('FOR');
+     xnNew.Attributes['Mode']      := rtFor;
+     xnNew.Attributes['Caption']   := 'i:=0;i<10;i++';
+     xnNew.Attributes['Source']:= 'i:=0;i<10;i++';
+     xnNew.Attributes['Comment']   := '';
+     //FOR_CIRCLE
+     xnNew     := xnPar.ChildNodes.Last.AddChild('circle');
+     xnNew.Attributes['Mode']      := rtBlock_Body;
+     xnNew.Attributes['Caption']   := '';
+     xnNew.Attributes['Source']    := '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //FOR
+     tnNew     := TreeView.Items.AddChild(tnPar,'i:=0;i<10;i++');
+     tnNew.ImageIndex    := ModeToImageIndex(rtFOR);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //FOR_CIRCLE
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Body);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewCODEClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //CODE
+     xnNew     := xnPar.AddChild('CODE');
+     xnNew.Attributes['Mode']      := rtBlock_Code;
+     xnNew.Attributes['Caption']   := 'Code';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //CODE
+     tnNew     := TreeView.Items.AddChild(tnPar,'CODE');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Code);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     //
+     gxnNode   := xnNew;
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewWHILEClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //FOR
+     xnNew     := xnPar.AddChild('WHILE');
+     xnNew.Attributes['Mode']      := rtWhile;
+     xnNew.Attributes['Caption']   := 'TRUE';
+     xnNew.Attributes['Source']    := 'TRUE';
+     xnNew.Attributes['Comment']   := '';
+     //FOR_CIRCLE
+     xnNew     := xnPar.ChildNodes.Last.AddChild('circle');
+     xnNew.Attributes['Mode']      := rtBlock_Body;
+     xnNew.Attributes['Caption']   := '';
+     xnNew.Attributes['Source']    := '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //While
+     tnNew     := TreeView.Items.AddChild(tnPar,'TRUE');
+     tnNew.ImageIndex    := ModeToImageIndex(rtWhile);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //WHILE_CIRCLE
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Body);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewREPEATClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //FOR
+     xnNew     := xnPar.AddChild('REPEAT');
+     xnNew.Attributes['Mode']      := rtRepeat;
+     xnNew.Attributes['Caption']   := 'TRUE';
+     xnNew.Attributes['Source']    := 'TRUE';
+     xnNew.Attributes['Comment']   := '';
+     //FOR_CIRCLE
+     xnNew     := xnPar.ChildNodes.Last.AddChild('circle');
+     xnNew.Attributes['Mode']      := rtBlock_Body;
+     xnNew.Attributes['Caption']   := '';
+     xnNew.Attributes['Source']    := '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //While
+     tnNew     := TreeView.Items.AddChild(tnPar,'TRUE');
+     tnNew.ImageIndex    := ModeToImageIndex(rtRepeat);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //WHILE_CIRCLE
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Body);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewCASEClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //
+     xnNew     := xnPar.AddChild('CASE');
+     xnNew.Attributes['Mode']      := rtCase;
+     xnNew.Attributes['Caption']   := 'var';
+     xnNew.Attributes['Source']:= 'var';
+     xnNew.Attributes['Comment']   := '';
+     //
+     xnNew     := xnPar.ChildNodes.Last.AddChild('CASE');
+     xnNew.Attributes['Mode']      := rtCase_Default;
+     xnNew.Attributes['Caption']   := 'default';
+     xnNew.Attributes['Source']:= 'default';
+     xnNew.Attributes['Comment']   := '';
+     //为Case_Default添加一个默认的code节点
+     xnNew     := xnNew.AddChild('code');
+     xnNew.Attributes['Mode']      := rtBlock_Code;
+     xnNew.Attributes['Caption']   := 'code';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //FOR
+     tnNew     := TreeView.Items.AddChild(tnPar,'var');
+     tnNew.ImageIndex    := ModeToImageIndex(rtCase);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //FOR_CIRCLE
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'default');
+     tnNew.ImageIndex    := ModeToImageIndex(rtCase_Default);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //为Case_Default添加一个默认的code节点
+     tnNew     := TreeView.Items.AddChild(tnNew,'code');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Code);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent.Parent);
+     gxnNode   := xnNew.ParentNode.ParentNode;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.TreeViewMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+     //右键直接选择节点
+     gtnCurNode     := TreeView.GetNodeAt(X, Y);
+     if gtnCurNode<>nil then begin
+          gtnCurNode.Selected := True;
+     end;
+end;
+
+procedure TMainForm.PopMenu_NewCASEItemClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //判断源节点的
+     if xnNode.Attributes['Mode']=rtCase then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else if xnNode.Attributes['Mode']=rtCase_Item then begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end else if xnNode.Attributes['Mode']=rtCase_default then begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end else begin
+          Exit;
+     end;
+
+
+     //<新增XML节点
+     //CODE
+     xnNew     := xnPar.AddChild('CODE',xnPar.ChildNodes.Count-1);
+     xnNew.Attributes['Mode']      := rtCase_Item;
+     xnNew.Attributes['Caption']   := 'value';
+     xnNew.Attributes['Source']    := 'value';
+     xnNew.Attributes['Comment']   := '';
+     //为Case_Item添加一个默认的code节点
+     xnNew     := xnNew.AddChild('code');
+     xnNew.Attributes['Mode']      := rtBlock_Code;
+     xnNew.Attributes['Caption']   := 'code';
+     xnNew.Attributes['Source']    := '';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     TreeView.Items.BeginUpdate;
+     //CODE
+     tnNew     := TreeView.Items.AddChild(tnPar,'value');
+     tnNew.ImageIndex    := ModeToImageIndex(rtCase_Item);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MoveTo(tnNew.getPrevSibling,naInsert);
+
+     //为Case_Item添加一个默认的code节点
+     tnNew     := TreeView.Items.AddChild(tnNew,'code');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Code);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     TreeView.Items.EndUpdate;
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.MenuItem_ExitClick(Sender: TObject);
+begin
+     Close;
+end;
+
+procedure TMainForm.PopMenu_NewBREAKClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //CODE
+     xnNew     := xnPar.AddChild('BREAK');
+     xnNew.Attributes['Mode']      := rtJump_Break;
+     xnNew.Attributes['Caption']   := 'break;';
+     xnNew.Attributes['Source']:= 'break;';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //CODE
+     tnNew     := TreeView.Items.AddChild(tnPar,'break');
+     tnNew.ImageIndex    := ModeToImageIndex(rtJump_Break);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewCONTINUEClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //CODE
+     xnNew     := xnPar.AddChild('CONTINUE');
+     xnNew.Attributes['Mode']      := rtJump_Continue;
+     xnNew.Attributes['Caption']   := 'continue;';
+     xnNew.Attributes['Source']:= 'continue;';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //CODE
+     tnNew     := TreeView.Items.AddChild(tnPar,'continue');
+     tnNew.ImageIndex    := ModeToImageIndex(rtJump_Continue);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.PopMenu_NewEXITClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //CODE
+     xnNew     := xnPar.AddChild('RETURN');
+     xnNew.Attributes['Mode']      := rtJump_Exit;
+     xnNew.Attributes['Caption']   := 'return;';
+     xnNew.Attributes['Source']:= 'return;';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //CODE
+     tnNew     := TreeView.Items.AddChild(tnPar,'return');
+     tnNew.ImageIndex    := ModeToImageIndex(rtJump_Exit);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.TreeViewClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     rConfig   : TWWConfig;
+begin;
+     try
+          tnNode    := TreeView.Selected;
+          if tnNode= nil then Exit;
+
+          //得到XML节点
+          gxnNode   := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+          //检测
+          if gxnNode=nil then begin
+               ShowMessage('Error because GetXMLNodeFromTreeNode return nil when TreeViewChange');
+               Exit;
+          end;
+
+          //根据树节点，设置XML节点的开合状态
+          SetNodeStatus(tnNode,gxnNode);
+
+          //清除记忆的老选择数据
+          SelectRect.Left     := -1;
+
+          //
+          ShowNodeAttributes(tnNode);
+
+          //恢复位置
+          Image.Top      := 10;
+          Image.Left     := 10;
+
+          //刷新流程图
+          UpdateChart;
+          //
+          SetUpDownEnable;
+     except
+     end;
+end;
+
+procedure TMainForm.PopMenu_NewTryClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+     //<新增XML节点
+     //Try
+     xnNew     := xnPar.AddChild('TRY');
+     xnNew.Attributes['Mode']      := rtTry;
+     xnNew.Attributes['Caption']   := 'Try';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //Try_Body
+     xnNew     := xnPar.ChildNodes.Last.AddChild('EXCEPT');
+     xnNew.Attributes['Mode']      := rtBlock_Body;
+     xnNew.Attributes['Caption']   := '';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     //Except
+     xnNew     := xnPar.ChildNodes.Last.AddChild('EXCEPT');
+     xnNew.Attributes['Mode']      := rtTRY_Except;
+     xnNew.Attributes['Caption']   := 'Except';
+     xnNew.Attributes['Source']:= 'Except';
+     xnNew.Attributes['Comment']   := '';
+     //>
+
+     //<新增树节点
+     //Try
+     tnNew     := TreeView.Items.AddChild(tnPar,'TRY');
+     tnNew.ImageIndex    := ModeToImageIndex(rtTry);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //TRY_BODY
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Body);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+     //EXCEPT
+     tnNew     := TreeView.Items.AddChild(tnPar.GetLastChild,'EXCEPT');
+     tnNew.ImageIndex    := ModeToImageIndex(rtTRY_EXCEPT);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //>
+
+     //显示新增树节点的属性
+     tnNew.Parent.Selected := True;
+     ShowNodeAttributes(tnNew.Parent);
+     gxnNode   := xnNew.ParentNode;
+
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.ToolButton_ExpandClick(Sender: TObject);
+begin
+     if TreeView.Selected<>nil then begin
+          TreeView.Items.BeginUpdate;
+          TreeView.Selected.Expand(True);
+          TreeView.Selected.MakeVisible;
+          TreeView.Items.EndUpdate;
+          //
+          UpdateChart;
+          //TreeView.OnClick(Self);
+     end;
+end;
+
+procedure TMainForm.ToolButton_CollapseClick(Sender: TObject);
+begin
+     if TreeView.Selected<>nil then begin
+          TreeView.Selected.Collapse(True);
+          //
+          UpdateChart;
+          //TreeView.OnClick(Self);
+     end;
+
+end;
+
+procedure TMainForm.ToolButton_UpClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     iIndex    : Integer;
+     xnNew     : IXMLNode;
+begin
+     //
+     if gxnNode=nil then begin
+          Exit;
+     end;
+
+     //
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+
+     //
+     if gxnNode=gxdXML.DocumentElement then begin
+          Exit;
+     end;
+     if gxnNode=gxnNode.ParentNode.ChildNodes.First then begin
+          Exit;
+     end;
+
+     //XML节点上移
+     iIndex    := GetXMLNodeIndex(gxnNode);
+     xnNew     := gxnNode.ParentNode.AddChild(gxnNode.NodeName,iIndex-1);
+     CopyXMLNode(gxnNode,xnNew);
+     gxnNode.ParentNode.ChildNodes.Delete(iIndex+1);
+     gxnNode   := xnNew;
+     //gxnNode.ParentNode.ChildNodes.ReplaceNode(gxnNode.PreviousSibling,gxnNode);
+     //gxnNode.ParentNode.ChildNodes.Insert(iIndex-1,gxnNode);
+
+     //树节点上移
+     TreeView.OnCustomDrawItem     := nil;
+     tnNode.MoveTo(tnNode.getPrevSibling,naInsert);
+     TreeView.OnCustomDrawItem     := TreeViewCustomDrawItem;
+
+     //
+     SetUpDownEnable;
+end;
+
+procedure TMainForm.ToolButton_DownClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     xnNew     : IXMLNode;
+     iIndex    : Integer;
+begin
+     //
+     if gxnNode=nil then begin
+          Exit;
+     end;
+
+     //
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+
+     //
+     if gxnNode=gxdXML.DocumentElement then begin
+          Exit;
+     end;
+     if gxnNode=gxnNode.ParentNode.ChildNodes.Last then begin
+          Exit;
+     end;
+     //XML节点下移
+     iIndex    := GetXMLNodeIndex(gxnNode);
+     xnNew     := gxnNode.ParentNode.AddChild(gxnNode.NodeName,iIndex+2);  //在新位置生成新节点
+     CopyXMLNode(gxnNode,xnNew);   //复制源节点的属性和子节点
+     gxnNode.ParentNode.ChildNodes.Delete(iIndex);     //删除源节点
+     gxnNode   := xnNew; //设置新节点为当前节点
+
+     //
+     if tnNode.getNextSibling.getNextSibling<>nil then begin
+          tnNode.MoveTo(tnNode.getNextSibling.getNextSibling,naInsert);
+     end else begin
+          tnNode.MoveTo(tnNode.getNextSibling,naAdd);
+     end;
+     //
+     gxnNode   := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //
+     SetUpDownEnable;
+
+end;
+
+
+
+
+
+
+
+
+
+
+
+procedure TMainForm.ToolButton_SaveClick(Sender: TObject);
+var
+     xnRoot    : IXMLNode;
+begin
+     xnRoot    := gxdXML.DocumentElement;
+     xnRoot.Attributes['FileType'] := 'AutoCode';
+     xnRoot.Attributes['Language'] := ComboBox_Language.Text;
+     if not FileExists(gsFileName) then begin
+          if SaveDialog.Execute then begin
+               gsFileName     := SaveDialog.FileName;
+               gxdXML.SaveToFile(SaveDialog.FileName);
+               //设置为未修改状态
+               gbModified     := False;
+          end ;
+     end else begin
+          gxdXML.SaveToFile(gsFileName);
+          //设置为未修改状态
+          gbModified     := False;
+     end;
+end;
+
+procedure TMainForm.ToolButton_OpenClick(Sender: TObject);
+var
+     iRes      : Integer;
+     I         : Integer;
+begin
+     //退出时如果当前文档已修改，则提示是否保存/取消退出
+     if gbModified then begin
+          iRes := MessageDlg('The file has been modified, do you save it ?',mtConfirmation,[mbYes,mbNO,mbCancel],0);
+          Case iRes of
+               mrYes : begin
+                    ToolButton_Save.OnClick(Self);
+               end;
+               mrCancel : begin
+                    Exit;
+               end;
+          end;
+     end;
+
+     if OpenDialog.Execute then begin
+          //导入XML
+          gxdXML.LoadFromFile(OpenDialog.FileName);
+          //
+          gsFileName     := OpenDialog.FileName;
+
+          //检查必备项是否具备， 否则补上
+          CheckXMLNode(gxdXML.DocumentElement);
+
+          //设置为流程图的绘制根节点
+          gxnRootNode    := gxdXML.DocumentElement;
+          gxnNode        := gxnRootNode;
+
+          //查找语言类型
+          if gxnRootNode.HasAttribute('Language') then begin
+               for I:=0 to ComboBox_Language.Items.Count-1 do begin
+                    if ComboBox_Language.Items[I]=gxnRootNode.Attributes['Language'] then begin
+                         ComboBox_Language.ItemIndex   := I;
+                         break;
+                    end;
+               end;
+          end;
+
+
+          //根据XML创建树
+          bIsCreating    := True;
+          XmlToTreeView(gxdXML,TreeView);
+          bIsCreating    := False;
+          //
+          TreeView.Items[0].Expand(True);
+          TreeView.Items[0].Selected    := True;
+          iMoveX    := -9999;
+          iMoveY    := 0;
+          Image.Left     := 10;
+          Image.Top      := 10;
+          //
+          UpdateChart;
+          //TreeView.OnClick(Self);
+
+          //一些必要的工作
+          gxnCopySource  := nil;   //清空
+          //设置为未修改状态
+          gbModified     := False;
+     end;
+end;
+
+procedure TMainForm.ImageDblClick(Sender: TObject);
+var
+     tnCur     : TTreeNode;
+     xnCur     : IXMLNode;
+begin
+
+     //得到树节点
+     tnCur    := GetNodeFromPos(iMoveX,iMoveY);
+
+     //如果没找到树节点,则退出
+     if tnCur=nil then begin
+          Exit;
+     end;
+
+     //更改开合状态
+     if tnCur.Count>0 then begin
+          tnCur.Expanded := not tnCur.Expanded;
+     end else begin
+          if tnCur<>TreeView.Selected then begin
+               tnCur.Parent.Expanded    := False;
+               tnCur     := tnCur.Parent;
+          end;
+     end;
+
+     //得到XML节点
+     gxnNode   := GetXMLNodeFromTreeNode(gxdXML,tnCur);
+
+     //
+     UpdateChart;
+
+     //更新当前选择的树节点
+     //tnCur.Selected := True;
+
+end;
+
+procedure TMainForm.ImageMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+     L,T,W,H,E : Single;
+     tnCur     : TTreeNode;
+begin
+
+     //记录下位置,以用于移动
+     iMoveX  := X;
+     iMoveY  := Y;
+
+
+end;
+
+procedure TMainForm.ImageMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+     if iMoveX<>-1 then begin
+          if iMoveX<>-9999 then begin
+               ScrollBox.ScrollBy(X-iMoveX,Y-iMoveY);
+          end;
+          iMoveX  := X;
+          iMoveY  := Y;
+     end;
+
+end;
+
+function TMainForm.GetNodeFromPos(mX, mY: Integer): TTreeNode;
+var
+     tnNode    : TTreeNode;
+     I         : Integer;
+     L,T,W,H,E : Integer;
+     xnNode    : IXMLNode;
+     bFound    : Boolean;
+begin
+     //默认返回值
+     Result    := nil;
+     //
+     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnRootNode);
+     while True do begin
+          //查找到
+          if (tnNode.Count=0)or(not tnNode.Expanded) then begin
+               Result    := tnNode;
+               Break;
+          end;
+
+          //
+          bFound    := False;
+          for I:=0 to tnNode.Count-1 do begin
+               xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode.Item[I]);
+               L    := xnNode.Attributes['X'];
+               T    := xnNode.Attributes['Y'];
+               W    := xnNode.Attributes['W'];
+               H    := xnNode.Attributes['H'];
+               if xnNode.HasAttribute('E') then begin
+                    E    := xnNode.Attributes['E'];
+               end else begin
+                    E    := 0;
+               end;
+               //
+               //
+               L    := L-E-Round(grConfig.BaseWidth*grConfig.Scale);
+               W    := W+E;
+
+               //判断是否在当前节点内
+               if (mX>=L)and(mX<=L+W)and(mY>=T)and(mY<=T+H) then begin
+                    tnNode    := tnNode.Item[I];
+                    Result    := tnNode;
+                    bFound    := True;
+                    Break;
+               end;
+          end;
+
+          //如果没发现,则返回nil
+          if not bFound then begin
+               Break;
+          end;
+     end;
+end;
+
+procedure TMainForm.NextInspectorChange(Sender: TObject;
+  Item: TNxPropertyItem; Value: WideString);
+var
+     xnNode    : IXMLNode;
+     tnNode    : TTreeNode;
+     sCaption  : string;
+begin
+     //如果是自动创建，则不需要处理
+     if bIsCreating then begin
+          Exit;
+     end;
+
+     
+     //得到标题
+     sCaption  := Item.Caption;
+
+     //保存到XML
+     gxnNode.Attributes[sCaption]  := Value;
+
+     //如果是名称，则重绘
+     if sCaption='Caption' then begin
+          //修改TreeView
+          tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+          tnNode.Text    := Value;
+
+          //重绘图
+          xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
+          xnNode.Attributes['Expanded']  := tnNode.Expanded;
+          DrawXmlToFlowChart(gxnRootNode,Image,grConfig);
+     end;
+
+     //如果是Source，则重绘
+     //if sCaption='Source' then begin
+     //     //重绘图
+     //     //xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
+     //     gxnNode.Attributes['Expanded']     := tnNode.Expanded;
+     //     DrawXmlToFlowChart(gxnRootNode,Image,grConfig);
+     //end;
+
+end;
+
+procedure TMainForm.SetUpDownEnable;
+begin
+     //
+     ToolButton_Up.Enabled    := gxnNode<>gxnNode.ParentNode.ChildNodes.First;
+     ToolButton_Down.Enabled  := gxnNode<>gxnNode.ParentNode.ChildNodes.Last;
+     //
+     if InModes(gxnNode.Attributes['Mode'],[rtIF_Yes,rtIF_Else,rtCase_Default]) then begin
+          ToolButton_Up.Enabled    := False;
+          ToolButton_Down.Enabled  := False;
+     end;
+     //
+     if gxnNode.Attributes['Mode']=rtCase_Item then begin
+          ToolButton_Down.Enabled  := gxnNode<>gxnNode.ParentNode.ChildNodes.Last.PreviousSibling;
+     end;
+end;
+
+procedure TMainForm.PopMenu_CutClick(Sender: TObject);
+begin
+
+     //
+     if gxnNode=nil then begin
+          ShowMessage('Please selected a node at first!');
+          Exit;
+     end;
+
+     giSourceMode        := gxnNode.Attributes['Mode'];
+     gxnCopySource       := gxnNode;
+
+     //
+     if gxnNode=gxdXML.DocumentElement then begin
+          ShowMessage('Connot cut the root node!');
+          Exit;
+     end else begin
+          //将源节点保存到XML中
+          gxdCopy.ChildNodes.Clear;
+          gxdCopy.AddChild('Cut');
+          CopyXMLNode(gxnNode,gxdCopy.DocumentElement);
+     end;
+
+
+end;
+
+procedure TMainForm.CheckXMLNode(xnNode:IXMLNode);
+var
+     xnChild   : IXMLNode;
+     xnPar     : IXMLNode;
+     xnNext    : IXMLNode;
+     I         : Integer;
+begin
+     //自动增加属性值
+     if not xnNode.HasAttribute('Caption') then begin
+          xnNode.Attributes['Caption']  := '';
+     end;
+     if not xnNode.HasAttribute('Source') then begin
+          xnNode.Attributes['Source']   := '';
+     end;
+     if not xnNode.HasAttribute('Comment') then begin
+          xnNode.Attributes['Comment']  := '';
+     end;
+
+     //无Mode自动设置Mode
+     if not xnNode.HasAttribute('Mode') then begin
+          //先根据其父节点设置
+          if xnNode.ParentNode=nil then begin
+               xnNode.Attributes['Mode']     := rtFile;
+          end else begin
+               xnPar     := xnNode.ParentNode;
+               case xnPar.Attributes['Mode'] of
+                    rtIF : begin
+                         if xnNode=xnPar.ChildNodes[0] then begin
+                              xnNode.Attributes['Mode']     := rtIF_Yes;
+                         end else begin
+                              xnNode.Attributes['Mode']     := rtIF_Else;
+                         end;
+                    end;
+                    rtFor,rtRepeat,rtWhile : begin
+                         xnNode.Attributes['Mode']     := rtBlock_Body;
+                    end;
+                    rtCase : begin
+                         if xnNode=xnPar.ChildNodes.Last then begin
+                              xnNode.Attributes['Mode']     := rtCase_Default;
+                         end else begin
+                              xnNode.Attributes['Mode']     := rtCase_Item;
+                         end;
+                    end;
+                    rtTry : begin
+                         if xnNode=xnPar.ChildNodes[0] then begin
+                              xnNode.Attributes['Mode']     := rtBlock_Body;
+                         end else begin
+                              xnNode.Attributes['Mode']     := rtTry_Except;
+                         end;
+                    end;
+               end;
+          end;
+
+          //如果根据父类未解决,则根据其子类判断
+          if (not xnNode.HasAttribute('Mode'))and(xnNode.HasChildNodes) then begin
+               xnChild   := xnNode.ChildNodes[0];
+               if xnChild.HasAttribute('Mode') then begin
+                    case xnChild.Attributes['Mode'] of
+                         rtIF_Yes : begin
+                              xnNode.Attributes['Mode']     := rtIF;
+                         end;
+                         rtBlock_Body : begin
+                              if xnNode.ChildNodes.Count>1 then begin
+                                   xnNode.Attributes['Mode']     := rtTry;
+                              end else begin
+                                   xnNode.Attributes['Mode']     := rtFor;
+                              end;
+                         end;
+                         rtCase_Item,rtCase_Default : begin
+                              xnNode.Attributes['Mode']     := rtCase;
+                         end;
+                    end;
+               end;
+          end;
+
+          //如果仍未解决，则指定一个
+          if not xnNode.HasAttribute('Mode') then begin
+               if xnNode.HasChildNodes then begin
+                    xnNode.Attributes['Mode']     := rtBlock_Set;
+               end else begin
+                    xnNode.Attributes['Mode']     := rtBlock_Code;
+               end;
+          end;
+
+     end;
+
+     //递归检查并自动增补子节点属性值
+     for I:=0 to xnNode.ChildNodes.Count-1 do begin
+          CheckXMLNode(xnNode.ChildNodes[I]);
+     end;
+end;
+
+
+
+procedure TMainForm.PopMenu_SetRootClick(Sender: TObject);
+var
+     tnCur     : TTreeNode;
+     xnCur     : IXMLNode;
+     bDefault  : Boolean;      
+begin                          
+     if gxnNode<>nil then begin
+          xnCur          := gxnNode;    //GetXMLNodeFromTreeNode(gxdXML,gtnCurNode);
+          gxnRootNode    := xnCur;
+          gxnNode        := xnCur;
+          //
+          UpdateChart;
+          //TreeView.OnClick(Self);
+          //TreeView.OnCustomDrawItem(nil,tnCur,[],bDefault);
+          TreeView.Refresh;
+     end;
+end;
+
+procedure TMainForm.UpdateChart;
+var
+     tnRoot    : TTreeNode;
+     L,T,E,W,H : Integer;
+     bPar      : Boolean;
+     xnTmp     : IXMLNode;
+     tnCur     : TTreeNode;
+begin
+     //
+     if gxnRootNode=nil then begin
+          Exit;
+     end;
+     //得到相应树节点
+     tnRoot    := GetTreeNodeFromXMLNode(TreeView,gxnRootNode);
+     if tnRoot=nil then begin
+          ShowMessage('Error when UpdateChart! ');
+          Exit;
+     end;
+
+     //设置各XML节点的Expanded属性
+     SetNodeStatus(tnRoot,gxnRootNode);
+
+     //重绘流程图
+     DrawXmlToFlowChart(gxnRootNode,Image,grConfig);
+
+     //如果当前无节点或当前节点为流程图根节点，则退出
+     if (gxnNode=nil)or(gxnRootNode=gxnNode) then begin
+          Exit;
+     end;
+
+     //如果当前节点不是流程图根节点的子孙节点，则退出
+     xnTmp     := gxnNode;
+     bPar      := False;
+     while xnTmp<>nil do begin
+          if xnTmp=gxnRootNode then begin
+               bPar := True;
+               Break;
+          end else begin
+               xnTmp     := xnTmp.ParentNode;
+          end;
+     end;
+     if not bPar then begin
+          Exit;
+     end;
+
+
+     //<绘制当前节点图
+     //
+     L    := gxnNode.Attributes['X'];
+     T    := gxnNode.Attributes['Y'];
+     W    := gxnNode.Attributes['W'];
+     H    := gxnNode.Attributes['H'];
+     E    := gxnNode.Attributes['E'];
+
+     //得到区域信息
+     L    := Round(L-E-grConfig.BaseWidth*grConfig.Scale);
+     W    := W+E;
+
+     //绘制
+     SelectRect.Left     := Round(L-grConfig.SpaceHorz*grConfig.Scale/2);
+     SelectRect.Top      := Round(T-grConfig.SpaceVert*grConfig.Scale/2);
+     SelectRect.Right    := Round(L+W+grConfig.SpaceHorz*grConfig.Scale/2);
+     SelectRect.Bottom   := Round(T+H-grConfig.SpaceVert*grConfig.Scale/2);
+
+     with Image.Canvas do begin
+          Brush.Style    := bsSolid;
+          Brush.Color    := clWhite-grConfig.SelectColor;// clWhite-Color_Selected;
+          Pen.Color      := clWhite-grConfig.SelectColor;//clWhite-Color_Selected;
+          Pen.Mode       := pmXor;
+          Rectangle(SelectRect.Left,SelectRect.Top ,SelectRect.Right ,SelectRect.Bottom);
+     end;
+     //>
+
+     //选中gxnNode对应的树节点
+     tnCur     := GetTreeNodeFromXMLNode(TreeView,gxnNode);
+     tnCur.Selected := True;
+end;
+
+procedure TMainForm.PopMenu_NewSETClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //得到当前节点
+     tnNode    := TreeView.Selected;
+     if tnNode=nil then begin
+          Exit;
+     end;
+     xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+     //根据当前节点类型确定父节点
+     if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+          xnPar     := xnNode;
+          tnPar     := tnNode;
+     end else begin
+          xnPar     := xnNode.ParentNode;
+          tnPar     := tnNode.Parent;
+     end;
+
+
+     //新增XML节点
+     xnNew     := xnPar.AddChild('SET');
+     xnNew.Attributes['Mode']      := rtBlock_Set;
+     xnNew.Attributes['Caption']   := '';
+     xnNew.Attributes['Source']    := '';
+     xnNew.Attributes['Comment']   := '';
+
+     //新增树节点
+     tnNew     := TreeView.Items.AddChild(tnPar,'');
+     tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Set);
+     tnNew.SelectedIndex := tnNew.ImageIndex;
+     tnNew.MakeVisible;
+
+     //显示新增树节点的属性
+     tnNew.Selected := True;
+     ShowNodeAttributes(tnNew);
+     gxnNode   := xnNew;
+
+     //刷新流程图
+     UpdateChart;
+     //设置已修改标识
+     gbModified     := True;
+end;
+
+procedure TMainForm.TreeViewMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+     tnNode    : TTreeNode;
+     rConfig   : TWWConfig;
+begin;
+     try
+          tnNode    := TreeView.Selected;
+          if tnNode= nil then Exit;
+
+          //得到XML节点
+          gxnNode   := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+          //检测
+          if gxnNode=nil then begin
+               ShowMessage('Error because GetXMLNodeFromTreeNode return nil when TreeViewChange');
+               Exit;
+          end;
+
+          //根据树节点，设置XML节点的开合状态
+          SetNodeStatus(tnNode,gxnNode);
+
+          //清除记忆的老选择数据
+          SelectRect.Left     := -1;
+
+          //
+          ShowNodeAttributes(tnNode);
+
+          //恢复位置
+          Image.Top      := 10;
+          Image.Left     := 10;
+
+          //刷新流程图
+          UpdateChart;
+          //
+          SetUpDownEnable;
+     except
+     end;
+end;
+
+procedure TMainForm.ToolButton_ZoomInClick(Sender: TObject);
+begin
+     //
+     if grConfig.Scale<4/1.2 then begin
+          grConfig.Scale := grConfig.Scale * 1.2;
+          //
+          UpdateChart;
+     end;
+end;
+
+procedure TMainForm.ToolButton_ZoomOutClick(Sender: TObject);
+begin
+     //
+     if grConfig.Scale>0.24 then begin
+          grConfig.Scale := grConfig.Scale / 1.2;
+     end;
+     //
+     UpdateChart;
+end;
+
+procedure TMainForm.ImageClick(Sender: TObject);
+var
+     tnCur     : TTreeNode;
+begin
+     //得到树节点
+     tnCur    := GetNodeFromPos(iMoveX,iMoveY);
+
+     //如果没找到树节点,则退出
+     if tnCur=nil then begin
+          gxnNode   := nil;
+
+          //刷新显示
+          UpdateChart;
+
+     end else begin
+
+          //显示当前树节点信息
+          ShowNodeAttributes(tnCur);
+
+          //得到XML节点
+          gxnNode   := GetXMLNodeFromTreeNode(gxdXML,tnCur);
+
+          //刷新显示
+          UpdateChart;
+          //
+          SetUpDownEnable;
+     end;
+
+end;
+
+procedure TMainForm.ToolButton_NewProjectClick(Sender: TObject);
+var
+     xnNew     : IXMLNode;
+     iRes      : Integer;
+begin
+     if gbModified then begin
+          iRes := MessageDlg('The file has been modified, do you save it ?',mtConfirmation,[mbYes,mbNO,mbCancel],0);
+          case iRes of
+               mrYes : begin
+                    ToolButton_Save.OnClick(Self);
+               end;
+               mrCancel : begin
+                    Exit;
+               end;
+          end;
+     end;
+
+     //
+     gxdXML.Destroy;
+     gxdXML    := TXMLDocument.Create(self);
+     gxdXML.Active  := True;
+     gxdXML.Version      := '1.0';
+     gxdXML.Encoding     := 'UTF-8';
+     //添加根节点
+     xnNew     := gxdXML.AddChild('Root');
+     xnNew.Attributes['Mode']      := rtFile;
+     xnNew.Attributes['BaseWidth'] := 50;
+     xnNew.Attributes['BaseHeight']:= 24;
+     xnNew.Attributes['SpaceVert'] := 15;
+     xnNew.Attributes['SpaceHorz'] := 20;
+     xnNew.Attributes['ChartMode'] := cmFlowChart;
+     xnNew.Attributes['Caption']   := 'New file';
+     xnNew.Attributes['Source']    := 'Newfile.c';
+     xnNew.Attributes['Comment']   := '';
+
+     //
+     gxnRootNode    := xnNew;
+     gxnNode        := xnNew;
+     gbModified     := False;
+     gsFileName     := '';
+
+     //
+     TreeView.Items[0].DeleteChildren;
+     TreeView.Items[0].Text   := 'New file';
+
+     //
+     ShowNodeAttributes(TreeView.Items[0]);
+
+     //
+     UpdateChart;
+
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var
+     iRes : Integer;
+begin
+     //退出时如果当前文档已修改，则提示是否保存/取消退出
+     if gbModified then begin
+          iRes := MessageDlg('The file has been modified, do you save it ?',mtConfirmation,[mbYes,mbNO,mbCancel],0);
+          Case iRes of
+               mrYes : begin
+                    ToolButton_Save.OnClick(Self);
+               end;
+               mrCancel : begin
+                    CanClose  := False;
+               end;
+          end;
+     end;
+
+end;
+
+procedure TMainForm.ToolButton_OptionClick(Sender: TObject);
+begin
+     Form_Options.ShowModal;
+     //
+     UpdateChart;
+end;
+
+procedure TMainForm.ComboBox_LanguageChange(Sender: TObject);
+var
+     fIni      : TIniFile;
+     sLang     : string;
+begin
+     //保存到INI，以便下次打开后自动设为当前语言
+     fIni := TIniFile.Create(gsMainDir+'Options.ini');
+     fIni.WriteInteger('Main','LanguageID',ComboBox_Language.ItemIndex);
+     fIni.Destroy;
+
+     //
+     //得到语言ID
+     sLang     := Trim(ComboBox_Language.Text);
+     if sLang = 'Java' then begin
+          SynEdit.Highlighter := SynJavaSyn;
+     end else if  sLang = 'C/Cpp' then begin
+          SynEdit.Highlighter := SynCppSyn;
+     end else if  sLang = 'CSharp' then begin
+          SynEdit.Highlighter := SynCppSyn;
+     end else if  sLang = 'Delphi' then begin
+          SynEdit.Highlighter := SynPasSyn;
+     end else if  sLang = 'JavaScript' then begin
+          SynEdit.Highlighter := SynJScriptSyn;
+     end;
+
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+var
+     fIni      : TIniFile;
+     iID       : Integer;
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+begin
+     Caption   := gsName;
+
+     //保存到INI，以便下次打开后自动设为当前语言
+     fIni := TIniFile.Create(gsMainDir+'Options.ini');
+     iID  := fIni.ReadInteger('Main','LanguageID',1);
+     fIni.Destroy;
+
+
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //清空剪切板
+     ClipBoard.Clear;
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+
+
+     //仅用于测试模式
+     //gbRegistered  := True;
+     //仅用于解决Win7不能注册的问题
+     //Panel_Register.Caption   := ' shinichi satomura';
+
+     //检查破解
+     for I:=0 to 99 do begin
+          if random(50)>10 then begin
+               if Pos('0562.com',sRegName)>0  then begin
+                    gbRegistered   := False;
+               end;
+          end;
+     end;
+
+     if (not gbRegistered)  then begin
+          //读取剩余次数信息
+          Panel_Register.Caption   := ' Trials version';
+
+     end;
+     {$I critic_end.inc}
+
+
+     //
+     if (iID>=0)and(iID<ComboBox_Language.Items.Count) then begin
+          ComboBox_Language.ItemIndex   := iID;
+          ComboBox_Language.OnChange(Self);
+     end;
+
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+     //<释放对象
+     if gxdXML<>nil then begin
+          gxdXML.Destroy;
+     end;
+     if gxdCopy<>nil then begin
+          gxdCopy.Destroy;
+     end;
+     //>
+end;
+
+procedure TMainForm.ToolButton_ExportToFileClick(Sender: TObject);
+var
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+
+begin
+     //-------------------------------检查注册------------------------------------------------------
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+     if not gbRegistered then begin
+          Form_InputRegCode.ShowModal;
+     end;
+     {$I critic_end.inc}
+     //-------------------------------检查注册结束--------------------------------------------------
+
+     //
+
+     //
+     if (TreeView.Items.Count=1) then begin
+          ShowMessage('Can not export to file when only one node! ');
+          Exit;
+     end else begin
+          if Trim(SynEdit.Lines.Text)='' then begin
+               ToolButton_GenerateCode.OnClick(Self);
+          end;
+     end;
+
+
+     //
+     if SaveDialog_ExportToFile.Execute then begin
+          SynEdit.Lines.SaveToFile(SaveDialog_ExportToFile.FileName);
+     end;
+end;
+
+procedure TMainForm.ToolButton_SaveToBmpClick(Sender: TObject);
+var
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+
+begin
+     //-------------------------------检查注册------------------------------------------------------
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+     if not gbRegistered then begin
+          Form_InputRegCode.ShowModal;
+     end;
+     {$I critic_end.inc}
+     //-------------------------------检查注册结束--------------------------------------------------
+
+     {$I critic_begin.inc}
+     if not gbRegistered then begin
+          Form_InputRegCode.Tag    := 0;
+          Form_InputRegCode.ShowModal;
+          if Form_InputRegCode.Tag=0 then begin
+               Exit;
+          end;
+     end;
+
+     //
+     if SavePictureDialog.Execute then begin
+          Image.Picture.SaveToFile(SavePictureDialog.FileName);
+     end;
+
+
+     {$I critic_end.inc}
+end;
+
+procedure TMainForm.ToolButton_SaveToWordClick(Sender: TObject);
+var
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+
+begin
+     //-------------------------------检查注册------------------------------------------------------
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+     if not gbRegistered then begin
+          Form_InputRegCode.ShowModal;
+     end;
+     {$I critic_end.inc}
+     //-------------------------------检查注册结束--------------------------------------------------
+
+     //
+     if SaveDialog_Word.Execute then begin
+          MainForm.Update;
+          Application.ProcessMessages;
+          Form_ExportWord.ExportToWord(gxnRootNode,SaveDialog_Word.FileName,grConfig);
+     end;
+end;
+
+procedure TMainForm.ToolButton_SaveToVisioClick(Sender: TObject);
+var
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+
+begin
+     //-------------------------------检查注册------------------------------------------------------
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+     if not gbRegistered then begin
+          Form_InputRegCode.ShowModal;
+     end;
+     {$I critic_end.inc}
+     //-------------------------------检查注册结束--------------------------------------------------
+
+     if SaveVisioDialog.Execute then begin
+          MainForm.Update;
+          Application.ProcessMessages;
+          Form_ExportVisio.ExportToVisio(gxnRootNode, SaveVisioDialog.FileName, grConfig);
+     end;
+
+end;
+
+procedure TMainForm.ToolButton_SaveToSVGClick(Sender: TObject);
+var
+     sRegName  : string;
+     sRegCode  : string;
+     I         : Integer;
+
+begin
+     //-------------------------------检查注册------------------------------------------------------
+     {$I critic_begin.inc}
+     //读取用户信息
+     gbRegistered     := False;
+     SecureRead('Name_FC737',sRegName);
+     SecureRead('Code_FC911',sRegCode);
+
+     //检查用户信息
+     if  Length(sRegCode)>4 then begin
+          try
+               for I:=0 to 99 do begin
+                    if (random(50)>40)or(I=99) then begin
+                         sRegCode  := DecryptKey(sRegCode,'WW_FC241');
+                         if sRegCode=sRegName then begin
+                              Panel_Register.Caption   := ''+sRegName;
+                              gbRegistered     := True;
+                              break;
+                         end;
+                    end;
+               end;
+          except
+          end;
+     end;
+     if not gbRegistered then begin
+          Form_InputRegCode.ShowModal;
+     end;
+     {$I critic_end.inc}
+     //-------------------------------检查注册结束--------------------------------------------------
+
+     if SaveDialog_SVG.Execute then begin
+          MainForm.Update;
+          Application.ProcessMessages;
+          ExportFlowToSVG(gxnRootNode,SaveDialog_SVG.FileName,grConfig);
+     end;
+
+end;
+
+procedure TMainForm.FormResize(Sender: TObject);
+begin
+     Panel_Register.Left := MainForm.Width-228-7;
+
+end;
+
+procedure TMainForm.MenuItem_InputRegisterCodeClick(Sender: TObject);
+begin
+     Form_InputRegCode.ShowModal;
+end;
+
+procedure TMainForm.MenuItem_BuyNowClick(Sender: TObject);
+begin
+     ShellExecute(Handle,'open',Pchar(gsOrderPage),'','',SW_SHOWDEFAULT);
+
+end;
+
+procedure TMainForm.MenuItem_OptionClick(Sender: TObject);
+begin
+     Form_Options.ShowModal;
+     //
+     UpdateChart;
+
+end;
+
+procedure TMainForm.MenuItem_HomePageClick(Sender: TObject);
+begin
+     ShellExecute(Handle,'open',Pchar(gsHomePage),'','',SW_SHOWDEFAULT);
+
+end;
+
+procedure TMainForm.MenuItem_AboutClick(Sender: TObject);
+begin
+     Form_About.ShowModal;
+end;
+
+end.
+

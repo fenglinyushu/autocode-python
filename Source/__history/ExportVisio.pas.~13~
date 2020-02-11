@@ -1,0 +1,1084 @@
+unit ExportVisio;
+
+interface
+
+uses
+     OleCtrls,ComObj,OleServer,ActiveX,
+
+     //自编模块
+     SysRecords,SysConsts,SysVars,SysUnits,
+
+     //第三方控件
+     GDIPAPI,GDIPOBJ,
+
+     //
+     XMLDoc,XMLIntf,
+     ComCtrls,
+     Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+     Dialogs,  Math;
+
+type
+  TForm_ExportVisio = class(TForm)
+  private
+     oVisio : Variant;
+     oDoc : Variant;
+     oCell : Variant;
+
+     CurConfig : TWWConfig;
+     procedure AddVisioShape(ShapeID:SmallInt ; X, Y, W,H: single);
+     procedure AddVisioLine( X1, Y1, X2,Y2: single ;Arrow:Boolean);
+     procedure SetLastText(S:String);
+     Procedure SetLastSize(X,Y,Width,Height:Single);
+     procedure HideLastBorder;     //隐藏最后一个形状的边框
+     procedure ClearLastColor;     //去除最后一个形状的颜色
+
+     //1/6 绘制多点曲线
+     procedure DrawPoints(Pts:array of double);
+     //2/6 绘制箭头
+     procedure DrawArrow(iX,iY:Single;bDown:Boolean);
+     //3/6 绘制菱形框,iX,iY为上顶点坐标
+     procedure DrawDiamond(iX,iY:Single;Text:String);
+     //4/6 绘制一般块
+     procedure DrawBlock(iX,iY,iW,iH:Single;Text:String;Collapsed:Boolean);
+     //5/6 绘制半圆弧方框
+     procedure DrawRoundRect(iX,iY:Single;Text:String);
+     //6/6 绘制TRY的各种形状 (iX,iY为上边中心点坐标，Text为文本,Mode为类型,0:TRY,1:EXCEPT/FINALLY,3.END)
+     procedure DrawTry(iX,iY:Single;Text:String;Collapsed:Boolean;Mode:Integer);
+     //7 绘制代码块
+     procedure DrawCodeBlock(iX,iY,iW,iH:Single;Text:String);
+
+     // 绘制NS一般块
+     procedure NSDrawBlock(iX,iY,iW,iH:Single;Text:String;Collapsed:Boolean);
+     // 绘制文本
+     procedure DrawString(S:String;Rect:TGPRectF);
+     procedure DrawText(S:String;X,Y,W,H:Single);
+  public
+     procedure ExportToVisio(  Node:IXMLNode;FileName:String;Config:TWWConfig);
+     procedure ExportNSToVisio(Node:IXMLNode;FileName:String;Config:TWWConfig);
+    { Public declarations }
+  end;
+
+var
+     Form_ExportVisio: TForm_ExportVisio;
+Const
+     _CONV     = 100;         //控件设置位置1，则VISIO上标尺为25,此处用于调整比例，以显示更美观
+
+implementation
+
+{$R *.dfm}
+uses Main;
+
+{ TForm_ExportVisio }
+procedure SetShapeSize(Shape:OleVariant;X,Y,Width,Height:Single);
+begin
+      Shape.CellsSRC[visSectionObject, visRowXFormOut, visXFormPinX].FormulaU   := FloatToStr(X+Width/2);
+      Shape.CellsSRC[visSectionObject, visRowXFormOut, visXFormPinY].FormulaU   := FloatToStr(Y-Height/2);
+      Shape.CellsSRC[visSectionObject, visRowXFormOut, visXFormWidth].FormulaU  := FloatToStr(Width);
+      Shape.CellsSRC[visSectionObject, visRowXFormOut, visXFormHeight].FormulaU := FloatToStr(Height);
+end;
+
+procedure TForm_ExportVisio.HideLastBorder;     //隐藏最后一个形状的边框
+var
+     iCount    : Integer;
+begin
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     //隐藏边框
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowLine, visLinePattern].FormulaU := '0';
+end;
+
+procedure TForm_ExportVisio.ClearLastColor;     //去除最后一个形状的颜色
+var
+     iCount    : Integer;
+begin
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     //去除颜色
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowFill, visFillPattern].FormulaU := '0';
+end;
+
+procedure TForm_ExportVisio.SetLastSize(X, Y, Width, Height: Single);
+var
+     iCount    : Integer;
+begin
+     X         := X/_CONV;
+     Y         := 210/25-Y/_CONV;//(290*_CONV/25-Y)/_CONV;
+     Width     := Width/_CONV;
+     Height    := Height/_CONV;
+     //
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowXFormOut, visXFormPinX].FormulaU   := FloatToStr(X+Width/2);
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowXFormOut, visXFormPinY].FormulaU   := FloatToStr(Y-Height/2);
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowXFormOut, visXFormWidth].FormulaU  := FloatToStr(Width);
+     oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionObject, visRowXFormOut, visXFormHeight].FormulaU := FloatToStr(Height);
+end;
+
+procedure TForm_ExportVisio.SetLastText(S: String);
+var
+     iCount    : Integer;
+begin
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     if iCount>0 then begin
+          oVisio.ActiveWindow.page.Shapes[iCount].Text   := S;
+          oVisio.ActiveWindow.page.Shapes[iCount].CellsSRC[visSectionCharacter, 0, visCharacterSize].FormulaU
+                    := IntToStr(Round(CurConfig.FontSize*CurConfig.Scale*0.7))+' pt';
+     end;
+end;
+
+
+procedure TForm_ExportVisio.AddVisioLine( X1, Y1, X2, Y2: Single;Arrow: Boolean);
+var
+     iCount    : Integer;
+     oShape    : Variant;
+begin
+     X1   := X1/_CONV;
+     Y1   := 210/25-Y1/_CONV;//(290*_CONV/25-Y)/_CONV;
+     //Y1   := (290*_CONV/25-Y1)/_CONV;
+     X2   := X2/_CONV;
+     Y2   := 210/25-Y2/_CONV;//(290*_CONV/25-Y)/_CONV;
+     //Y2   := (290*_CONV/25-Y2)/_CONV;
+     //绘制线段
+     oShape    := oVisio.ActiveWindow.Page.DrawLine(X1,Y1,X2,Y2);
+     //绘制箭头
+     if Arrow then begin
+          oShape.CellsSRC[visSectionObject, visRowLine, visLineEndArrow].FormulaU := '13';
+     end;
+end;
+
+//X,Y为左上角坐标
+procedure TForm_ExportVisio.AddVisioShape(ShapeID:SmallInt ; X, Y, W,H: Single);
+var
+     iCount    : Integer;
+begin
+     X    := X/_CONV;
+     Y         := 210/25-Y/_CONV;//(290*_CONV/25-Y)/_CONV;
+     //Y    := (290*_CONV/25-Y)/_CONV;
+     W    := W/_CONV;
+     H    := H/_CONV;
+     case ShapeID of
+          //画圆
+          0 : begin
+               //oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASIC_M.VSS').Masters.ItemU('Circle'), 3, 7);
+               //DC.Document.Pages[1].DrawOval(X,Y,X+W,Y+H);
+               oVisio.ActiveWindow.page.DrawCircle(1,2,3,4);
+          end;
+          //画矩形
+          1 : begin
+               oVisio.ActiveWindow.page.DrawRectangle(1,2,3,4);
+               //oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASIC_M.VSS').Masters.ItemU('Rectangle'), 3, 7);
+               //DC.Document.Pages[1].DrawRectangle(X,Y,X+W,Y-H);
+          end;
+          //画菱形
+          2 : begin
+               //oVisio.ActiveWindow.page.DrawRectangle(1,2,3,4);
+               //
+               oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASFLO_M.VSS').Masters.ItemU('Decision'), 3, 7);
+               //Application.ActiveWindow.Page.Drop Application.Documents.Item("BASFLO_M.VSS").Masters.ItemU("Decision"), 2.066929, 8.759843
+               //DC.Document.Pages[1].DrawRectangle(X,Y,X+W,Y-H);
+          end;
+     else
+               oVisio.ActiveWindow.page.DrawRectangle(1,2,3,4);
+          //绘制形状
+          //DC.Document.Pages[1].Drop(DC.Document.Pages[1].Application.Documents.ItemFromID[1].Masters.ItemFromID[ShapeID],0,0);
+     end;
+     //设置新形状的大小
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     SetShapeSize(oVisio.ActiveWindow.page.Shapes[iCount],X,Y,W,H);
+end;
+
+//输入各点坐标,绘制折线(第一条线直接画, 第二条线以第一条线方向为X轴,以起点为原点绘制,
+//以后的线均以左下角为原点,X轴向右,Y轴向上)
+procedure TForm_ExportVisio.DrawPoints(Pts:array of Double);
+var
+     I,iCount  : Integer;
+     vPoint    : OleVariant;
+     sa        : PSafeArray;
+     sa1       : Variant;
+     iID       : Integer;     //Shape的个数
+     oShape    : Variant;     //当前形状
+     fMinX     : Double;
+     fMinY     : Double;
+begin
+     //转换坐标
+     for I:=0 to High(Pts) do begin
+          if I mod 2=0 then begin
+               Pts[I]    := Pts[I]/_CONV;
+          end else begin
+               //Y         := 210/25-Y/_CONV;//(290*_CONV/25-Y)/_CONV;
+               Pts[I]    := (210*_CONV/25-Pts[I])/_CONV;
+          end;
+     end;
+
+     //2012-07-24在火车上开始用DrawLine来代替DrawPolyline
+     oVisio.ActiveWindow.page.DrawLine(Pts[0],Pts[1],Pts[2],Pts[3]);
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     oShape    := oVisio.ActiveWindow.page.Shapes[iCount];
+     //
+     fMinX     := Min(Pts[0],Pts[2]);
+     fMinY     := Min(Pts[1],Pts[3]);
+     for I:=1 to (Length(Pts) div 2)-2 do begin
+          iID  := I*2;
+          oVisio.ActiveWindow.page.DrawLine(Pts[iID],Pts[iID+1],Pts[iID+2],Pts[iID+3]);
+          //oShape.DrawLine(Pts[iID]-fMinX,Pts[iID+1]-fMinY,Pts[iID+2]-fMinX,Pts[iID+3]-fMinY);
+          //fMinX     := Min(fMinX,Pts[iID+2]);
+          //fMinY     := Min(fMinY,Pts[iID+3]);
+     end;
+
+     //组合
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     oVisio.ActiveWIndow.DeselectAll;
+     for I:=iCount downto iCount - ((Length(Pts) div 2)-1)+1 do begin
+          oVisio.ActiveWindow.Select(oVisio.ActiveWindow.page.Shapes[I],2);
+     end;
+     oVisio.ActiveWindow.Selection.Group;
+     //好象都是依左下角为坐标绘制的
+{
+     oVisio.ActiveWindow.Deselectall;
+     oVisio.ActiveWindow.Select(oVisio.ActiveWindow.page.Shapes[1],2);
+     oVisio.ActiveWindow.Select(oVisio.ActiveWindow.page.Shapes[2],2);
+     ShowMessage(IntToStr(oVisio.ActiveWindow.page.Shapes.Count));
+//     oVisio.ActiveWindow.Selection.Group;
+     ShowMessage(IntToStr(oVisio.ActiveWindow.page.Shapes.Count));
+}
+
+     //生成PSafeArray
+     //vPoint    := VarArrayCreate([0,High(Pts)],VT_R8);
+     //for I:=0 to High(Pts) do begin
+     //     vPoint[I] := Pts[I];
+     //end;
+     //sa   := PSafeArray(TVarData(vPoint).VArray);
+
+     //绘制曲线
+     //oVisio.ActiveWindow.page.
+     //     DrawPolyline(
+     //     sa,
+     //     8);
+end; //end of DrawPoints
+
+//绘制向上或向上箭头(iX,iY为中心点坐标)
+procedure TForm_ExportVisio.DrawArrow(iX,iY:Single;bDown:Boolean);
+var
+     iCount    : Integer;
+     I         : Integer;
+begin
+
+     if bDown then begin
+          iY   := iY+iDeltaY/2;
+          DrawPoints([iX,iY,  iX-iDeltaX,iY-iDeltaY,  iX+iDeltaX,iY-iDeltaY,  iX,iY,  iX,iY-iDeltaY]);
+     end else begin
+          iY   := iY-iDeltaY/2;
+          DrawPoints([iX,iY,  iX-iDeltaX,iY+iDeltaY,  iX+iDeltaX,iY+iDeltaY,  iX,iY,  iX,iY+iDeltaY]);
+     end;
+    //
+     //组合
+     iCount    := oVisio.ActiveWindow.page.Shapes.Count;
+     oVisio.ActiveWIndow.DeselectAll;
+     for I:=iCount downto iCount - 1 do begin
+          oVisio.ActiveWindow.Select(oVisio.ActiveWindow.page.Shapes[I],2);
+     end;
+     oVisio.ActiveWindow.Selection.Group;
+
+
+end; //end of DrawArrow
+
+procedure TForm_ExportVisio.ExportToVisio(Node:IXMLNode;FileName:String;Config:TWWConfig);
+
+var
+     I,J, PID       : Integer;
+     iCount         : Integer;
+     S              : string;
+     Closed         : Boolean;
+     Ids            : array of integer;
+     BH,BW,SH,SV    : Single;           //流程图块之间的间隔
+     X,Y,W,H,E      : Single;
+     xnChild        : IXMLNode;
+     xnExtra        : IXMLNode;
+     xnNode         : IXMLNode;
+     bTmp           : Boolean;
+     iTmp           : Single;
+     procedure DrawNodeFlowchart(Node:IXMLNode);
+     var
+          II,JJ     : Integer;
+     begin
+          //赋给简单变量以便于书写
+          X    := Node.Attributes['X'];
+          Y    := Node.Attributes['Y'];
+          E    := Node.Attributes['E'];
+          W    := Node.Attributes['W'];
+          H    := Node.Attributes['H'];
+
+          //
+          if Node.Attributes['W']=-1 then begin
+               Exit;
+          end;
+
+          //<绘制子节点数为0的节点和合拢的节点
+          if (Node.ChildNodes.Count=0) then begin
+               //处理无子块节点(不包括跳转及分支)
+               if (Node.Attributes['Mode']=rtBlock_Code)
+                         and((Node.Attributes['ShowDetailCode']=1)or(grConfig.ShowDetailCode and (Node.Attributes['ShowDetailCode']<>2))) then begin
+                    //节点(矩形)
+                    DrawCodeBlock(X,Y,W,H-SV,Node.Attributes['Text']);
+                    //下接线
+                    DrawPoints([X,Y+H-SV,  X,Y+H]);
+                    //
+                    Exit;
+               end else if not InModes(Node.Attributes['Mode'],[rtCase_Item,rtCase_Default,rtTry_Except,rtTry_Finally]) then begin
+                    //节点(矩形)
+                    DrawBlock(X,Y,W,H,RTtoStr(Node.Attributes['Mode']),False);
+                    //下接线
+                    DrawPoints([X,Y+BH,  X,Y+BH+SV]);
+                    //
+                    Exit;
+               end;
+          end else if (Node.Attributes['Expanded']=False) then begin
+               //处理合拢的节点(不包括分支)
+               if not InModes(Node.Attributes['Mode'],[rtCase_Item,rtCase_Default,rtTry_Except,rtTry_Finally]) then begin
+                    //合拢节点(矩形)
+                    DrawBlock(X,Y,W,H, RTtoStr(Node.Attributes['Mode']),False);
+                    //下接线
+                    DrawPoints([X,Y+BH,  X,Y+BH+SV]);
+                    //
+                    Exit;
+               end;
+          end;
+          //>
+
+
+          //
+          case Node.Attributes['Mode'] of
+               //
+               rtIF : begin
+                    //菱形框
+                    DrawDiamond(X,Y,Format('%s',[GetNodeText(Node)]));
+                    DrawPoints([X,Y+BH*2,  X,Y+BH*2+SV]); //向下线
+                    //菱形框向右延伸线
+                    xnChild   := Node.ChildNodes[0];
+                    if _M(Node.ChildNodes[1]) = rtIF_ElseIf then begin
+                         DrawPoints([_X(xnChild)+BW,Y+BH,  _EL(xnChild.NextSibling),Y+BH]);
+                    end else begin
+                         DrawPoints([_X(xnChild)+BW,Y+BH,  _X(xnChild.NextSibling),Y+BH]);
+                    end;
+
+                    //
+                    for JJ:=1 to Node.ChildNodes.Count-1 do begin
+                         xnChild   := Node.ChildNodes[JJ];
+                         if _M(xnChild) = rtIF_ElseIf then begin
+                              //菱形框
+                              DrawDiamond(_X(xnChild),_Y(xnChild)-BH*2-SV,GetNodeText(Node));
+                              DrawPoints([_X(xnChild),_Y(xnChild)-SV,_X(xnChild),_Y(xnChild)]); //菱形框向下线
+                              DrawPoints([_X(xnChild)+BW,_Y(xnChild)-SV-BH,_EL(xnChild.NextSibling),_Y(xnChild)-SV-BH]);  //菱形框向右延伸线
+
+                         end else begin
+                              DrawPoints([_L(xnChild),_Y(xnChild)-SV-BH,_X(xnChild),_Y(xnChild)-SV-BH]);  //接上模块菱形框向右延伸线
+                              DrawPoints([_X(xnChild),_Y(xnChild)-SV-BH,_X(xnChild),_Y(xnChild)]); //无菱形框向下线
+                         end;
+                              DrawPoints([_X(xnChild),_B(xnChild),_X(xnChild),_EB(xnChild.ParentNode)]); //模块下面的下接线
+                    end;
+
+                    //横向多模块下接线
+                    DrawPoints([X,Y+H-SV,_X(Node.ChildNodes.Last),Y+H-SV]);
+                    //YES块的下接线
+                    DrawPoints([X,_B(Node.ChildNodes.First),  X,Y+H]);
+
+               end;
+
+               //
+               rtFOR : begin
+                    //菱形框
+                    DrawPoints([X-BW,Y,  X+W-BW-Sh-BH,Y,  X+W-BW-Sh,Y+BH/2,  X+W-BW-Sh-BH,Y+BH,  X-BW,Y+BH,  X-BW,Y]);
+                    DrawText(Format('for %s',[Node.Attributes['Caption']]),X-BW,Y,W-Sh-BH/2,BH);
+                    DrawPoints([X,Y+BH,  X,Y+BH+SV]);
+                    //得到子块
+                    xnChild   := Node.ChildNodes.First;
+                    //退出循环线
+                    DrawPoints([X+W-BW-Sh,Y+BH/2,  X+W-BW,Y+BH/2,  X+W-BW,Y+H-SV,  X,Y+H-SV,  X,Y+H]);
+                    DrawArrow(X+W-BW,Y+H / 2, True);
+                    //继续循环线
+                    DrawPoints([X,Y+H-SV*3,  X,Y+H-SV*2,  X-BW-E,Y+H-SV*2,  X-BW-E,Y+BH/2,  X-BW,Y+BH/2]);
+                    DrawArrow(X-BW-E,Y+H / 2, False);
+               end;
+
+               //
+               rtWhile : begin
+                    //菱形框
+                    DrawDiamond(X,Y+SV,Format('%s',[GetNodeText(Node)]));
+                    DrawPoints([X,Y+BH*2+SV,  X,Y+BH*2+SV*2]);
+                    //得到子块
+                    xnChild   := Node.ChildNodes.First;
+                    //退出循环线
+                    DrawPoints([X+BW,Y+BH+SV,  X+W-BW,Y+BH+SV,  X+W-BW,Y+H-SV,  X,Y+H-SV,  X,Y+H]);
+                    DrawArrow(X+W-BW,Y+H / 2, True);
+                    //继续循环线
+                    DrawPoints([X,StrToFloat(xnChild.Attributes['Y'])+xnChild.Attributes['H'],
+                              X,Y+H-SV*2,  X-BW-E,Y+H-SV*2,  X-BW-E,Y,  X,Y,  X,Y+SV]);
+                    DrawArrow(X-BW-E,Y+H / 2, False);
+               end;
+
+               //
+               rtRepeat : begin
+                    //得到子块
+                    xnChild   := Node.ChildNodes.First;
+                    //菱形框
+                    DrawDiamond(X,StrToFloat(xnChild.Attributes['Y'])+xnChild.Attributes['H'],
+                              Format('%s',[Node.Attributes['Caption']]));
+                    DrawPoints([X,StrToFloat(xnChild.Attributes['Y'])+xnChild.Attributes['H']+BH*2,
+                              X,StrToFloat(xnChild.Attributes['Y'])+xnChild.Attributes['H']+BH*2+SV]);
+                    //退出循环线
+                    DrawPoints([X+BW,Y+H-SV*3-BH,  X+W-BW,Y+H-SV*3-BH,  X+W-BW,Y+H-SV,  X,Y+H-SV,  X,Y+H]);
+                    DrawArrow(X+W-BW,Y+H-SV*2-BH/2, True);
+                    //继续循环线
+                    DrawPoints([X,Y+H-SV*3,  X,Y+H-SV*2,  X-BW-E,Y+H-SV*2,  X-BW-E,Y,  X,Y,  X,Y+SV]);
+                    DrawArrow(X-BW-E,Y+(H-SV*2)/2, False);
+               end;
+
+               //
+               rtCase : begin
+                    //绘制子块
+                    bTmp := False; //记录是否绘制了跳转到下一分支的线
+
+                    //
+                    for JJ:=0 to Node.ChildNodes.Count-1 do begin
+                         //得到相应子块
+                         xnChild   := Node.ChildNodes[JJ];
+
+                         //得到子块的信息
+                         X    := xnChild.Attributes['X'];
+                         Y    := xnChild.Attributes['Y'];
+                         E    := xnChild.Attributes['E'];
+                         W    := xnChild.Attributes['W'];
+                         H    := xnChild.Attributes['H'];
+
+                         //菱形框
+                         DrawDiamond(X,Y-BH*2-SV*2,xnChild.Attributes['Caption']);
+                         //菱形框下接线
+                         DrawPoints([X,Y-SV*2,  X,Y]);
+
+                         //如果上一块跳转到本块, 则需要续画跳转线
+                         if bTmp then begin
+                              DrawPoints([X,Y-SV,  X-BW-E,Y-SV]);
+                         end;
+                         //
+                         bTmp := False; //记录是否绘制了跳转到下一分支的线
+
+                         //如果非第一分枝, 则绘制与上一块连接线的本块内部分
+                         if J>0 then begin
+                              DrawPoints([X-BW,Y-BH-SV*2,  X-BW-E,Y-BH-SV*2]);
+                         end;
+
+                         //接下一个节点的线(右),及有可能跳转到下一分支的线
+                         if JJ<>Node.ChildNodes.Count-1 then begin
+                              //右线(只绘制本块中分界部分)
+                              DrawPoints([X+BW,Y-BH-SV*2,  X+W-BW+SH*2,Y-BH-SV*2]);
+
+                              if InModes(Config.Language,[loC,loCpp]) then begin
+                                   //如果最后一个子块不是跳转, 则绘制一条跳转到下一分支的线(仅画位于本块内的部分)
+                                   if Config.Language in [loC,loCpp] then begin
+                                        if xnChild.HasChildNodes then begin
+                                             xnChild   := xnChild.ChildNodes.Last;
+                                             if not InModes(xnChild.Attributes['Mode'],[rtJUMP_Break,rtJUMP_Continue,rtJUMP_Exit,rtJUMP_Goto]) then begin
+                                                  DrawPoints([X,Y+H,  X+W-BW+SH,Y+H,  X+W-BW+SH,Y-SV,  X+W-BW+SH*2,Y-SV]);
+                                                  bTmp := True;
+                                             end;
+                                        end else begin
+                                             //如果当前分支没有子块,则直接跳转到下一块
+                                             DrawPoints([X,Y,  X+W-BW+SH,Y,  X+W-BW+SH,Y-SV,  X+W-BW+SH*2,Y-SV]);
+                                             bTmp := True;
+                                        end;
+                                   end;
+                              end;
+                         end else begin     //在最后一个子块绘制SWITCH的多分支的统一结束线
+                              DrawPoints([X,StrToFloat(Node.Attributes['Y'])+Node.Attributes['H']-SV,
+                                        Node.Attributes['X'], StrToFloat(Node.Attributes['Y'])+Node.Attributes['H']-SV,
+                                        Node.Attributes['X'], StrToFloat(Node.Attributes['Y'])+Node.Attributes['H']]);
+                         end;
+
+                         //如果没有绘制了跳转到下一分支的线,则绘制到当前块的下面与主连接的线
+                         if not bTmp then begin
+                              DrawPoints([X,Y+H,  X,StrToFloat(Node.Attributes['Y'])+Node.Attributes['H']-SV]);
+                         end;
+
+                         //在最底部绘制一个向下箭头
+                         DrawArrow(X,Y+H-iDeltaY/2,True);
+
+                    end;
+
+                    //
+               end;
+
+               rtCase_Item,rtCase_Default : begin
+                    //如果当前子块未展开,则绘制一个
+                    if (Node.Attributes['Expanded']=False) then begin
+                         if Node.HasChildNodes then begin
+                              iTmp := Y;
+                              DrawBlock(x,iTmp,W,H,'... ...',True);
+                              //下接线
+                              DrawPoints([X,iTmp+BH,  X,iTmp+BH+SV]);
+
+                         end;
+                    end ;
+               end;
+
+               //
+               rtTry : begin
+                    //绘制Try
+                    DrawTry(X,Y,RTtoStr(Node.Attributes['Mode']),True,0);
+
+                    //绘制End of Try
+                    //iTmp := Y+H-BH-SV;
+                    //DrawTry(X,iTmp,'TRY END',True,2);
+               end;
+               //
+               rtTry_Except,rtTry_Finally,rtTry_Else : begin
+                    //绘制
+                    DrawTry(X,Y,RTtoStr(Node.Attributes['Mode']),not Node.Attributes['Expanded'],1);
+               end;
+
+          else
+
+          end;
+          //递归绘制其子节点
+          if Node.Attributes['Expanded'] then begin
+               for II:=0 to Node.ChildNodes.Count-1 do begin
+                    DrawNodeFlowchart(Node.ChildNodes[II]);
+               end;
+          end;
+     end;
+begin
+     try
+          Tag  := 0;
+
+          oVisio     := CreateOleObject('Visio.Application');
+          oDoc       := oVisio.Documents.Addex('basflo_m.vst',0, 4);
+     except
+          Tag  := 999;
+          ShowMessage(#13'The function need install MS Visio at first!'#13);
+          Exit;
+     end;
+
+     //<得到流程图设置
+     CurConfig := Config;
+     BW   := Config.BaseWidth*Config.Scale;
+     BH   := Config.BaseHeight*Config.Scale;
+     SH   := Config.SpaceHorz*Config.Scale;
+     SV   := Config.SpaceVert*Config.Scale;
+     if BW=0 then begin
+          BW   := 80;
+     end;
+     if BH=0 then begin
+          BH   := 30;
+     end;
+     if SH=0 then begin
+          SH   := 20;
+     end;
+     if SV=0 then begin
+          SV   := 20;
+     end;
+     //>
+
+
+     //--------------------------依次绘制流程图(此后的代码应能共享)---------------------------------------------------//
+     //<绘制开始和结束标志
+     //起始标志
+     xnNode    := Node;
+     X    := xnNode.Attributes['X'];
+     Y    := SV;
+     DrawRoundRect(X,Y,'START');
+     //下接线
+     DrawPoints([X,Y+BH,  X,Y+BH+SV]);
+     //结束标志
+     X    := xnNode.Attributes['X'];
+     Y    := Round(StrToFloat(xnNode.Attributes['Y']))+Round(StrToFloat(xnNode.Attributes['H']));
+     DrawRoundRect(X,Y,'END');
+     //>
+
+     //递归绘制流程图
+     DrawNodeFlowchart(xnNode);
+    //------------共享结束
+
+     oVisio.ActiveDocument.SaveAsex(FileName, 2 and 4 );
+     oVisio.quit;     //
+     //DC.Document.SaveAs(FileName);
+     //
+     //DC.Destroy;
+     //
+     MessageDlg(#13'   ---   Export VISIO successfully!   ---   '#13,mtInformation,[mbOK],0);
+end;
+
+procedure TForm_ExportVisio.ExportNSToVisio(Node:IXMLNode;FileName:String;Config:TWWConfig);
+type
+     TNodeWHE = record
+          W,H,E     : Integer;
+     end;
+var
+     I,J, PID       : Integer;
+     iCount         : Integer;
+     S              : string;
+     Closed         : Boolean;
+     Ids            : array of integer;
+     BH,BW,SH,SV    : Single;           //流程图块之间的间隔
+     X,Y,W,H,E      : Single;
+     xnChild        : IXMLNode;
+     xnExtra        : IXMLNode;
+     rChild         : TNodeWHE;
+     rExtra         : TNodeWHE;
+     bTmp           : Boolean;
+     iTmp           : Single;
+     sTxt           : String;
+     oFontBrh  : TGPSolidBrush;
+     oFont     : TGPFont;
+     oFontB    : TGPFont;
+     oFormat   : TGPStringFormat;
+     oPath     : TGPGraphicsPath;
+     procedure GetGPTextWH(Text:string;
+               Font:TGPFont;FontFormat:TGPStringFormat;
+               FontFamily:TGPFontFamily;
+               var Width:Single;var Height:Single);
+     var
+          oPath   : TGPGraphicsPath;
+          oRect   : TGPPointF;
+          strFormat    : TGPStringFormat;
+          rcBound      : TGPRectF;
+     begin
+          oPath     := TGPGraphicsPath.Create;
+          strFormat := TGPStringFormat.Create();
+          oPath.AddString(Text,-1,
+                    FontFamily,
+                    font.GetStyle(),
+                    font.GetSize(),
+                    oRect,strFormat);
+          oPath.GetBounds(rcBound);
+
+          //
+          Width     := rcBound.Width;
+          Height    := rcBound.Height;
+     end;
+     function GetGPTextWidth(Text:string):Single;
+     var
+          W,H       : Single;
+          oFF       : TGPFontFamily;
+          oFormat   : TGPStringFormat;
+     begin
+          oFormat   := TGPStringFormat.Create();
+          oFF       := TGPFontFamily.Create;
+          oFont.GetFamily(oFF);//oFF       := TGPFontFamily.Create(Config.FontName);
+
+          GetGPTextWH(Text,oFont,oFormat,oFF,W,H);
+          Result    := W;
+          oFormat.Destroy;
+          oFF.Destroy;
+     end;
+     function GetGPTextHeight(Text:string):Single;
+     var
+          W,H       : Single;
+          oFF       : TGPFontFamily;
+          oFormat   : TGPStringFormat;
+     begin
+          oFormat   := TGPStringFormat.Create();
+          oFF       := TGPFontFamily.Create;
+          oFont.GetFamily(oFF);//oFF       := TGPFontFamily.Create(Config.FontName);
+          GetGPTextWH(Text,oFont,oFormat,oFF,W,H);
+          Result    := H;
+          oFormat.Destroy;
+          oFF.Destroy;
+     end;
+     function GetNodeWHE(Node:IXMLNode):TNodeWHE;
+     var
+          iiCode    : Integer;
+          KK        : Integer;
+          xnFirst   : IXMLNode;
+          xnNext    : IXMLNode;
+          xnChild   : IXMLNode;
+          xnExtra   : IXMLNode;
+          rChild    : TNodeWHE;
+          rExtra    : TNodeWHE;
+          slTmp     : TStringList;
+          sText     : string;
+     begin
+          //如果已计算过,则直接出结果
+          if Node.HasAttribute('W') then begin
+               Result.W  := Node.Attributes['W'];
+               Result.H  := Node.Attributes['H'];
+               Result.E  := Node.Attributes['E'];
+               //
+               Exit;
+          end else begin
+               ShowMessage('Export to Visio Error when GetNodeWHE !'#13+Node.NodeName);
+          end;
+     end;
+     //
+     procedure DrawNodeNSchart(Node:IXMLNode);
+     var
+          II,JJ     : Integer;
+          rChild    : TNodeWHE;
+          rExtra    : TNodeWHE;
+     begin
+          //赋给简单变量以便于书写
+          X    := Node.Attributes['X'];
+          Y    := Node.Attributes['Y'];
+          E    := 0;//Node.Attributes['E'];
+          W    := Node.Attributes['W'];
+          H    := Node.Attributes['H'];
+
+          //
+          if Node.Attributes['W']=-1 then begin
+               Exit;
+          end;
+
+          //
+          if Node.Attributes['Mode']=rtCase_Item then begin
+               sTxt := Node.Attributes['Caption'];
+          end else begin
+               sTxt := RTtoStr(Node.Attributes['Mode']);
+          end;
+
+          //<绘制子节点数为0的节点和合拢的节点
+          if (Node.ChildNodes.Count=0) then begin
+               //处理无子块节点(不包括跳转及分支)
+               if (Node.Attributes['Mode']=rtBlock_Code)
+                         and((Node.Attributes['ShowDetailCode']=1)or(grConfig.ShowDetailCode and (Node.Attributes['ShowDetailCode']<>2))) then begin
+                    //节点(矩形)
+                    NSDrawBlock(X,Y,W,H,Node.Attributes['Text'],False);
+                    //
+                    Exit;
+               end else begin
+                    if not InModes(Node.Attributes['Mode'],[rtCase_Item,rtCase_Default,rtTry_Except,rtTry_Finally]) then begin
+                         //节点(矩形)
+                         NSDrawBlock(X,Y,W,H,sTxt,False);
+                         //
+                         Exit;
+                    end;
+               end;
+          end else if (not Node.Attributes['Expanded']) then begin
+               //处理合拢的节点(不包括分支)
+               if not InModes(Node.Attributes['Mode'],[rtCase_Item,rtCase_Default,rtTry_Except,rtTry_Finally]) then begin
+                    //合拢节点(矩形)
+                    NSDrawBlock(X,Y,W,H,sTxt,False);
+                    //
+                    Exit;
+               end;
+          end;
+          //>
+
+          //
+          case Node.Attributes['Mode'] of
+               //
+               rtIF : begin
+                    xnChild   := Node.ChildNodes[0];
+                    rChild    := GetNodeWHE(xnChild);
+                    //多段折线
+                    DrawPoints([X,Y,  X+W,Y,  X+W,Y+BH,  X,Y+BH,  X,Y, X+rChild.W,Y+BH, X+W,Y]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    DrawString(sTxt,MakeRect(X,Y,rChild.W*2,BH));
+               end;
+
+               //
+               rtFOR : begin
+                    //多段折线
+                    DrawPoints([X,Y+H,  X,Y,  X+W,Y,  X+W,Y+H,  X+W-SH,Y+H]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    DrawString(sTxt,MakeRect(X,Y,W,BH));
+               end;
+
+               //
+               rtWhile : begin
+                    //多段折线
+                    DrawPoints([X+SH,Y+H,  X,Y+H,  X,Y,  X+W,Y,  X+W,Y+BH]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    DrawString(sTxt,MakeRect(X,Y,W,BH));
+               end;
+
+               //
+               rtRepeat : begin
+                    //多段折线
+                    DrawPoints([X+W-SH,Y,  X+W,Y,  X+W,Y+H,  X,Y+H,  X,Y+H-H]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    DrawString(sTxt,MakeRect(X,Y+H-BH,W,BH));
+               end;
+
+               //
+               rtCase : begin
+                    //方框
+                    DrawPoints([X,Y,  X+W,Y,  X+W,Y+BH,  X,Y+BH,  X,Y]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    //两端斜线
+                    DrawPoints([X,Y,  X+BH,Y+BH]);
+                    DrawPoints([X+W,Y,  X+W-BH,Y+BH]);
+                    //
+                    DrawString(sTxt+' '+Node.Attributes['Caption'],MakeRect(X,Y,W,BH));
+               end;
+
+               rtCase_Item,rtCase_Default : begin
+                    //多段折线
+                    DrawPoints([X,Y,  X+W,Y,  X+W,Y+BH,  X,Y+BH,  X,Y]);
+                    //含子块的框
+                    DrawPoints([X,Y,  X+W,Y,  X+W,Y+H,  X,Y+H,  X,Y]);
+                    //写文字
+                    //SetLastText(sTxt);
+                    DrawString(Node.Attributes['Caption'],MakeRect(X,Y,W,BH));
+               end;
+
+               //
+               rtTry : begin
+                    //绘制Try
+                    DrawTry(X,Y,RTtoStr(Node.Attributes['Mode']),True,0);
+
+               end;
+               //
+               rtTry_Except,rtTry_Finally,rtTry_Else: begin
+                    //绘制
+                    DrawTry(X,Y,RTtoStr(Node.Attributes['Mode']),not Node.Attributes['Expanded'],1);
+               end;
+          else
+
+          end;
+          //>
+
+          //递归绘制其子节点
+          if Node.Attributes['Expanded'] then begin
+               for II:=0 to Node.ChildNodes.Count-1 do begin
+                    DrawNodeNSchart(Node.ChildNodes[II]);
+               end;
+          end;
+     end;
+begin
+
+     try
+          Tag  := 0;
+
+          oVisio     := CreateOleObject('Visio.Application');
+          oDoc       := oVisio.Documents.Addex('basflo_m.vst',0, 4);
+     except
+          Tag  := 999;
+          ShowMessage(#13'The function need install MS Visio at first!'#13);
+          Exit;
+     end;
+
+     //<得到流程图设置
+     CurConfig := Config;
+     BW   := Config.BaseWidth*Config.Scale;
+     BH   := Config.BaseHeight*Config.Scale;
+     SH   := Config.SpaceHorz*Config.Scale;
+     SV   := Config.SpaceVert*Config.Scale;
+     if BW=0 then begin
+          BW   := 80;
+     end;
+     if BH=0 then begin
+          BH   := 30;
+     end;
+     if SH=0 then begin
+          SH   := 20;
+     end;
+     if SV=0 then begin
+          SV   := 20;
+     end;
+     //>
+
+     oFont     := TGPFont.Create(Config.FontName, Config.FontSize*Config.Scale, FontStyleRegular, UnitPixel);
+
+     //--------------------------依次绘制流程图(此后的代码应能共享)---------------------------------------------------//
+     //<绘制开始和结束标志
+     //起始标志
+     X    := Node.Attributes['X']+0+Node.Attributes['W'] / 2;
+     Y    := SV;
+     DrawRoundRect(X,Y,'START');
+     //下接线
+     DrawPoints([X,Y+BH,  X,Y+BH+SV]);
+     //结束标志
+     X    := Node.Attributes['X']+0+Node.Attributes['W'] / 2;
+     Y    := Node.Attributes['Y']+0+Node.Attributes['H']+SV;
+     //下接线
+     DrawPoints([X,Y-SV,  X,Y]);
+     DrawRoundRect(X,Y,'END');
+     //>
+
+     //递归绘制流程图
+     DrawNodeNSchart(Node);
+     //----------共享结束
+
+     oVisio.ActiveDocument.SaveAsex(FileName, 2 and 4 );
+     oVisio.quit;     //
+     //
+     //DC.Document.SaveAs(FileName);
+     //
+     //DC.Destroy;
+     //
+     MessageDlg(#13'   ---   Export VISIO successfully!   ---   '#13,mtInformation,[mbOK],0);
+
+end;
+
+procedure TForm_ExportVisio.DrawDiamond(iX, iY: Single; Text: String);
+var
+     BW,BH     : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     BH   := CurConfig.BaseHeight*CurConfig.Scale;
+     //菱形框
+     AddVisioShape(2,iX-BW,iY,BW*2,BH*2);
+     SetLastText(Text);
+end;
+
+procedure TForm_ExportVisio.DrawRoundRect(iX, iY: Single; Text: String);
+var
+     BW,BH     : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     BH   := CurConfig.BaseHeight*CurConfig.Scale;
+     //
+     try
+          oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASFLO_M.VSS').Masters.ItemU('Process'), 3.0, 7.0); //后面两个值为位置信息Start/End //Process
+          //oVisio.ActiveWindow.page.drop(oVisio.documents.Item('AUDIT_M.vssx').Masters.ItemU('Process'), 3.0, 7.0); //后面两个值为位置信息Start/End //Process
+
+
+          //oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASFLO_M.VSS').Masters.ItemU('Decision'), 3, 7);
+          SetLastSize(iX-BW/2,iY,BW,BH);
+         //AddVisioShape(18,iX-BW/2,iY,BW,BH);
+          //Application.ActiveWindow.Page.Drop Application.Documents.Item("BASFLO_M.VSS").Masters.ItemU("Terminator"), 1.082677, 11.220472
+          //oVisio.ActiveWindow.page.drop(oVisio.documents.Item('BASFLO_M.VSS').Masters.ItemU('Start/End'), 5, 7);
+
+     except
+          //AddVisioShape(6,iX-BW/2,iY,BW,BH);
+     end;
+     SetLastText(Text);
+
+end;
+
+procedure TForm_ExportVisio.DrawBlock(iX, iY, iW, iH: Single; Text: String;
+  Collapsed: Boolean);
+var
+     BW,SV   : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     SV   := CurConfig.SpaceVert*CurConfig.Scale;
+     //
+     AddVisioShape(1,iX-BW,iY,iW,iH-Sv);//BW*2,BH);
+     SetLastText(Text);
+
+     if Collapsed then begin
+          //表示是合拢块的双竖线
+          AddViSioLine(iX-BW+5,iY,iX-BW+5,iY+iH ,FALSE);
+          AddViSioLine(iX+BW-5,iY,iX+BW-5,iY+iH ,FALSE);
+     end;
+end;
+
+procedure TForm_ExportVisio.NSDrawBlock(iX, iY, iW, iH: Single; Text: String;
+  Collapsed: Boolean);
+var
+     BW,BH     : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     BH   := CurConfig.BaseHeight*CurConfig.Scale;
+     //
+     AddVisioShape(1,iX,iY,iW,iH);
+     ClearLastColor;
+     SetLastText(Text);
+
+     if Collapsed then begin
+          //表示是合拢块的双竖线
+          //AddViSioLine(iX-BW+5,iY,iX-BW+5,iY+BH ,FALSE);
+          //AddViSioLine(iX+BW-5,iY,iX+BW-5,iY+BH ,FALSE);
+     end;
+end;
+
+procedure TForm_ExportVisio.DrawTry(iX, iY: Single; Text: String;
+  Collapsed: Boolean; Mode: Integer);
+var
+     BW,BH     : Single;
+     SH,SV     : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     BH   := CurConfig.BaseHeight*CurConfig.Scale;
+     SV   := CurConfig.SpaceVert*CurConfig.Scale;
+     SH   := CurConfig.SpaceHorz*CurConfig.Scale;
+     //
+     case mode of
+          0 : begin
+               //绘制Try
+               DrawPoints([iX-BW,iY,  iX+BW,iY,  iX+BW-BH,iY+BH,  iX-BW,iY+BH,  iX-BW,iY]);
+               //
+               SetLastText(Text);
+               //下接线
+               DrawPoints([iX,iY+BH,  iX,iY+BH+SV]);
+          end;
+          1 : begin
+               //绘制except/finally
+               DrawPoints([iX-BW,iY,  iX+BW-BH,iY,  iX+BW-BH-BH/2,iY+BH/2,  iX+BW-BH,iY+BH,  iX-BW,iY+BH,  iX-BW,iY]);
+               //
+               SetLastText(Text);
+               //
+               if Collapsed then begin
+                    //左侧的竖线
+                    DrawPoints([iX-BW+5,iY,  iX-BW+5,iY+BH]);
+               end;
+               //下接线
+               DrawPoints([iX,iY+BH,  iX,iY+BH+SV]);
+          end;
+          2 : begin
+               //绘制end of Try
+               DrawPoints([iX-BW,iY,  iX+BW-BH,iY,  iX+BW,iY+BH,  iX-BW,iY+BH,  iX-BW,iY]);
+               //
+               SetLastText(Text);
+               //下接线
+               DrawPoints([iX,iY+BH,  iX,iY+BH+SV]);
+          end;
+     end;
+end;
+
+procedure TForm_ExportVisio.DrawString(S: String; Rect: TGPRectF);
+var
+     iCount    : Integer;
+begin
+     //思路: 先绘制一个方框,然后去除线条,最后SetLastText;
+
+
+     //绘制方框
+     AddVisioShape(1,Rect.X,Rect.Y,Rect.Width,Rect.Height);
+
+     //隐藏边框
+     HideLastBorder;
+
+     //清除颜色
+     ClearLastColor;
+     
+     //
+     SetLastText(S); 
+end;
+
+procedure TForm_ExportVisio.DrawText(S: String; X, Y, W, H: Single);
+var
+     iCount    : Integer;
+begin
+     //思路: 先绘制一个方框,然后去除线条,最后SetLastText;
+
+
+     //绘制方框
+     AddVisioShape(1,X,Y,W,H);
+
+     //隐藏边框
+     HideLastBorder;
+
+     //清除颜色
+     ClearLastColor;
+
+     //
+     SetLastText(S);
+
+end;
+
+procedure TForm_ExportVisio.DrawCodeBlock(iX, iY, iW, iH: Single;
+  Text: String);
+var
+     BW,BH     : Single;
+begin
+     BW   := CurConfig.BaseWidth*CurConfig.Scale;
+     BH   := CurConfig.BaseHeight*CurConfig.Scale;
+     //
+     AddVisioShape(1,iX-BW,iY,iW,iH);
+     SetLastText(''#13#10+Text);
+
+end;
+
+end.
