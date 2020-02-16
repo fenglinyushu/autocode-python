@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.518,E:\我的工作\AutoPhython\Source\AutoPython.dproj=E:\我的工作\AutoPhython\Source\AutoPhython.dproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.055,E:\我的工作\AutoPhython\Source\XMLPython.pas=E:\我的工作\AutoPhython\Source\XMLPhython.pas</Transaction>
-    <Transaction>2020-02-11 10:41:47.582,E:\我的工作\AutoPython\Source\AutoCodePython.dproj=E:\我的工作\AutoPython\Source\AutoPython.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.582,E:\我的工作\AutoPython\Source\AutoPython.dproj=E:\我的工作\AutoPython\Source\AutoCodePython.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.055,E:\我的工作\AutoPhython\Source\XMLPhython.pas=E:\我的工作\AutoPhython\Source\XMLPython.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.518,E:\我的工作\AutoPhython\Source\AutoPhython.dproj=E:\我的工作\AutoPhython\Source\AutoPython.dproj</Transaction>
   </Transactions>
 </BorlandProject>

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,ComObj,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, ImgList, ToolWin, System.ImageList, Vcl.Buttons, SynEdit,
-  Vcl.Samples.Spin;
+  Vcl.Samples.Spin, dxGDIPlusClasses;
 
 type
   TForm1 = class(TForm)
@@ -88,6 +88,9 @@ type
     ComboBox_Direction: TComboBox;
     ToolButton_Delete: TToolButton;
     ToolButton4: TToolButton;
+    ToolButton3: TToolButton;
+    ImageList: TImageList;
+    ToolButton5: TToolButton;
     procedure ControlMouseDown(Sender: TObject; Button: TMouseButton;Shift: TShiftState; X, Y: Integer);
     procedure ControlMouseMove(Sender: TObject; Shift: TShiftState; X,  Y: Integer);
     procedure ControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -102,10 +105,14 @@ type
     procedure SpinEditChange(Sender: TObject);
     procedure MemoChange(Sender: TObject);
     procedure SpinEdit_ListBoxChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ToolButton_DeleteClick(Sender: TObject);
+    procedure ToolButton2Click(Sender: TObject);
   private
     { Private declarations }
   public
      procedure ShowComponentInfo(ACtrl:TControl);
+     procedure SelectComponent(APanel:TPanel);
   end;
 
 var
@@ -130,6 +137,8 @@ begin
           Dec(iTag);
      end;
      //
+     ShowComponentInfo(oControl);
+     //
      if (x>=0)and(x<=3) then begin
           if (y>=0)and(y<=3) then oControl.Perform(WM_SysCommand,$F004,0);
           if (y>3)and(y<oControl.Height-3) then oControl.Perform(WM_SysCommand,$F001,0);
@@ -144,8 +153,6 @@ begin
           if (y>=oControl.Height-3)and(y<=oControl.Width) then oControl.Perform(WM_SysCommand,$F008,0);
      end;
 
-     //
-     ShowComponentInfo(oControl);
      //TPanel(oControl).BevelOuter     := bvSpace;
 end;
 
@@ -255,6 +262,7 @@ var
      oEntry         : TEdit;
      oListBox       : TListBox;
      oText          : TMemo;
+     oContainer     : TPanel;
      oScale         : TProgressBar;
      function _CreateGUIDName:string;
      begin
@@ -268,7 +276,7 @@ var
      begin
           Result    := TPanel.Create(Panel_FormClient);
           Result.Parent            := Panel_FormClient;
-          Result.BorderWidth       := 2;
+          Result.BorderWidth       := 1;
           Result.BevelOuter        := bvNone;
           Result.ParentBackground  := False;
           Result.Left              := X;
@@ -294,6 +302,8 @@ begin
           oLabel.BevelOuter   := bvNone;
           oLabel.OnMouseDown  := ControlMouseDown;
           oLabel.OnMouseMove  := ControlMouseMove;
+          oLabel.Color        := clBtnFace;
+          oLabel.ParentBackground  := False;
      end else if ToolButton_Button.Down then begin
           oPanel    := _CreateParentPanel(X,Y);
           //
@@ -349,7 +359,8 @@ begin
           oListBox.OnMouseDown:= ControlMouseDown;
           oListBox.OnMouseMove:= ControlMouseMove;
      end else if ToolButton_Text.Down then begin
-          oPanel    := _CreateParentPanel(X,Y);
+          oPanel         := _CreateParentPanel(X,Y);
+          oPanel.Height  := 60;
           //
           oText               := TMemo.Create(oPanel);
           oText.Parent        := oPanel;
@@ -368,6 +379,8 @@ begin
           oScale.Tag          := 1;
           oScale.OnMouseDown  := ControlMouseDown;
           oScale.OnMouseMove  := ControlMouseMove;
+     end else begin
+          Exit;
      end;
      //
      ShowComponentInfo(oPanel);
@@ -429,6 +442,36 @@ begin
      end;
 end;
 
+procedure TForm1.FormShow(Sender: TObject);
+var
+     iTab      : Integer;
+begin
+
+     //隐藏所有Tab
+     for iTab := 0 to PageControl_Detail.PageCount-1 do begin
+          PageControl_Detail.Pages[iTab].TabVisible    := False;
+     end;
+
+     //默认选择窗体
+     Label_Caption.OnMouseDown(Label_Caption,mbLeft, [], 10, 10);
+end;
+
+procedure TForm1.SelectComponent(APanel: TPanel);
+var
+     iCtrl     : Integer;
+     oPanel    : TPanel;
+begin
+     //Exit;
+     //
+     for iCtrl := 0 to Panel_FormClient.ControlCount-1 do begin
+          oPanel    := TPanel(Panel_FormClient.Controls[iCtrl]);
+          if oPanel <> APanel then begin
+               oPanel.Color        := clBtnFace;
+          end;
+     end;
+     APanel.Color   := clMedGray;
+end;
+
 procedure TForm1.ShowComponentInfo(ACtrl: TControl);
 var
      oPanel         : TPanel;
@@ -477,6 +520,12 @@ var
      end;
 
 begin
+     //
+     if ACtrl = nil then begin
+          Exit;
+     end;
+
+     //
      if ACtrl.Tag = - 1 then begin
           oPanel    := TPanel(ACtrl);
      end else begin
@@ -484,6 +533,9 @@ begin
      end;
      //
      if oPanel = Panel_Client then Exit;
+
+     //
+     SelectComponent(oPanel);
 
      //
      PageControl_Detail.Hint  := oPanel.Name;
@@ -615,6 +667,229 @@ begin
      oPanel    := TPanel(Panel_FormClient.FindChildControl(PageControl_Detail.Hint));
      //
      SetLTWH;
+end;
+
+procedure TForm1.ToolButton2Click(Sender: TObject);
+var
+     sName     : string;
+     //
+     oPanel    : TPanel;
+     oCtrl     : TControl;
+     oLabel    : TStaticText;
+     oEntry    : TEdit;
+     oCheck    : TCheckBox;
+     oRadio    : TRadioButton;
+     oButton   : TButton;
+     oText     : TMemo;
+     oScale    : TTrackBar;
+     oListBox  : TListBox;
+     //
+     iCtrl     : Integer;
+     iLabelId  : Integer;
+     iEntryId  : Integer;
+     iButtonId : Integer;
+     iCheckId  : Integer;
+     iRadioId  : Integer;
+     iTextId   : Integer;
+     iListBoxId: Integer;
+     iW,iH     : Integer;
+
+     //
+     slCode    : TStringList;
+
+     function _ItemsToStr(AItems:TStrings):string;
+     var
+          II   : Integer;
+     begin
+          Result    := '';
+          //
+          if AItems.Count>0 then begin
+               Result    := '"'+AItems[0]+'"';
+          end;
+
+          for II := 1 to AItems.Count-1 do begin
+               Result    := Result+',"'+AItems[II]+'"';
+          end;
+     end;
+
+begin
+     iLabelId  := 0;
+     iEntryId  := 0;
+     iButtonId := 0;
+     iCheckId  := 0;
+     iRadioId  := 0;
+     iTextId   := 0;
+     //
+     slCode  := TStringList.Create;
+     //
+     slCode.Add('win = tk.Tk()');
+
+     //标题
+     slCode.Add('');
+     slCode.Add('# title');
+     slCode.Add('win.title('''+Label_Caption.Caption+''')');
+
+     //设定窗口的大小(长 * 宽)
+     slCode.Add('');
+     slCode.Add('# width/height/left/top');
+     slCode.Add(Format('win.geometry(''%dx%d+%d+%d'')',
+               [Panel_Form.Width,Panel_Form.Height-30,Panel_Form.Left,Panel_Form.Top]));
+
+     for iCtrl := 0 to Panel_FormClient.ControlCount-1 do begin
+          oPanel  := TPanel(Panel_FormClient.Controls[iCtrl]);
+
+          //
+          oCtrl     := oPanel.Controls[0];
+
+
+          if oCtrl.ClassType = TPanel then begin
+               oLabel    := TStaticText(oCtrl);
+               //
+               Canvas.Font    := oLabel.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# label');
+               slCode.Add(Format('Label%d = tk.Label(win, text="%s",  font=("%s", %d))',
+                    [iLabelId,oLabel.Caption,oLabel.Font.Name,oLabel.Font.Size]));
+               slCode.Add(Format('Label%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iEntryId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               //
+               Inc(iLabelId);
+          end else if oCtrl.ClassType = TEdit then begin
+               oEntry    := TEdit(oCtrl);
+               //
+               Canvas.Font    := oEntry.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# Entry');
+               slCode.Add(Format('Entry%d = tk.Entry(win, text="%s",  font=("%s", %d))',
+                    [iEntryId,oEntry.Text,oEntry.Font.Name,oEntry.Font.Size]));
+               slCode.Add(Format('Entry%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iEntryId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               //
+               Inc(iEntryId);
+          end else if oCtrl.ClassType = TCheckBox then begin
+               oCheck    := TCheckBox(oCtrl);
+               //
+               Canvas.Font    := oCheck.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# CheckButton');
+               slCode.Add(Format('Check%d = tk.Checkbutton(win, text="%s",font=("%s", %d))',
+                    [iCheckId,oCheck.Caption,oCheck.Font.Name,oCheck.Font.Size]));
+               slCode.Add(Format('Check%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iCheckId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               //
+               Inc(iCheckId);
+          end else if oCtrl.ClassType = TRadioButton then begin
+               oRadio    := TRadioButton(oCtrl);
+               //
+               Canvas.Font    := oRadio.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# RadioButton');
+               slCode.Add(Format('Radio%d = tk.Radiobutton(win, text="%s",font=("%s", %d))',
+                    [iRadioId,oRadio.Caption,oRadio.Font.Name,oRadio.Font.Size]));
+               slCode.Add(Format('Radio%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iRadioId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               //
+               Inc(iRadioId);
+          end else if oCtrl.ClassType = TButton then begin
+               oButton    := TButton(oCtrl);
+               //
+               Canvas.Font    := oButton.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# Button');
+               slCode.Add(Format('Button%d = tk.Button(win, text="%s",font=("%s", %d))',
+                    [iButtonId,oButton.Caption,oButton.Font.Name,oButton.Font.Size]));
+               slCode.Add(Format('Button%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iButtonId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               //
+               Inc(iButtonId);
+          end else if oCtrl.ClassType = TListBox then begin
+               oListBox    := TListBox(oCtrl);
+               //
+               Canvas.Font    := oListBox.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# ListBox');
+               slCode.Add(Format('Listbox%d = tk.Listbox(win, font=("%s", %d))',
+                    [iListBoxId,oListBox.Font.Name,oListBox.Font.Size]));
+               slCode.Add(Format('Listbox%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iListBoxId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               slCode.Add('for item in ['+_ItemsToStr(oListBox.Items)+']:');
+               slCode.Add('     Listbox'+IntToStr(iListBoxId)+'.insert("end", item)');
+               //
+               Inc(iListBoxId);
+          end else if oCtrl.ClassType = TMemo then begin
+               oText    := TMemo(oCtrl);
+               //
+               Canvas.Font    := oText.Font;
+               iW   := Canvas.TextWidth('A');
+               iH   := Canvas.TextHeight('A');
+               //
+               slCode.Add('');
+               slCode.Add('# Text');
+               slCode.Add(Format('Text%d = tk.Text(win, font=("%s", %d))',
+                    [iTextId,oText.Font.Name,oText.Font.Size]));
+               slCode.Add(Format('Text%d.place(x=%d,y=%d, width=%d, height=%d)',
+                         [iTextId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+               slCode.Add('for item in ['+_ItemsToStr(oText.Lines)+']:');
+               slCode.Add('     Text'+IntToStr(iTextId)+'.insert("end", item)');
+               //
+               Inc(iTextId);
+          end;
+
+     end;
+
+     //主窗口循环显示
+     slCode.Add('');
+     slCode.Add('# run');
+     slCode.Add('win.mainloop()');
+
+     //
+     slCode.SaveToFile('d:\py.txt');
+     slCode.Destroy;
+end;
+
+procedure TForm1.ToolButton_DeleteClick(Sender: TObject);
+var
+     iCtrl     : Integer;
+     oPanel    : TPanel;
+begin
+     oPanel := nil;
+     for iCtrl := 0 to Panel_FormClient.ControlCount-1 do begin
+          if TPanel(Panel_FormClient.Controls[iCtrl]).Ctl3D = False then begin
+               oPanel    := TPanel(Panel_FormClient.Controls[iCtrl]);
+               Break;
+          end;
+     end;
+
+     //
+     if oPanel = nil then begin
+          Exit;
+     end;
+
+     //
+     if MessageDlg('Are you sure delete the component ?',mtConfirmation,[mbOK,mbCancel],0)= mrOk then begin
+          oPanel.Destroy;
+          //select form_window as default
+          Label_Caption.OnMouseDown(Label_Caption,mbLeft, [], 10, 10);
+     end;
+
 end;
 
 end.
