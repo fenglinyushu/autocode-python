@@ -3,12 +3,16 @@ unit TkinterWin;
 interface
 
 uses
+     //
+     JsonDataObjects,
+
+     //
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,ComObj,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, ImgList, ToolWin, System.ImageList, Vcl.Buttons, SynEdit,
   Vcl.Samples.Spin, dxGDIPlusClasses;
 
 type
-  TForm1 = class(TForm)
+  TForm_TkinterWindow = class(TForm)
     ToolBar1: TToolBar;
     ToolButton_Label: TToolButton;
     ToolButton_Button: TToolButton;
@@ -30,7 +34,7 @@ type
     SpeedButton_Max: TSpeedButton;
     ToolButton_Text: TToolButton;
     ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
+    ToolButton_Generate: TToolButton;
     PageControl_Detail: TPageControl;
     TabSheet_Listbox: TTabSheet;
     TabSheet_Normal: TTabSheet;
@@ -90,7 +94,13 @@ type
     ToolButton4: TToolButton;
     ToolButton3: TToolButton;
     ImageList: TImageList;
-    ToolButton5: TToolButton;
+    ToolButton_Cancel: TToolButton;
+    ToolButton_New: TToolButton;
+    ToolButton_Open: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton_Save: TToolButton;
+    SaveDialog: TSaveDialog;
+    OpenDialog: TOpenDialog;
     procedure ControlMouseDown(Sender: TObject; Button: TMouseButton;Shift: TShiftState; X, Y: Integer);
     procedure ControlMouseMove(Sender: TObject; Shift: TShiftState; X,  Y: Integer);
     procedure ControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -107,22 +117,28 @@ type
     procedure SpinEdit_ListBoxChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ToolButton_DeleteClick(Sender: TObject);
-    procedure ToolButton2Click(Sender: TObject);
+    procedure ToolButton_GenerateClick(Sender: TObject);
+    procedure ToolButton_CancelClick(Sender: TObject);
+    procedure ToolButton_SaveClick(Sender: TObject);
+    procedure ToolButton_OpenClick(Sender: TObject);
   private
     { Private declarations }
   public
+     PythonCode : string;
+     gjoTkinter : TJsonObject;
      procedure ShowComponentInfo(ACtrl:TControl);
      procedure SelectComponent(APanel:TPanel);
+
   end;
 
 var
-  Form1: TForm1;
+     Form_TkinterWindow  : TForm_TkinterWindow;
 
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.ControlMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TForm_TkinterWindow.ControlMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
      oControl  : TControl;
@@ -156,7 +172,7 @@ begin
      //TPanel(oControl).BevelOuter     := bvSpace;
 end;
 
-procedure TForm1.ControlMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+procedure TForm_TkinterWindow.ControlMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 var
      oControl  : TControl;
      iTag      : Integer;
@@ -184,7 +200,7 @@ begin
      end;
 end;
 
-procedure TForm1.Label_CaptionMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
+procedure TForm_TkinterWindow.Label_CaptionMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer);
 var
      oControl  : TControl;
@@ -223,7 +239,7 @@ begin
 
 end;
 
-procedure TForm1.Label_CaptionMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+procedure TForm_TkinterWindow.Label_CaptionMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 var
      oControl  : TControl;
 begin
@@ -233,7 +249,7 @@ begin
      end;
 end;
 
-procedure TForm1.MemoChange(Sender: TObject);
+procedure TForm_TkinterWindow.MemoChange(Sender: TObject);
 var
      oPanel    : TPanel;
      oCtrl     : TControl;
@@ -251,7 +267,7 @@ begin
      end;
 end;
 
-procedure TForm1.Panel_FormClientMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TForm_TkinterWindow.Panel_FormClientMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
      oPanel         : TPanel;
      //
@@ -386,20 +402,20 @@ begin
      ShowComponentInfo(oPanel);
 end;
 
-procedure TForm1.ControlMouseLeave(Sender: TObject);
+procedure TForm_TkinterWindow.ControlMouseLeave(Sender: TObject);
 begin
      TPanel(Sender).BevelOuter     := bvNone;
      ShowComponentInfo(TPanel(Sender));
 end;
 
-procedure TForm1.ControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+procedure TForm_TkinterWindow.ControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
 begin
      TPanel(Sender).BevelOuter     := bvNone;
      ShowComponentInfo(TPanel(Sender));
 end;
 
-procedure TForm1.Edit_TitleChange(Sender: TObject);
+procedure TForm_TkinterWindow.Edit_TitleChange(Sender: TObject);
 var
      oPanel    : TPanel;
      oCtrl          : TControl;
@@ -442,7 +458,7 @@ begin
      end;
 end;
 
-procedure TForm1.FormShow(Sender: TObject);
+procedure TForm_TkinterWindow.FormShow(Sender: TObject);
 var
      iTab      : Integer;
 begin
@@ -456,7 +472,7 @@ begin
      Label_Caption.OnMouseDown(Label_Caption,mbLeft, [], 10, 10);
 end;
 
-procedure TForm1.SelectComponent(APanel: TPanel);
+procedure TForm_TkinterWindow.SelectComponent(APanel: TPanel);
 var
      iCtrl     : Integer;
      oPanel    : TPanel;
@@ -472,7 +488,7 @@ begin
      APanel.Color   := clMedGray;
 end;
 
-procedure TForm1.ShowComponentInfo(ACtrl: TControl);
+procedure TForm_TkinterWindow.ShowComponentInfo(ACtrl: TControl);
 var
      oPanel         : TPanel;
      //
@@ -615,7 +631,7 @@ begin
      end;
 end;
 
-procedure TForm1.SpinEditChange(Sender: TObject);
+procedure TForm_TkinterWindow.SpinEditChange(Sender: TObject);
 var
      oPanel    : TPanel;
      oCtrl          : TControl;
@@ -644,7 +660,7 @@ begin
      SetLTWH;
 end;
 
-procedure TForm1.SpinEdit_ListBoxChange(Sender: TObject);
+procedure TForm_TkinterWindow.SpinEdit_ListBoxChange(Sender: TObject);
 var
      oPanel    : TPanel;
      oCtrl          : TControl;
@@ -669,7 +685,7 @@ begin
      SetLTWH;
 end;
 
-procedure TForm1.ToolButton2Click(Sender: TObject);
+procedure TForm_TkinterWindow.ToolButton_GenerateClick(Sender: TObject);
 var
      sName     : string;
      //
@@ -722,6 +738,9 @@ begin
      //
      slCode  := TStringList.Create;
      //
+     slCode.Add('');
+     slCode.Add('import tkinter as tk');
+     //
      slCode.Add('win = tk.Tk()');
 
      //БъЬт
@@ -752,9 +771,9 @@ begin
                slCode.Add('');
                slCode.Add('# label');
                slCode.Add(Format('Label%d = tk.Label(win, text="%s",  font=("%s", %d))',
-                    [iLabelId,oLabel.Caption,oLabel.Font.Name,oLabel.Font.Size]));
+                         [iLabelId,oLabel.Caption,oLabel.Font.Name,oLabel.Font.Size]));
                slCode.Add(Format('Label%d.place(x=%d,y=%d, width=%d, height=%d)',
-                         [iEntryId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
+                         [iLabelId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                //
                Inc(iLabelId);
           end else if oCtrl.ClassType = TEdit then begin
@@ -767,7 +786,7 @@ begin
                slCode.Add('');
                slCode.Add('# Entry');
                slCode.Add(Format('Entry%d = tk.Entry(win, text="%s",  font=("%s", %d))',
-                    [iEntryId,oEntry.Text,oEntry.Font.Name,oEntry.Font.Size]));
+                         [iEntryId,oEntry.Text,oEntry.Font.Name,oEntry.Font.Size]));
                slCode.Add(Format('Entry%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iEntryId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                //
@@ -782,7 +801,7 @@ begin
                slCode.Add('');
                slCode.Add('# CheckButton');
                slCode.Add(Format('Check%d = tk.Checkbutton(win, text="%s",font=("%s", %d))',
-                    [iCheckId,oCheck.Caption,oCheck.Font.Name,oCheck.Font.Size]));
+                         [iCheckId,oCheck.Caption,oCheck.Font.Name,oCheck.Font.Size]));
                slCode.Add(Format('Check%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iCheckId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                //
@@ -797,7 +816,7 @@ begin
                slCode.Add('');
                slCode.Add('# RadioButton');
                slCode.Add(Format('Radio%d = tk.Radiobutton(win, text="%s",font=("%s", %d))',
-                    [iRadioId,oRadio.Caption,oRadio.Font.Name,oRadio.Font.Size]));
+                         [iRadioId,oRadio.Caption,oRadio.Font.Name,oRadio.Font.Size]));
                slCode.Add(Format('Radio%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iRadioId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                //
@@ -812,7 +831,7 @@ begin
                slCode.Add('');
                slCode.Add('# Button');
                slCode.Add(Format('Button%d = tk.Button(win, text="%s",font=("%s", %d))',
-                    [iButtonId,oButton.Caption,oButton.Font.Name,oButton.Font.Size]));
+                         [iButtonId,oButton.Caption,oButton.Font.Name,oButton.Font.Size]));
                slCode.Add(Format('Button%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iButtonId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                //
@@ -827,7 +846,7 @@ begin
                slCode.Add('');
                slCode.Add('# ListBox');
                slCode.Add(Format('Listbox%d = tk.Listbox(win, font=("%s", %d))',
-                    [iListBoxId,oListBox.Font.Name,oListBox.Font.Size]));
+                         [iListBoxId,oListBox.Font.Name,oListBox.Font.Size]));
                slCode.Add(Format('Listbox%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iListBoxId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                slCode.Add('for item in ['+_ItemsToStr(oListBox.Items)+']:');
@@ -844,7 +863,7 @@ begin
                slCode.Add('');
                slCode.Add('# Text');
                slCode.Add(Format('Text%d = tk.Text(win, font=("%s", %d))',
-                    [iTextId,oText.Font.Name,oText.Font.Size]));
+                         [iTextId,oText.Font.Name,oText.Font.Size]));
                slCode.Add(Format('Text%d.place(x=%d,y=%d, width=%d, height=%d)',
                          [iTextId,oPanel.Left,oPanel.Top,(oPanel.Width) ,(oPanel.Height) ]));
                slCode.Add('for item in ['+_ItemsToStr(oText.Lines)+']:');
@@ -861,18 +880,212 @@ begin
      slCode.Add('win.mainloop()');
 
      //
+     PythonCode     := slCode.Text;
+
+     //
      slCode.SaveToFile('d:\py.txt');
      slCode.Destroy;
+
+     //
+     ModalResult    := mrOk;
+
+
 end;
 
-procedure TForm1.ToolButton_DeleteClick(Sender: TObject);
+procedure TForm_TkinterWindow.ToolButton_OpenClick(Sender: TObject);
+var
+     iCtrl     : Integer;
+     oPanel    : TPanel;
+     oCtrl     : TControl;
+begin
+     if OpenDialog.Execute then begin
+          gjoTkinter     := TJsonObject.Create;
+          gjoTkinter.LoadFromFile(OpenDialog.FileName);
+          //
+
+     end;
+end;
+
+procedure TForm_TkinterWindow.ToolButton_SaveClick(Sender: TObject);
+var
+     iCtrl     : Integer;
+     oPanel    : TPanel;
+     oCtrl     : TControl;
+     oLabel    : TStaticText;
+     oEntry    : TEdit;
+     oCheck    : TCheckBox;
+     oRadio    : TRadioButton;
+     oButton   : TButton;
+     oText     : TMemo;
+     oScale    : TTrackBar;
+     oListBox  : TListBox;
+     //
+     jaItems   : TJsonArray;
+     joItem    : TJsonObject;
+begin
+     if gjoTkinter = nil then begin
+          if SaveDialog.Execute then begin
+               gjoTkinter     := TJsonObject.Create;
+               //
+               gjoTkinter.S['filename'] := SaveDialog.FileName;
+          end else begin
+               Exit;
+          end;
+     end;
+
+     //
+     gjoTkinter.S['title']    := Label_Caption.Caption;
+     gjoTkinter.I['left']     := Panel_Form.Left;
+     gjoTkinter.I['top']      := Panel_Form.Top;
+     gjoTkinter.I['with']     := Panel_Form.Width;
+     gjoTkinter.I['height']   := Panel_Form.Height;
+
+     //
+     gjoTkinter.A['items']    := TJsonArray.Create;
+     jaItems   := gjoTkinter.A['items'];
+     //
+     for iCtrl := 0 to Panel_FormClient.ControlCount-1 do begin
+          oPanel  := TPanel(Panel_FormClient.Controls[iCtrl]);
+
+          //
+          oCtrl     := oPanel.Controls[0];
+
+
+          if oCtrl.ClassType = TPanel then begin
+               oLabel    := TStaticText(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TLabel';
+                    S['name']      := oLabel.Name;
+                    S['caption']   := oLabel.Caption;
+                    I['color']     := oLabel.Color;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TEdit then begin
+               oEntry    := TEdit(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TEdit';
+                    S['name']      := oCtrl.Name;
+                    S['text']      := oEntry.Text;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TCheckBox then begin
+               oCheck    := TCheckBox(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TCheckBox';
+                    S['name']      := oCtrl.Name;
+                    S['caption']   := oCheck.Caption;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TRadioButton then begin
+               oRadio    := TRadioButton(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TRadioButton';
+                    S['name']      := oCtrl.Name;
+                    S['caption']   := oRadio.Caption;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TButton then begin
+               oButton    := TButton(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TButton';
+                    S['name']      := oCtrl.Name;
+                    S['caption']   := oButton.Caption;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TListBox then begin
+               oListBox    := TListBox(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TListBox';
+                    S['name']      := oCtrl.Name;
+                    S['text']      := oListBox.Items.Text;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end else if oCtrl.ClassType = TMemo then begin
+               oText    := TMemo(oCtrl);
+               //
+               with jaItems.AddObject do begin
+                    S['class']     := 'TMemo';
+                    S['name']      := oCtrl.Name;
+                    S['text']      := oText.Lines.Text;
+                    //
+                    I['left']      := oPanel.Left;
+                    I['top']       := oPanel.Top;
+                    I['width']     := oPanel.Width;
+                    I['height']    := oPanel.Height;
+                    S['fontname']  := oPanel.Font.Name;
+                    I['fontsize']  := oPanel.Font.Size;
+                    I['fontcolor'] := oPanel.Font.Color;
+               end;
+          end;
+
+     end;
+     //
+     gjoTkinter.SaveToFile(gjoTkinter.S['filename'],False,TEncoding.UTF8,False);
+     //
+     ShowMessage('Save success!');
+end;
+
+procedure TForm_TkinterWindow.ToolButton_CancelClick(Sender: TObject);
+begin
+     ModalResult    := mrCancel;
+end;
+
+procedure TForm_TkinterWindow.ToolButton_DeleteClick(Sender: TObject);
 var
      iCtrl     : Integer;
      oPanel    : TPanel;
 begin
      oPanel := nil;
      for iCtrl := 0 to Panel_FormClient.ControlCount-1 do begin
-          if TPanel(Panel_FormClient.Controls[iCtrl]).Ctl3D = False then begin
+          if TPanel(Panel_FormClient.Controls[iCtrl]).Color <> clBtnFace then begin
                oPanel    := TPanel(Panel_FormClient.Controls[iCtrl]);
                Break;
           end;

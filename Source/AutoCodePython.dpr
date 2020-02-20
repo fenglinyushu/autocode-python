@@ -21,7 +21,9 @@ uses
   ExportSVG in 'ExportSVG.pas',
   ExportVisio in 'ExportVisio.pas' {Form_ExportVisio},
   About in 'About.pas' {Form_About},
-  XMLPython in 'XMLPython.pas';
+  Json2Python in 'Json2Python.pas',
+  TkinterWin in '..\tkinter\TkinterWin.pas' {Form_TkinterWindow},
+  acVars in 'acVars.pas';
 
 {$R *.res}
 
@@ -35,6 +37,7 @@ begin
   Application.CreateForm(TForm_ExportWord, Form_ExportWord);
   Application.CreateForm(TForm_ExportVisio, Form_ExportVisio);
   Application.CreateForm(TForm_About, Form_About);
+  Application.CreateForm(TForm_TkinterWindow, Form_TkinterWindow);
   //
      Application.Run;
 end.

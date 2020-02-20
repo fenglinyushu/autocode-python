@@ -4,15 +4,29 @@ interface
 
 uses
      //
+     acVars,
      SysConsts,
 
      //
+     JsonDataObjects,
+
+     //
+     Messages, Windows,Dialogs,
      XMLDoc,XMLIntf,SysUtils,ComCtrls;
 
 function  GetXMLNodeFromTreeNode(XML:TXMLDocument;Node:TTreeNode):IXMLNode;       //从树节点，得到相应的XML节点
 function  InModes(Source:Integer;Ints:array of Integer):Boolean;
 function  GetTreeNodeFromXMLNode(TV:TTreeView;Node:IXMLNode):TTreeNode;
 
+//
+function  acTreeToJson(ANode:TTreeNode):TJsonObject;       //从树节点，得到相应的Json节点
+function  acInModules(AName:string;AArray:TJsonArray):Boolean;
+function  acInStrings(AName:string;AArray:array of string):Boolean;
+function  acModuleNameToImageIndex(AName:string):Integer;
+function  acFindModule(AName:string):TJsonObject;
+
+//
+function  isCtrlDown: Boolean;
 
 implementation
 
@@ -108,5 +122,160 @@ begin
      end;
 end;
 
+
+//
+function  acTreeToJson(ANode:TTreeNode):TJsonObject;       //从树节点，得到相应的Json节点
+var
+     iIDs      : array of Integer; //用于保存Index序列
+     //
+     I,J,iHigh : Integer;
+begin
+     //默认
+     Result    := nil;
+
+     //得到Index序列
+     SetLength(iIDs,0);
+     while ANode.Level>0 do begin
+          SetLength(iIDs,Length(iIDs)+1);
+          iIDs[High(iIDs)]    := ANode.Index;
+          //
+          ANode     := ANode.Parent;
+     end;
+
+     //得到节点
+     Result    := gjoProject;
+     for I:=High(iIDs) downto 0 do begin
+          Result    := Result.A['items'][iIDs[I]];
+     end;
+end;
+
+
+function  acInModules(AName:string;AArray:TjsonArray):Boolean;
+var
+     I         : Integer;
+begin
+     Result    := False;
+     for I := 0 to AArray.Count-1 do begin
+          if AArray.S[I] = AName then begin
+               Result    := True;
+               Break;
+          end;
+     end;
+end;
+
+function  acInStrings(AName:string;AArray:array of string):Boolean;
+var
+     I         : Integer;
+begin
+     Result    := False;
+     for I := 0 to High(AArray) do begin
+          if AArray[I] = AName then begin
+               Result    := True;
+               Break;
+          end;
+     end;
+end;
+
+function  acModuleNameToImageIndex(AName:string):Integer;
+const
+     miiFile        = 0;
+     miiFunction    = 1;
+     miiBlock       = 2;
+     miiCode        = 3;
+     miiSet         = 4;
+     miiIf          = 5;
+     miiTrue        = 6;
+     miiElif        = 7;
+     miiElse        = 8;
+     miiFor         = 9;
+     miiWhile       = 10;
+     miiBreak       = 11;
+     miiContinue    = 12;
+     miiTry         = 13;
+     miiExcept      = 14;
+     miiClass       = 15;
+begin
+     Result    := 0;
+     if AName = 'file' then begin
+          Result    := miiFile;
+     end else if AName = 'function' then begin
+          Result    := miiFunction;
+     end else if AName = 'set' then begin
+          Result    := miiSet;
+     end else if AName = 'if' then begin
+          Result    := miiIf;
+     end else if AName = 'elif' then begin
+          Result    := miiElif;
+     end else if AName = 'if_yes' then begin
+          Result    := miiTrue;
+     end else if AName = 'if_else' then begin
+          Result    := miiElse;
+     end else if AName = 'code' then begin
+          Result    := miiCode;
+     end else if AName = 'for' then begin
+          Result    := miiFor;
+     end else if AName = 'while' then begin
+          Result    := miiWhile;
+     end else if AName = 'try' then begin
+          Result    := miiTry;
+     end else if AName = 'try_except' then begin
+          Result    := miiExcept;
+     end else if AName = 'try_else' then begin
+          Result    := miiElse;
+     end else if AName = 'try_body' then begin
+          Result    := miiBlock;
+     end else if AName = 'block' then begin
+          Result    := miiBlock;
+     end else if AName = 'break' then begin
+          Result    := miiBreak;
+     end else if AName = 'continue' then begin
+          Result    := miiContinue;
+     end else if AName = 'class' then begin
+          Result    := miiClass;
+     end;
+end;
+
+function  acFindModule(AName:string):TJsonObject;
+var
+     iModule   : Integer;
+begin
+     Result    := nil;
+     for iModule := 0 to gjoModules.A['items'].Count-1 do begin
+          if gjoModules.A['items'][iModule].S['name'] = AName then begin
+               Result    := gjoModules.A['items'][iModule];
+               Break;
+          end;
+     end;
+
+     //
+     if Result = nil then begin
+          ShowMessage('Error when acFindModule : '+AName);
+     end;
+end;
+
+
+function isCtrlDown: Boolean;
+var
+  State: TKeyboardState;
+begin
+  GetKeyboardState(State);
+  Result := ((State[VK_CONTROL] and 128) <> 0);
+end;
+
+function isShiftDown: Boolean;
+var
+  State: TKeyboardState;
+begin
+  GetKeyboardState(State);
+  Result := ((State[VK_SHIFT] and 128) <> 0);
+end;
+
+function isAltDown: Boolean;
+var
+  State: TKeyboardState;
+begin
+  GetKeyboardState(State);
+  Result := ((State[VK_MENU] and 128) <> 0);
+end;
 
 end.

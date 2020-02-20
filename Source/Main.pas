@@ -11,6 +11,13 @@ uses
      SysVars,
      SysUnits,
 
+     //
+     acVars,
+
+
+     //
+     TkinterWin,
+
 
      //MyFunctions,
      //FcConsts,
@@ -24,13 +31,18 @@ uses
      XMLGenCodeRecords,
      SysOption,
 
+
+     //
+     JsonDataObjects,
+
      //各语言代码生成
      //XMLPascal,
      //XMLCpp,
      //XMLJava,
      //XMLCSharp,
      //XMLJavaScript,
-     XMLPython,
+     //XMLPython,
+     Json2Python,
 
      //导出
      ExportWord,
@@ -91,23 +103,11 @@ type
     N3: TMenuItem;
     MenuItem_About: TMenuItem;
     PopupMenu_TreeView: TPopupMenu;
-    PopMenu_NewFunction: TMenuItem;
-    PopMenu_NewSET: TMenuItem;
-    PopMenu_NewIF: TMenuItem;
-    PopMenu_NewFOR: TMenuItem;
-    PopMenu_NewCODE: TMenuItem;
-    N15: TMenuItem;
-    N16: TMenuItem;
-    PopMenu_NewWHILE: TMenuItem;
-    N17: TMenuItem;
-    PopMenu_NewBREAK: TMenuItem;
-    PopMenu_NewCONTINUE: TMenuItem;
     N18: TMenuItem;
     PopMenu_Copy: TMenuItem;
     PopMenu_Paste: TMenuItem;
     PopMenu_Delete: TMenuItem;
     ToolButton_NewProject: TToolButton;
-    PopMenu_NewTry: TMenuItem;
     StatusBar: TStatusBar;
     ToolButton7: TToolButton;
     N20: TMenuItem;
@@ -127,7 +127,6 @@ type
     ScrollBox: TScrollBox;
     Image: TImage;
     SynEdit: TSynEdit;
-    Other1: TMenuItem;
     ToolButton2: TToolButton;
     ToolButton_ExportToFile: TToolButton;
     ToolButton_SaveToWord: TToolButton;
@@ -146,121 +145,15 @@ type
     mxClickSplitter1: TmxClickSplitter;
     mxClickSplitter_Left: TmxClickSplitter;
     Panel_LeftBottom: TPanel;
-    PageControl_Detail: TPageControl;
-    TabSheet_File: TTabSheet;
-    Panel1: TPanel;
-    Label5: TLabel;
-    Edit_Caption: TEdit;
-    TabSheet_Function: TTabSheet;
-    Panel2: TPanel;
-    Label6: TLabel;
-    Edit_Function: TEdit;
-    Panel4: TPanel;
-    Label8: TLabel;
-    Edit_FunctionComment: TEdit;
-    TabSheet_Code: TTabSheet;
-    Panel5: TPanel;
-    Label9: TLabel;
-    Edit_CodeCaption: TEdit;
-    Panel6: TPanel;
-    Label10: TLabel;
-    CheckBox_CodeEnabled: TCheckBox;
-    Panel7: TPanel;
-    Label11: TLabel;
-    Edit_CodeComment: TEdit;
-    Panel8: TPanel;
-    Label12: TLabel;
-    SynEdit_Code: TSynEdit;
-    TabSheet_If: TTabSheet;
-    Panel9: TPanel;
-    Label13: TLabel;
-    Edit_IfCaption: TEdit;
-    Panel10: TPanel;
-    Label14: TLabel;
-    CheckBox_IfEnabled: TCheckBox;
-    Panel11: TPanel;
-    Label15: TLabel;
-    Edit_IfComment: TEdit;
-    Panel12: TPanel;
-    Label16: TLabel;
-    Edit_IfSource: TEdit;
     mxClickSplitter_ClientRight: TmxClickSplitter;
-    TabSheet_for: TTabSheet;
-    Panel13: TPanel;
-    Label1: TLabel;
-    Edit_ForCaption: TEdit;
-    Panel14: TPanel;
-    Label2: TLabel;
-    CheckBox_ForEnabled: TCheckBox;
-    Panel15: TPanel;
-    Label3: TLabel;
-    Edit_ForComment: TEdit;
-    Panel16: TPanel;
-    Label4: TLabel;
-    Edit_ForSource: TEdit;
-    TabSheet_While: TTabSheet;
-    Panel17: TPanel;
-    Label17: TLabel;
-    Edit_WhileCaption: TEdit;
-    Panel18: TPanel;
-    Label18: TLabel;
-    CheckBox_WhileEnabled: TCheckBox;
-    Panel19: TPanel;
-    Label19: TLabel;
-    Edit_WhileComment: TEdit;
-    Panel20: TPanel;
-    Label20: TLabel;
-    Edit_WhileSource: TEdit;
-    SpeedButton_CodeTrim: TSpeedButton;
     Panel_Client: TPanel;
     Panel_Messages: TPanel;
     mxClickSplitter2: TmxClickSplitter;
     Memo_Messages: TMemo;
-    Panel3: TPanel;
-    Label7: TLabel;
-    CheckBox_FunctionEnabled: TCheckBox;
-    TabSheet_Try: TTabSheet;
-    Panel21: TPanel;
-    Label21: TLabel;
-    Edit_TryCaption: TEdit;
-    Panel22: TPanel;
-    Label22: TLabel;
-    CheckBox_TryEnabled: TCheckBox;
-    Panel23: TPanel;
-    Label23: TLabel;
-    Edit_TryComment: TEdit;
-    TabSheet_TryExcept: TTabSheet;
-    Panel25: TPanel;
-    Expression: TLabel;
-    Edit_ExceptSource: TEdit;
-    Panel26: TPanel;
-    Label26: TLabel;
-    Edit_ExceptComment: TEdit;
-    Panel27: TPanel;
-    Label27: TLabel;
-    Edit_ExceptCaption: TEdit;
-    TabSheet_TryElse: TTabSheet;
-    Panel24: TPanel;
-    Label24: TLabel;
-    Edit_TryElseComment: TEdit;
-    Panel28: TPanel;
-    Label28: TLabel;
-    Edit_TryElseCaption: TEdit;
-    PopMenu_NewElif: TMenuItem;
-    SpeedButton_CodeClear: TSpeedButton;
     ToolButton_RunWithWindow: TToolButton;
     ImageList_TextModes: TImageList;
-    PopMenu_NewClass: TMenuItem;
-    TabSheet_Class: TTabSheet;
-    Panel29: TPanel;
-    Label29: TLabel;
-    Edit_ClassCaption: TEdit;
-    Panel30: TPanel;
-    Label30: TLabel;
-    Edit_ClassComment: TEdit;
-    Panel31: TPanel;
-    Label31: TLabel;
-    CheckBox_ClassEnabled: TCheckBox;
+    N5: TMenuItem;
+    PopMenu_tkinterwindow: TMenuItem;
     procedure PopMenu_DeleteClick(Sender: TObject);
     procedure TreeViewCustomDrawItem(Sender: TCustomTreeView;
       Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
@@ -324,12 +217,10 @@ type
     procedure Copyselectedcode1Click(Sender: TObject);
     procedure TreeViewChange(Sender: TObject; Node: TTreeNode);
     procedure Panel_RegisterClick(Sender: TObject);
-    procedure SpeedButton_CodeTrimClick(Sender: TObject);
-    procedure AttributeValueChange(Sender: TObject);
     procedure PopMenu_NewElifClick(Sender: TObject);
-    procedure SpeedButton_CodeClearClick(Sender: TObject);
     procedure ToolButton_RunWithWindowClick(Sender: TObject);
     procedure PopMenu_NewClassClick(Sender: TObject);
+    procedure PopMenu_tkinterwindowClick(Sender: TObject);
      private
           iMoveX         : Integer;
           iMoveY         : Integer;
@@ -347,9 +238,13 @@ type
           gsDragSrcMode  : string;           //待复制/剪切节点的类型
           gxdCopy        : TXMLDocument;     //待复制/剪切节点构成的XML
           //
+          procedure PopItem_ModuleClick(Sender: TObject);
+          procedure PropertyChange(Sender: TObject);
      public
-          procedure ShowNodeAttributes(AXNode:IXMLNode);
+          procedure ShowNodeAttributes(ANode:TJsonObject);
           procedure SaveNodeAttributes;
+
+          //
           function  GetNewMode(SourceMode,DestMode: Integer): TBlockCopyMode;
           function  GetNodeFromPos(mX,mY:Integer):TTreeNode;  //根据鼠标位置得到节点
           procedure SetUpDownEnable(AXNode:IXMLNode);
@@ -377,6 +272,9 @@ var
 
      //
      gsFileName     : string = '';      //当前文件名(含全路径)
+
+
+
 implementation
 
 uses InputRegCode, About;
@@ -443,7 +341,7 @@ begin
      xnNode   := xnPar;
 
      //
-     ShowNodeAttributes(xnPar);
+     //ShowNodeAttributes(xnPar);
      UpdateChart;
 
      //设置已修改标识
@@ -451,8 +349,95 @@ begin
 end;
 
 //------------------------------显示节点的属性----------------------------------------------------//
-procedure TMainForm.ShowNodeAttributes(AXNode: IXMLNode);
+procedure TMainForm.ShowNodeAttributes(ANode: TJsonObject);
+var
+     iProp     : Integer;
+     iCtrl     : Integer;
+     //
+     joProp    : TJsonObject;
+     //
+     oPanel    : TPanel;
+     oLabel    : TLabel;
+     oSpin     : TSpinEdit;
+     oEdit     : TEdit;
+     oSynEdit  : TSynEdit;
+     oCombo    : TComboBox;
+     oCheck    : TCheckBox;
+     //
+     bFoundSrc : Boolean;     //found source property
 begin
+     //Clear All components of Panel_LeftBottom
+          for iCtrl := Panel_LeftBottom.ControlCount-1 downto 0 do begin
+          Panel_LeftBottom.Controls[iCtrl].Destroy;
+     end;
+
+     //如果当前节点为nil,则退出
+     if ANode = nil then begin
+          Exit;
+     end;
+
+     //如果无属性,则退出
+     if not ANode.Contains('property') then begin
+          Exit;
+     end;
+
+     //显示属性
+     bFoundSrc := False;
+     for iProp := 0 to ANode.A['property'].Count-1 do begin
+          joProp    := ANode.A['property'][iProp];
+          //属性的外框
+          oPanel    := TPanel.Create(self);
+          oPanel.Parent       := Panel_LeftBottom;
+          oPanel.Align        := alTop;
+          oPanel.Top          := 9999;
+          if bFoundSrc then begin
+               oPanel.Align   := alBottom;
+               oPanel.Top     := 9999;
+          end;
+          oPanel.Height       := 28;
+          oPanel.BorderWidth  := 2;
+          oPanel.BevelOuter   := bvNone;
+          //属性名称
+          oLabel    := TLabel.Create(oPanel);
+          oLabel.Parent       := oPanel;
+          oLabel.Align        := alLeft;
+          oLabel.Layout       := tlCenter;
+          oLabel.AutoSize     := False;
+          oLabel.Width        := 100;
+          oLabel.Caption      := joProp.S['name'];
+          //属性值
+          if joProp.S['type'] = 'string' then begin
+               oEdit          := TEdit.Create(oPanel);
+               oEdit.Parent   := oPanel;
+               oEdit.Align    := alClient;
+               oEdit.Text     := joProp.S['value'];
+               oEdit.OnChange := PropertyChange;
+          end else if joProp.S['type'] = 'integer' then begin
+               oSpin          := TSpinEdit.Create(oPanel);
+               oSpin.Parent   := oPanel;
+               oSpin.Align    := alClient;
+               oSpin.Value    := joProp.I['value'];
+               oSpin.OnChange := PropertyChange;
+          end else if joProp.S['type'] = 'source' then begin
+               oSynEdit       := TSynEdit.Create(oPanel);
+               oSynEdit.Parent:= oPanel;
+               oSynEdit.Align := alClient;
+               oSynEdit.Text  := joProp.S['value'];
+               oSynEdit.OnChange   := PropertyChange;
+               oSynEdit.Gutter.Visible  := False;
+               //
+               bFoundSrc := True;
+               oPanel.Align   := alClient;
+          end else if joProp.S['type'] = 'boolean' then begin
+               oCheck         := TCheckBox.Create(oPanel);
+               oCheck.Parent  := oPanel;
+               oCheck.Align   := alClient;
+               oCheck.Checked := joProp.B['value'];
+               oCheck.OnClick := PropertyChange;
+          end;
+     end;
+
+{
      try
 
           if AXNode = nil then begin
@@ -473,7 +458,7 @@ begin
                     //
                     Edit_Caption.Text       := AXNode.Attributes['Caption'];
                     //
-                    Edit_Caption.OnChange   := AttributeValueChange;
+                    Edit_Caption.OnChange   := PropertyChange;
                end;
                rtFunc : begin
                     PageControl_Detail.ActivePage      := TabSheet_Function;
@@ -486,9 +471,9 @@ begin
                     Edit_FunctionComment.Text          := AXNode.Attributes['Comment'];
                     CheckBox_FunctionEnabled.Checked   := AXNode.Attributes['Enabled'];
                     //
-                    Edit_Function.OnChange             := AttributeValueChange;
-                    Edit_FunctionComment.OnChange      := AttributeValueChange;
-                    CheckBox_FunctionEnabled.OnClick   := AttributeValueChange;
+                    Edit_Function.OnChange             := PropertyChange;
+                    Edit_FunctionComment.OnChange      := PropertyChange;
+                    CheckBox_FunctionEnabled.OnClick   := PropertyChange;
 
                end;
                rtClass : begin
@@ -502,9 +487,9 @@ begin
                     Edit_ClassComment.Text             := AXNode.Attributes['Comment'];
                     CheckBox_ClassEnabled.Checked      := AXNode.Attributes['Enabled'];
                     //
-                    Edit_ClassCaption.OnChange         := AttributeValueChange;
-                    Edit_ClassComment.OnChange         := AttributeValueChange;
-                    CheckBox_ClassEnabled.OnClick      := AttributeValueChange;
+                    Edit_ClassCaption.OnChange         := PropertyChange;
+                    Edit_ClassComment.OnChange         := PropertyChange;
+                    CheckBox_ClassEnabled.OnClick      := PropertyChange;
 
                end;
                rtBlock_Code : begin
@@ -520,10 +505,10 @@ begin
                     CheckBox_CodeEnabled.Checked       := AXNode.Attributes['Enabled'];
                     SynEdit_Code.Text                  := AXNode.Attributes['Source'];
                     //
-                    Edit_CodeCaption.OnChange          := AttributeValueChange;
-                    Edit_CodeComment.OnChange          := AttributeValueChange;
-                    SynEdit_Code.OnChange              := AttributeValueChange;
-                    CheckBox_CodeEnabled.OnClick       := AttributeValueChange;
+                    Edit_CodeCaption.OnChange          := PropertyChange;
+                    Edit_CodeComment.OnChange          := PropertyChange;
+                    SynEdit_Code.OnChange              := PropertyChange;
+                    CheckBox_CodeEnabled.OnClick       := PropertyChange;
                end;
                rtIf,rtIF_ElseIf : begin
                     PageControl_Detail.ActivePage      := TabSheet_If;
@@ -538,10 +523,10 @@ begin
                     Edit_IfComment.Text                := AXNode.Attributes['Comment'];
                     CheckBox_IfEnabled.Checked         := AXNode.Attributes['Enabled'];
                     //
-                    Edit_IfCaption.OnChange            := AttributeValueChange;
-                    Edit_IfComment.OnChange            := AttributeValueChange;
-                    Edit_IfSource.OnChange             := AttributeValueChange;
-                    CheckBox_IfEnabled.OnClick         := AttributeValueChange;
+                    Edit_IfCaption.OnChange            := PropertyChange;
+                    Edit_IfComment.OnChange            := PropertyChange;
+                    Edit_IfSource.OnChange             := PropertyChange;
+                    CheckBox_IfEnabled.OnClick         := PropertyChange;
                end;
                rtFor : begin
                     PageControl_Detail.ActivePage      := TabSheet_For;
@@ -556,10 +541,10 @@ begin
                     Edit_ForComment.Text              := AXNode.Attributes['Comment'];
                     CheckBox_ForEnabled.Checked       := AXNode.Attributes['Enabled'];
                     //
-                    Edit_ForCaption.OnChange          := AttributeValueChange;
-                    Edit_ForComment.OnChange          := AttributeValueChange;
-                    Edit_ForSource.OnChange           := AttributeValueChange;
-                    CheckBox_ForEnabled.OnClick       := AttributeValueChange;
+                    Edit_ForCaption.OnChange          := PropertyChange;
+                    Edit_ForComment.OnChange          := PropertyChange;
+                    Edit_ForSource.OnChange           := PropertyChange;
+                    CheckBox_ForEnabled.OnClick       := PropertyChange;
                end;
                rtWhile : begin
                     PageControl_Detail.ActivePage      := TabSheet_While;
@@ -574,10 +559,10 @@ begin
                     Edit_WhileComment.Text              := AXNode.Attributes['Comment'];
                     CheckBox_WhileEnabled.Checked       := AXNode.Attributes['Enabled'];
                     //
-                    Edit_WhileCaption.OnChange          := AttributeValueChange;
-                    Edit_WhileComment.OnChange          := AttributeValueChange;
-                    Edit_WhileSource.OnChange           := AttributeValueChange;
-                    CheckBox_WhileEnabled.OnClick       := AttributeValueChange;
+                    Edit_WhileCaption.OnChange          := PropertyChange;
+                    Edit_WhileComment.OnChange          := PropertyChange;
+                    Edit_WhileSource.OnChange           := PropertyChange;
+                    CheckBox_WhileEnabled.OnClick       := PropertyChange;
                end;
                rtTry : begin
                     PageControl_Detail.ActivePage      := TabSheet_Try;
@@ -590,9 +575,9 @@ begin
                     Edit_TryComment.Text              := AXNode.Attributes['Comment'];
                     CheckBox_TryEnabled.Checked       := AXNode.Attributes['Enabled'];
                     //
-                    Edit_TryCaption.OnChange          := AttributeValueChange;
-                    Edit_TryComment.OnChange          := AttributeValueChange;
-                    CheckBox_TryEnabled.OnClick       := AttributeValueChange;
+                    Edit_TryCaption.OnChange          := PropertyChange;
+                    Edit_TryComment.OnChange          := PropertyChange;
+                    CheckBox_TryEnabled.OnClick       := PropertyChange;
                end;
                rtTry_Except : begin
                     PageControl_Detail.ActivePage      := TabSheet_TryExcept;
@@ -605,9 +590,9 @@ begin
                     Edit_ExceptSource.Text               := AXNode.Attributes['Source'];
                     Edit_ExceptComment.Text              := AXNode.Attributes['Comment'];
                     //
-                    Edit_ExceptCaption.OnChange          := AttributeValueChange;
-                    Edit_ExceptComment.OnChange          := AttributeValueChange;
-                    Edit_ExceptSource.OnChange           := AttributeValueChange;
+                    Edit_ExceptCaption.OnChange          := PropertyChange;
+                    Edit_ExceptComment.OnChange          := PropertyChange;
+                    Edit_ExceptSource.OnChange           := PropertyChange;
                end;
                rtTry_Else : begin
                     PageControl_Detail.ActivePage      := TabSheet_TryElse;
@@ -618,8 +603,8 @@ begin
                     Edit_TryElseCaption.Text              := AXNode.Attributes['Caption'];
                     Edit_TryElseComment.Text              := AXNode.Attributes['Comment'];
                     //
-                    Edit_TryElseCaption.OnChange          := AttributeValueChange;
-                    Edit_TryElseComment.OnChange          := AttributeValueChange;
+                    Edit_TryElseCaption.OnChange          := PropertyChange;
+                    Edit_TryElseComment.OnChange          := PropertyChange;
                end;
           end;
 
@@ -657,24 +642,9 @@ begin
      except
           ShowMessage('Error when ShowNodeAttributes');
      end;
+}
 end;
 
-
-procedure TMainForm.SpeedButton_CodeClearClick(Sender: TObject);
-begin
-     SynEdit_Code.Text   := '';
-
-end;
-
-procedure TMainForm.SpeedButton_CodeTrimClick(Sender: TObject);
-var
-     iRow      : Integer;
-begin
-     for iRow := 0 to SynEdit_Code.Lines.Count-1 do begin
-          SynEdit_Code.Lines[iRow] := Trim(SynEdit_Code.Lines[iRow]);
-     end;
-     AttributeValueChange(Sender);
-end;
 
 procedure TMainForm.TreeViewCustomDrawItem(Sender: TCustomTreeView;
   Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
@@ -682,7 +652,7 @@ var
      tnRoot    : TTreeNode;
      xnCur     : IXMLNode;
 begin
-
+Exit;
      //
      if gxnRootNode=nil then begin
           Exit;
@@ -899,6 +869,12 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
      xnNew     : IXMLNode;
      iPage     : Integer;
+     iItem     : Integer;
+     //
+     oPopItem  : TMenuItem;
+     //
+     joModule  : TJsonObject;
+     joProperty: TJsonObject;
 begin
      gsMainDir := ExtractFilePath(Application.ExeName);
 
@@ -918,7 +894,7 @@ begin
 
      //
      gxnRootNode    := xnNew;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
 
      //
      UpdateChart;
@@ -929,11 +905,39 @@ begin
      gxdCopy.Version     := '1.0';
      gxdCopy.Encoding    := 'UTF-8';
 
-     //
-     for iPage := 0 to PageControl_Detail.PageCount-1 do begin
-          PageControl_Detail.Pages[iPage].TabVisible  := False;
+     //=================================start json =================================================
+
+     //Load modules json for popmenu of treeview
+     gjoModules     := TJsonObject.Create;
+     gjoModules.LoadFromFile(gsMainDir+'modules.json');
+     for iItem := 0 to gjoModules.A['items'].Count-1 do begin
+          joModule  := gjoModules.A['items'][iItem];
+          //
+          oPopItem  := TMenuItem.Create(PopupMenu_TreeView);
+          PopupMenu_TreeView.Items.Add(oPopItem);
+          oPopItem.MenuIndex       := iItem;
+          oPopItem.AutoHotkeys     := maManual;
+          oPopItem.Caption         := joModule.S['name'];
+          if  joModule.S['name']<>'-' then begin
+               oPopItem.OnClick         := PopItem_ModuleClick;
+          end;
      end;
 
+     //
+     gjoProject     := TJsonObject.Create;
+     gjoProject.S['name']     := 'file';
+     gjoProject.S['mode']     := 'only child';
+     gjoProject.A['items']    := TJsonArray.Create;
+     gjoProject.A['property'] := TJsonArray.Create;
+     with gjoProject.A['property'].AddObject do begin
+          S['name']      := 'caption';
+          S['type']      := 'string';
+          s['value']     := 'autocodepython';
+     end;
+
+     //
+     TreeView.Items[0].ImageIndex       := acModuleNameToImageIndex('file');
+     TreeView.Items[0].SelectedIndex    := TreeView.Items[0].ImageIndex
 end;
 
 procedure TMainForm.Panel_RegisterClick(Sender: TObject);
@@ -988,7 +992,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
 
      //刷新流程图
      UpdateChart;
@@ -998,6 +1002,197 @@ begin
 
      //刷新显示
      TreeView.OnClick(TreeView);
+end;
+
+procedure TMainForm.PopItem_ModuleClick(Sender: TObject);
+     procedure _AddNode(AtnParent:TTreeNode;AIndex:Integer;AjoModule:TJsonObject);
+     var
+          joParent  : TJsonObject;
+          joNew     : TJsonObject;
+          joChild0  : TJsonObject;
+          joChild1  : TJsonObject;
+          joChild2  : TJsonObject;
+          jaParent  : TJsonArray;
+          joProp    : TJsonObject;
+          //
+          tnNew     : TTreeNode;
+          tnChild0  : TTreeNode;
+          tnChild1  : TTreeNode;
+          tnChild2  : TTreeNode;
+
+          //
+          iProp     : Integer;
+          iChild    : Integer;
+
+          //
+          sCaption  : string;      //新节点的caption
+     begin
+          //get parent json node
+          joParent  := acTreeToJson(AtnParent);
+
+          //new tree node default text
+          sCaption  := '';
+
+          //add a new node. AIndex = -1 is lastchild
+          if AIndex = -1 then begin
+               joNew     := joParent.A['items'].AddObject;
+          end else begin
+               joNew     := joParent.A['items'].InsertObject(AIndex);
+          end;
+
+          //
+          with joNew do begin
+               S['name']      := AjoModule.S['name'];
+               S['mode']      := AjoModule.S['mode'];
+               //add property
+               A['property']  := TJsonArray.Create;
+               for iProp := 0 to AjoModule.A['property'].Count-1 do begin
+                    joProp    := AjoModule.A['property'][iProp];
+                    if joProp.S['type'] = 'string' then begin
+                         with A['property'].AddObject do begin
+                              S['name']      := joProp.S['name'];
+                              S['type']      := joProp.S['type'];
+                              S['value']     := joProp.S['default'];
+                         end;
+                    end else if joProp.S['type'] = 'source' then begin
+                         with A['property'].AddObject do begin
+                              S['name']      := joProp.S['name'];
+                              S['type']      := joProp.S['type'];
+                              S['value']     := joProp.S['default'];
+                         end;
+                    end else if joProp.S['type'] = 'integer' then begin
+                         with A['property'].AddObject do begin
+                              S['name']      := joProp.S['name'];
+                              S['type']      := joProp.S['type'];
+                              I['value']     := joProp.I['default'];
+                         end;
+                    end else if joProp.S['type'] = 'boolean' then begin
+                         with A['property'].AddObject do begin
+                              S['name']      := joProp.S['name'];
+                              S['type']      := joProp.S['type'];
+                              B['value']     := joProp.B['default'];
+                         end;
+                    end;
+
+                    //get text of new node
+                    if joProp.S['name'] = 'caption' then begin
+                         sCaption  := joProp.S['default'];
+                    end;
+               end;
+
+          end;
+
+          //new tree node
+          tnNew     := TreeView.Items.AddChild(AtnParent,sCaption);
+          tnNew.ImageIndex    := acModuleNameToImageIndex(joNew.S['name']);
+          tnNew.SelectedIndex := tnNew.ImageIndex;
+          tnNew.MakeVisible;
+          //
+          if AIndex <> -1 then begin
+               if AtnParent.Count>AIndex then begin
+                    tnNew.MoveTo(AtnParent.Item[AIndex],naInsert);
+               end;
+          end;
+
+          //add childs
+          for iChild := 0 to AjoModule.A['child'].Count-1 do begin
+               _AddNode(tnNew,-1,acFindModule(AjoModule.A['child'].S[iChild]));
+          end;
+     end;
+var
+     joModule  : TJsonObject; //
+     joModPar  : TJsonObject; //待添加的类型的parent
+     joCur     : TJsonObject; //
+     tnCur     : TTreeNode;
+     tnParent  : TTreeNode;
+
+     //
+     sMode     : string;
+     //0: as sibling, 1:as child, 3:as sibling(not last), 4: as optional child (not first, not last)
+     iAddMode  : Integer;     //
+
+begin
+     //get current treeview node
+     tnCur     := TreeView.Selected;
+     if tnCur = nil then begin
+          Exit;
+     end;
+
+     //get json node from treenode
+     joCur     := acTreeToJson(tnCur);
+
+     //get the module jsonobject
+     joModule  := gjoModules.A['items'][TMenuItem(Sender).MenuIndex];
+
+     //get the new type : child/sibling
+     iAddMode  := 0;
+     sMode     := joCur.S['mode'];
+     if sMode = 'only child' then begin
+          iAddMode  := 1;
+     end else if sMode = 'sibling and child' then begin
+          if not isCtrlDown then begin
+               iAddMode  := 1;
+          end;
+     end else if (sMode = 'as optional child') or (sMode = 'as fixed child') then begin
+          if (joCur.S['name'] = joModule.S['name']) then begin
+               iAddMode  := 2;
+          end else begin
+               if joModule.A['parent'].Count>0 then begin
+                    joModPar  := acFindModule(joModule.A['parent'].S[0]);
+                    if acInModules(joCur.S['name'],joModPar.A['child']) then begin
+                         iAddMode  := 2;
+                    end else begin
+                         iAddMode  := 1;
+                    end;
+               end else begin
+                    iAddMode  := 1;
+               end;
+          end;
+     end else if sMode = 'optional child' then begin
+          if acInModules(joCur.S['name'],acFindModule(joModule.S['name']).A['parent']) then begin
+               iAddMode  := 3;
+          end;;
+     end;
+
+     //
+     case iAddMode of
+          0 : begin //0: as sibling
+               tnParent  := tnCur.Parent;
+               _AddNode(tnParent,tnCur.Index+1,joModule);
+               tnParent.Item[tnCur.Index+1].Selected := True;
+          end;
+          1 : begin //1:as child
+               _AddNode(tnCur,-1,joModule);
+               tnCur.Item[tnCur.Count-1].Selected := True;
+          end;
+          2 : begin //2:as sibling(not last)
+               tnParent  := tnCur.Parent;
+               if tnCur.Index = tnParent.Count-1 then begin
+                    _AddNode(tnParent,tnCur.Index,joModule);
+                    tnParent.Item[tnCur.Index].Selected := True;
+               end else begin
+                    _AddNode(tnParent,tnCur.Index+1,joModule);
+                    tnParent.Item[tnCur.Index+1].Selected := True;
+               end;
+          end;
+          3 : begin //3: as optional child (not first, not last)
+               _AddNode(tnCur,tnCur.Count-1,joModule);
+               tnCur.Item[tnCur.Count-2].Selected := True;
+          end;
+     end;
+{
+     //add json module
+     if acInModules(joCur.S['name'] , gjoModules.A['container']) and (not isCtrlDown) then begin
+          _AddNode(tnCur,-1,joModule);
+          tnCur.Item[tnCur.Count-1].Selected := True;
+     end else begin
+          tnParent  := tnCur.Parent;
+          _AddNode(tnParent,tnCur.Index+1,joModule);
+          tnParent.Item[tnCur.Index+1].Selected := True;
+     end;
+}
+     //
+     //SynEdit.Text   := gjoProject.ToJSON(False);
 end;
 
 procedure TMainForm.PopMenu_CopyClick(Sender: TObject);
@@ -1243,7 +1438,7 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     SynEdit.Text    := GenXMLToPython(gxdXML,grOption);
+     SynEdit.Text    := JsonToPython(gjoProject);
 
      //
      SynEdit.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
@@ -1323,48 +1518,72 @@ end;
 
 procedure TMainForm.PopupMenu_TreeViewPopup(Sender: TObject);
 var
-     I         : Integer;
-     iMode     : Integer;
-     iLevel    : Integer;
-     ModeSet   : Set of Byte;
-     TarNode   : TTreeNode;
-     xnNode    : IXMLNode;
-
+     iModule   : Integer;
+     //
+     sName     : string;
+     sMode     : string;
+     sParent   : string;
+     //
+     tnNode    : TTreeNode;
+     //
+     joNode    : TJsonObject;
+     joParent  : TJsonObject;
+     joModule  : TJsonObject;
+     //
+     bTmp      : Boolean;
 begin
 
      //-----------------------------出错处理------------------------------------------------------//
-     if TreeView.Selected=nil then begin
+     if TreeView.Selected = nil then begin
           TreeView.Items[0].Selected    := True;
      end;
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
-     if xnNode = nil then begin
+     tnNode    := TreeView.Selected ;
+
+     //get current project jsonnode
+     joNode    := acTreeToJson(tnNode);
+     if joNode = nil then begin
           Exit;
      end;
+     sName     := joNode.S['name'];
 
      //----------------------------动态菜单处理---------------------------------------------------//
-     //取得当前节点类型
-     iMode     := xnNode.Attributes['Mode'];
+     if joNode.S['mode'] = 'optional child' then begin
+          for iModule := 0 to gjoModules.A['items'].Count-1 do begin
+               sMode     := gjoModules.A['items'][iModule].S['mode'];
+               bTmp      := not (acInStrings(sMode,['only','as fixed child','as optional child']));
+               PopupMenu_TreeView.Items[iModule].Visible    := not (acInStrings(sMode,['only child','as fixed child','as optional child']));
+               if (sMode = 'as optional child') and (acInModules(sName,gjoModules.A['items'][iModule].A['parent'])) then begin
+                    PopupMenu_TreeView.Items[iModule].Visible    := True;
+               end;
+          end;
+     end else if (joNode.S['mode'] = 'as optional child') or (joNode.S['mode'] = 'as fixed child') then begin
+          sParent   := acFindModule(sName).A['parent'].S[0];
+          for iModule := 0 to gjoModules.A['items'].Count-1 do begin
+               joModule  := gjoModules.A['items'][iModule];
+               sMode     := joModule.S['mode'];
+               PopupMenu_TreeView.Items[iModule].Visible    := not (acInStrings(sMode,['only child','as fixed child','as optional child']));
+               if sMode = 'as optional child' then begin
+                    if joModule.Contains('parent') then begin
+                         if joModule.A['parent'].Count>0 then begin
+                              PopupMenu_TreeView.Items[iModule].Visible    := joModule.A['parent'].S[0]=sParent;
+                         end;
+                    end;
+               end;
+          end;
+     end else begin
+          for iModule := 0 to gjoModules.A['items'].Count-1 do begin
+               joModule  := gjoModules.A['items'][iModule];
+               sMode     := joModule.S['mode'];
+               PopupMenu_TreeView.Items[iModule].Visible    := not (acInStrings(sMode,['only child','as fixed child','as optional child']));
+               //
+               if joModule.Contains('parent') then begin
+                    PopupMenu_TreeView.Items[iModule].Visible    := acInModules(sName,joModule.A['parent']);
+               end;
 
-     //Function检测
-     PopMenu_NewFunction.Visible   := InModes(iMode,[rtFile,rtClass]);
+          end;
+     end;
 
-     //Class检测
-     PopMenu_NewClass.Visible      := InModes(iMode,[rtFile]);
-
-     //Elif检测
-     PopMenu_NewElif.Visible      := InModes(iMode,[rtIF,rtIF_Else,rtIF_Yes,rtIF_ElseIf]);
-
-     //粘贴
-     PopMenu_Paste.Enabled    := gxdCopy.DocumentElement<>nil;
-
-     //删除
-     PopMenu_Delete.Enabled   := xnNode<>gxdXML.DocumentElement;
-
-     //剪切
-     PopMenu_Cut.Enabled      := xnNode<>gxdXML.DocumentElement;
-
-
-     //源节点不能剪切到其子节点
+     //there have erros when view menu and insert node!
 
 end;
 
@@ -1414,7 +1633,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
      //
      xnNode   := xnNew;
 
@@ -1647,7 +1866,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Parent.Selected := True;
-     ShowNodeAttributes(xnPar.ChildNodes.Last);
+     //ShowNodeAttributes(xnPar.ChildNodes.Last);
      
      //刷新流程图
      UpdateChart;
@@ -1719,7 +1938,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Parent.Selected := True;
-     ShowNodeAttributes(xnPar.ChildNodes.Last);
+     //ShowNodeAttributes(xnPar.ChildNodes.Last);
      xnNode   := xnNew.ParentNode;
 
      //刷新流程图
@@ -1782,7 +2001,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
      //
      xnNode   := xnNew;
      //刷新流程图
@@ -1858,7 +2077,7 @@ begin
      //显示新增树节点的属性
      tnNew.Parent.Selected := True;
      //
-     ShowNodeAttributes(xnPar.ChildNodes.Last);
+     //ShowNodeAttributes(xnPar.ChildNodes.Last);
 
      //刷新流程图
      UpdateChart;
@@ -1871,11 +2090,13 @@ end;
 
 procedure TMainForm.TreeViewMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+     tnNode    : TTreeNode;
 begin
      //右键直接选择节点
-     gtnCurNode     := TreeView.GetNodeAt(X, Y);
-     if gtnCurNode<>nil then begin
-          gtnCurNode.Selected := True;
+     tnNode     := TreeView.GetNodeAt(X, Y);
+     if tnNode<>nil then begin
+          tnNode.Selected := True;
      end;
 end;
 
@@ -1934,7 +2155,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
      //刷新流程图
      UpdateChart;
      //设置已修改标识
@@ -1995,7 +2216,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
      //刷新流程图
      UpdateChart;
      //设置已修改标识
@@ -2082,7 +2303,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
 
 
      //刷新流程图
@@ -2101,6 +2322,7 @@ var
      xnNode    : IXMLNode;
 begin
 
+Exit;
      try
           tnNode    := TreeView.Selected;
           if tnNode= nil then Exit;
@@ -2122,14 +2344,14 @@ begin
           SelectRect.Left     := -1;
 
           //
-          ShowNodeAttributes(xnNode);
+          //ShowNodeAttributes(xnNode);
 
           //恢复位置
           Image.Top      := 10;
           Image.Left     := 10;
 
           //
-          SynEdit.Text    := GenXMLToPython(gxdXML,grOption);
+          SynEdit.Text    := JsonToPython(gjoProject);
 
           //刷新流程图
           UpdateChart;
@@ -2267,7 +2489,7 @@ begin
 
      //显示新增树节点的属性
      tnTry.Selected := True;
-     ShowNodeAttributes(xnTry);
+     //ShowNodeAttributes(xnTry);
 
 
      //刷新流程图
@@ -2394,7 +2616,7 @@ var
      xnRoot    : IXMLNode;
 begin
      SaveNodeAttributes;
-     SynEdit.Text    := GenXMLToPython(gxdXML,grOption);
+     SynEdit.Text    := JsonToPython(gjoProject);
 
      //
      xnRoot    := gxdXML.DocumentElement;
@@ -2585,92 +2807,47 @@ end;
 procedure TMainForm.SaveNodeAttributes;
 var
      tnNode    : TTreeNode;
-     xnNew     : IXMLNode;
-     iIndex    : Integer;
-     xnNode    : IXMLNode;
+     joNode    : TJsonObject;
+     //
+     iProp     : Integer;
+     //
+     joProp    : TJsonObject;
+     //
+     oPanel    : TPanel;
+     oEdit     : TEdit;
+     oSpinEdit : TSpinEdit;
+     oSynEdit  : TSynEdit;
+     oCheckBox : TCheckBox;
 begin
      tnNode    := TreeView.Selected;
      if tnNode = nil then begin
           Exit;
      end;
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
-
-     try
-          case Integer(xnNode.Attributes['Mode']) of
-               rtFile : begin
-                    xnNode.Attributes['Caption'] := Edit_Caption.Text  ;
-               end;
-               rtFunc : begin
-                    //
-                    xnNode.Attributes['Caption'] := Edit_Function.Text                ;
-                    xnNode.Attributes['Comment'] := Edit_FunctionComment.Text         ;
-                    xnNode.Attributes['Enabled'] := CheckBox_FunctionEnabled.Checked  ;
-
-               end;
-               rtClass : begin
-                    //
-                    xnNode.Attributes['Caption'] := Edit_ClassCaption.Text         ;
-                    xnNode.Attributes['Comment'] := Edit_ClassComment.Text         ;
-                    xnNode.Attributes['Enabled'] := CheckBox_ClassEnabled.Checked  ;
-
-               end;
-               rtBlock_Code : begin
-                    //
-                    xnNode.Attributes['Caption'] := Edit_CodeCaption.Text             ;
-                    xnNode.Attributes['Comment'] := Edit_CodeComment.Text             ;
-                    xnNode.Attributes['Enabled'] := CheckBox_CodeEnabled.Checked      ;
-                    xnNode.Attributes['Source']  := SynEdit_Code.Text                 ;
-               end;
-               rtIf,rtIF_ElseIf : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_IfCaption.Text           ;
-                    xnNode.Attributes['Source']  :=  Edit_IfSource.Text            ;
-                    xnNode.Attributes['Comment'] :=  Edit_IfComment.Text           ;
-                    xnNode.Attributes['Enabled'] :=  CheckBox_IfEnabled.Checked    ;
-               end;
-               rtFor : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_ForCaption.Text           ;
-                    xnNode.Attributes['Source']  :=  Edit_ForSource.Text            ;
-                    xnNode.Attributes['Comment'] :=  Edit_ForComment.Text           ;
-                    xnNode.Attributes['Enabled'] :=  CheckBox_ForEnabled.Checked    ;
-               end;
-               rtWhile : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_WhileCaption.Text           ;
-                    xnNode.Attributes['Source']  :=  Edit_WhileSource.Text            ;
-                    xnNode.Attributes['Comment'] :=  Edit_WhileComment.Text           ;
-                    xnNode.Attributes['Enabled'] :=  CheckBox_WhileEnabled.Checked    ;
-               end;
-               rtTry : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_TryCaption.Text           ;
-                    xnNode.Attributes['Comment'] :=  Edit_TryComment.Text           ;
-                    xnNode.Attributes['Enabled'] :=  CheckBox_TryEnabled.Checked    ;
-               end;
-               rtTry_Except : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_ExceptCaption.Text           ;
-                    xnNode.Attributes['Source']  :=  Edit_ExceptSource.Text            ;
-                    xnNode.Attributes['Comment'] :=  Edit_ExceptComment.Text           ;
-               end;
-               rtTry_Else : begin
-                    //
-                    xnNode.Attributes['Caption'] :=  Edit_TryElseCaption.Text           ;
-                    xnNode.Attributes['Comment'] :=  Edit_TryElseComment.Text           ;
-               end;
+     //
+     joNode    := acTreeToJson(tnNode);
+     //
+     for iProp := 0 to Panel_LeftBottom.ControlCount-1 do begin
+          joProp    := joNode.A['property'][iProp];
+          //
+          oPanel    := TPanel(Panel_LeftBottom.Controls[iProp]);
+          if joProp.S['type'] = 'string' then begin
+               oEdit     := TEdit(oPanel.Controls[1]);
+               joProp.S['value']   := oEdit.Text;
+          end else if joProp.S['type'] = 'source' then begin
+               oSynEdit  := TSynEdit(oPanel.Controls[1]);
+               joProp.S['value']   := oSynEdit.Text;
+          end else if joProp.S['type'] = 'integer' then begin
+               oSpinEdit     := TSpinEdit(oPanel.Controls[1]);
+               joProp.I['value']   := oSpinEdit.Value;
+          end else if joProp.S['type'] = 'boolean' then begin
+               oCheckBox     := TCheckBox(oPanel.Controls[1]);
+               joProp.B['value']   := oCheckBox.Checked;
           end;
 
           //更新树节点显示
-          if TreeView.Selected <> nil then begin
-               if Trim(xnNode.Attributes['Caption']) = '' then begin
-                    TreeView.Selected.Text   := GetNodeText(xnNode);//RTtoStr(xnNode.Attributes['Mode']);
-               end else begin
-                    TreeView.Selected.Text   := xnNode.Attributes['Caption'];
-               end;
+          if joProp.S['name'] = 'caption' then begin
+               TreeView.Selected.Text   := joProp.S['value'];
           end;
-     except
-          ShowMessage('Error when SaveNodeAttributes!');
      end;
 end;
 
@@ -2849,6 +3026,73 @@ begin
      end;
 end;
 
+procedure TMainForm.PopMenu_tkinterwindowClick(Sender: TObject);
+var
+     tnNode    : TTreeNode;
+     tnPar     : TTreeNode;
+     tnNew     : TTreeNode;
+     //
+     xnNode    : IXMLNode;    //当前节点
+     xnPar     : IXMLNode;    //拟新增节点的父节点
+     xnNew     : IXMLNode;    //新增节点
+begin
+     //
+     if Form_TkinterWindow.ShowModal = mrOK then begin
+          //得到当前节点
+          tnNode    := TreeView.Selected;
+          if tnNode=nil then begin
+               Exit;
+          end;
+          xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+
+          //根据当前节点类型确定父节点
+          if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
+               xnPar     := xnNode;
+               tnPar     := tnNode;
+          end else begin
+               xnPar     := xnNode.ParentNode;
+               tnPar     := tnNode.Parent;
+          end;
+
+          //<新增XML节点
+          //CODE
+          xnNew     := xnPar.AddChild('CODE');
+          xnNew.Attributes['Mode']      := rtBlock_Code;
+          xnNew.Attributes['Caption']   := '';
+          xnNew.Attributes['Source']    := Form_TkinterWindow.PythonCode;
+          xnNew.Attributes['Comment']   := '';
+          xnNew.Attributes['Enabled']   := True;
+          //>
+
+          //设置上移下称可用性
+          ToolButton_Down.Enabled  := xnNew.NextSibling<>nil;
+          ToolButton_Up.Enabled    := xnNew.PreviousSibling<>nil;
+
+          //<新增树节点
+          //CODE
+          tnNew     := TreeView.Items.AddChild(tnPar,'tkineter window');
+          tnNew.ImageIndex    := ModeToImageIndex(rtBlock_Code);
+          tnNew.SelectedIndex := tnNew.ImageIndex;
+          tnNew.MakeVisible;
+
+          //>
+
+          //显示新增树节点的属性
+          tnNew.Selected := True;
+          //ShowNodeAttributes(xnNew);
+          //
+          xnNode   := xnNew;
+          //刷新流程图
+          UpdateChart;
+          //设置已修改标识
+          gbModified     := True;
+
+          //刷新显示
+          TreeView.OnClick(TreeView);
+     end;
+
+end;
+
 procedure TMainForm.UpdateChart;
 var
      tnRoot    : TTreeNode;
@@ -2985,7 +3229,7 @@ begin
 
      //显示新增树节点的属性
      tnNew.Selected := True;
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
      xnNode   := xnNew;
 
      //刷新流程图
@@ -3004,6 +3248,9 @@ var
      rConfig   : TWWConfig;
      xnNode    : IXMLNode;
 begin
+     Exit;
+
+     //
      tnNode    := TreeView.Selected;
      if tnNode = nil then begin
           Exit;
@@ -3029,7 +3276,7 @@ begin
           SelectRect.Left     := -1;
 
           //
-          ShowNodeAttributes(xnNode);
+          //ShowNodeAttributes(xnNode);
 
           //恢复位置
           Image.Top      := 10;
@@ -3089,7 +3336,7 @@ begin
           xnNode   := GetXMLNodeFromTreeNode(gxdXML,tnCur);
 
           //显示当前树节点信息
-          ShowNodeAttributes(xnNode);
+          //ShowNodeAttributes(xnNode);
 
           //刷新显示
           UpdateChart;
@@ -3143,7 +3390,7 @@ begin
      TreeView.Items[0].Text   := 'New file';
 
      //
-     ShowNodeAttributes(xnNew);
+     //ShowNodeAttributes(xnNew);
 
      //
      UpdateChart;
@@ -3196,7 +3443,7 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     SynEdit.Text    := GenXMLToPython(gxdXML,grOption);
+     SynEdit.Text    := JsonToPython(gjoProject);
 
      //
      SynEdit.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
@@ -3346,22 +3593,19 @@ begin
      clipboard.AsText    := SynEdit.SelText;
 end;
 
-procedure TMainForm.AttributeValueChange(Sender: TObject);
+procedure TMainForm.PropertyChange(Sender: TObject);
 begin
      SaveNodeAttributes;
-     UpdateChart;
-     SynEdit.Text    := GenXMLToPython(gxdXML,grOption);
+     //UpdateChart;
+     SynEdit.Text    := JsonToPython(gjoProject);
 end;
 
 procedure TMainForm.TreeViewChange(Sender: TObject; Node: TTreeNode);
-var
-     xnNode    : IXMLNode;
+
 begin
-     //得到当前节点的XML节点
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,Node);
 
      //显示详细信息
-     ShowNodeAttributes(xnNode);
+     ShowNodeAttributes(acTreeToJson(Node));
 
 end;
 

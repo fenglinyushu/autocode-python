@@ -1,0 +1,23 @@
+
+1 only child 不允许有兄弟模块,只有孩子
+  file, block
+
+2 sibling and child 允许有兄弟和孩子
+  function,class,set,
+
+3 fixed child 只有固定的孩子
+  for,while,repeat
+
+4 optional child 有固定的孩子和可选的孩子
+  if,try
+
+5 as fixed child 只有固定的父亲,只有少量的兄弟
+  if_yes,if_else
+  try_else
+
+6 as optional child 作为可选的孩子，配合parent使用
+  if_elif，try_except
+
+7 no child 没有孩子
+  code,break,continue
+

@@ -1,0 +1,13 @@
+unit acVars;
+
+interface
+
+Uses
+     JsonDataObjects,
+
+     //
+     Classes,Graphics;
+
+implementation
+
+end.

@@ -1,0 +1,19 @@
+unit acVars;
+
+interface
+
+Uses
+     JsonDataObjects,
+
+     //
+     Classes,Graphics;
+
+
+var
+     //
+     gjoModules     : TJsonObject;      //可以添加的模块
+     gjoProject     : TJsonObject;      //当前工程
+
+implementation
+
+end.

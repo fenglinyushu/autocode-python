@@ -1,0 +1,33 @@
+unit SysVars;
+{
+本单元包含系统全部的全局变量
+}
+
+//{$DEFINE ISOEM}
+
+interface
+
+uses
+     //自编模块
+     SysRecords,SysConsts,
+     XMLGenCodeRecords,
+     //
+     Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+     Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons, ImgList, ToolWin,
+     Math, Spin, IniFiles, Grids, ExtDlgs,  Menus;
+type
+     //当前打开的文件结构
+     TWWFile = record
+          Name      : String;                     //当前程序的文件名,不含路径名
+          Path      : String;                     //文件目录名,含最后的\
+          CodeType  : Integer;                    //0:C,1:Pascal
+          Changed   : Boolean;                    //文件是否已更改
+          FuncNames : array of string;            //当前文件的简洁函数名列表
+          FileTime  : TDateTime;
+     end;
+
+implementation
+
+
+
+end.

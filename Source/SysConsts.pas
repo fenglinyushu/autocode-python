@@ -159,7 +159,7 @@ const
      rtSys_VarType       = rtSysBase+12;     // int,long,WORD,DWORD,char
      rtSys_Array         = rtSysBase+13;     // array[..]
      rtClass             = rtSysBase+14;     // class
-     rtSys_Struct        = rtSysBase+15;     // class
+     rtSys_Struct        = rtSysBase+15;     //
      rtSys_BeginSign     = rtSysBase+16;     // 开始分析标志, 主要用于DELPHI中的program,implementation,library等
      rtSys_External      = rtSysBase+17;     // 用于DELPHI中引用其它库的函数
      rtSys_NameSpace     = rtSysBase+18;     // NameSapce
