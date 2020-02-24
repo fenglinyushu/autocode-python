@@ -20,7 +20,6 @@ type
     Label3: TLabel;
     Timer: TTimer;
     procedure Button_CancelClick(Sender: TObject);
-    procedure Button_OrderNowClick(Sender: TObject);
     procedure Edit_RegNameChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -50,11 +49,6 @@ end;
 procedure TForm_InputRegCode.Button_OKClick(Sender: TObject);
 begin
      Close;
-end;
-
-procedure TForm_InputRegCode.Button_OrderNowClick(Sender: TObject);
-begin
-     ShellExecute(Handle,'open',Pchar(gsOrderPage),'','',SW_SHOWDEFAULT);
 end;
 
 procedure TForm_InputRegCode.Edit_RegNameChange(Sender: TObject);

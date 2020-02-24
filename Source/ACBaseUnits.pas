@@ -24,6 +24,7 @@ function  acInModules(AName:string;AArray:TJsonArray):Boolean;
 function  acInStrings(AName:string;AArray:array of string):Boolean;
 function  acModuleNameToImageIndex(AName:string):Integer;
 function  acFindModule(AName:string):TJsonObject;
+function acGetNewMode(ASource,ADest: String): TPasteMode;
 
 //
 function  isCtrlDown: Boolean;
@@ -252,6 +253,66 @@ begin
           ShowMessage('Error when acFindModule : '+AName);
      end;
 end;
+
+
+
+function acGetNewMode(ASource,ADest: String): TPasteMode;
+var
+     iCurMode  : Integer;
+     bCtrl     : Boolean;
+     bShift    : Boolean;
+     //
+     joSource  : TJsonObject;
+     joDest    : TJsonObject;
+begin
+     //设置默认返回值
+     Result    := pmNext;
+
+     //获得当前键盘状态
+     bCtrl     := ((integer(GetKeyState(VK_Control))and integer($80))<>0);
+     bShift    := ((integer(GetKeyState(VK_Shift))and integer($80))<>0);
+
+     //
+     joSource  := acFindModule(ASource);
+     joDest    := acFindModule(ADest);
+
+     if (joSource.S['mode'] = 'as optional child') and (joDest.S['mode']='optional child') then begin
+          if joSource.A['parent'].S[0] = ADest then begin
+               //源节点是目标节点的可选child
+               Result    := pmPrevLast;
+               Exit;
+          end else begin
+               //源节点不是目标节点的可选child
+               Result    := pmNext;
+               Exit;
+          end;
+     end;
+
+
+
+{
+     //<处理其它情况
+     //
+     if InModes(DestMode,gForceChildSet) then begin
+          Result.AddMode := nmChild;
+     end else if InModes(DestMode,gHasChildSet) then begin
+          if bCtrl then begin
+               Result.AddMode := nmAppend;
+          end else if bShift then begin
+               Result.AddMode := nmInsert;
+          end else begin
+               Result.AddMode := nmChild;
+          end;
+     end else begin
+          if bShift then begin
+               Result.AddMode := nmInsert;
+          end;
+     end;
+     Exit;
+     //>
+}
+end;
+
 
 
 function isCtrlDown: Boolean;

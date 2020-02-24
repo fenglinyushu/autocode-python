@@ -237,7 +237,7 @@ var
      var
           II,JJ     : Integer;
      begin
-          //赋给简单变量以便于书写
+{          //赋给简单变量以便于书写
           X    := Node.Attributes['X'];
           Y    := Node.Attributes['Y'];
           E    := Node.Attributes['E'];
@@ -486,6 +486,7 @@ var
                     DrawNodeFlowchart(Node.ChildNodes[II]);
                end;
           end;
+}
      end;
      procedure ClearNodeWHE(Node:IXMLNode);
      var

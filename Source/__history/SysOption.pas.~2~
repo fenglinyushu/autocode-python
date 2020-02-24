@@ -1,0 +1,280 @@
+unit SysOption;
+
+interface
+
+uses
+     //自编模块
+     SysRecords,SysConsts,SysVars,
+     XMLGenCodeRecords,
+     //XMLFlowChartUnit,
+     
+     //系统
+     XMLDoc,XMLIntf,
+     Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+     Dialogs, StdCtrls, ComCtrls,IniFiles, Grids,ExtCtrls, Buttons;
+
+type
+  TForm_Options = class(TForm)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    Panel1: TPanel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label36: TLabel;
+    Label34: TLabel;
+    Label38: TLabel;
+    Panel_Bottom: TPanel;
+    Panel_BottomRight: TPanel;
+    Button_OK: TButton;
+    Button_Cancel: TButton;
+    Panel_Demo: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Label3: TLabel;
+    PageControl2: TPageControl;
+    TabSheet2: TTabSheet;
+    Image: TImage;
+    Bevel3: TBevel;
+    Label4: TLabel;
+    CheckBox_AddCaption: TCheckBox;
+    CheckBox_AddComment: TCheckBox;
+    Button1: TButton;
+    procedure Button_OKClick(Sender: TObject);
+    procedure Button_CancelClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+          procedure UpdateConfig(Sender: TObject);
+          procedure Button1Click(Sender: TObject);
+  private
+  public
+          procedure SaveToFile(FileName:string);
+          function  GetCurrentConfig:TWWConfig;
+          procedure ShowConfig(Config:TWWConfig);
+    { Public declarations }
+  end;
+
+var
+  Form_Options: TForm_Options;
+
+procedure LoadFromFile(FileName:String);
+
+implementation
+uses Main;
+
+{$R *.dfm}
+
+procedure TForm_Options.Button_OKClick(Sender: TObject);
+var
+     MyIni     : TIniFile;
+     I         : Integer;
+begin
+     try
+          //
+          grConfig  := GetCurrentConfig;
+          //
+          SaveToFile(gsMainDir+'Options.ini');
+
+          Form_Options.Close;
+     except
+          ShowMessage(#13#13'   ---   Input value is invalid!   ---    '#13#13);
+     end;
+end;
+
+procedure TForm_Options.Button_CancelClick(Sender: TObject);
+begin
+     Close;
+end;
+
+procedure TForm_Options.FormShow(Sender: TObject);
+begin
+     //
+     ShowConfig(grConfig);
+
+     //
+     UpdateConfig(self);
+end;
+
+procedure TForm_Options.UpdateConfig(Sender: TObject);
+var
+     L,T,E,W,H : Integer;
+     bPar      : Boolean;
+     xnTmp     : IXMLNode;
+     tnCur     : TTreeNode;
+     //
+     xdXML     : TXMLDocument;
+     xnRoot    : IXMLNode;
+     xnNew     : IXMLNode;
+
+     SelRect   : TRect;
+     rConfig   : TWWConfig;
+begin
+     //
+     rConfig   := GetCurrentConfig;
+
+     //生成一个XML
+     xdXML     := TXMLDocument.Create(self);
+     xdXML.Active   := True;
+     xdXML.Version  := '1.0';
+     xdXML.Encoding := 'UTF-8';
+
+     //
+     xnRoot    := xdXML.AddChild('Root');
+     xnRoot.Attributes['Mode']     := rtFile;
+     xnRoot.Attributes['Caption']  := 'New file';
+     xnRoot.Attributes['Source']   := 'Newfile.c';
+     xnRoot.Attributes['Comment']  := '';
+     xnRoot.Attributes['Expanded'] := True;
+
+     //
+     //<新增XML节点
+     //IF
+     xnNew     := xnRoot.AddChild('IF');
+     xnNew.Attributes['Mode']      := rtIF;
+     xnNew.Attributes['Caption']   := 'TRUE';
+     xnNew.Attributes['Source']    := 'TRUE';
+     xnNew.Attributes['Comment']   := '';
+     xnNew.Attributes['Expanded']  := True;
+     //YES
+     xnNew     := xnRoot.ChildNodes.Last.AddChild('YES');
+     xnNew.Attributes['Mode']      := rtIF_YES;
+     xnNew.Attributes['Caption']   := 'YES';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     xnNew.Attributes['Expanded']  := True;
+     //NO
+     xnNew     := xnRoot.ChildNodes.Last.AddChild('NO');
+     xnNew.Attributes['Mode']      := rtIF_ELSE;
+     xnNew.Attributes['Caption']   := 'NO';
+     xnNew.Attributes['Source']:= '';
+     xnNew.Attributes['Comment']   := '';
+     xnNew.Attributes['Expanded']  := True;
+     //>
+
+     //重绘流程图
+     DrawXmlToFlowChart(xnRoot,Image,rConfig);
+
+
+
+     //<绘制当前节点图
+     //
+     L    := xnNew.Attributes['X'];
+     T    := xnNew.Attributes['Y'];
+     W    := xnNew.Attributes['W'];
+     H    := xnNew.Attributes['H'];
+     E    := xnNew.Attributes['E'];
+
+     //得到区域信息
+     L    := Round(L-E-rConfig.BaseWidth*rConfig.Scale);
+     W    := W+E;
+
+     //绘制
+     SelRect.Left     := Round(L-rConfig.SpaceHorz*rConfig.Scale/2);
+     SelRect.Top      := Round(T-rConfig.SpaceVert*rConfig.Scale/2);
+     SelRect.Right    := Round(L+W+rConfig.SpaceHorz*rConfig.Scale/2);
+     SelRect.Bottom   := Round(T+H-rConfig.SpaceVert*rConfig.Scale/2);
+
+     with Image.Canvas do begin
+          Brush.Style    := bsSolid;
+          Brush.Color    := clWhite-rConfig.SelectColor;// clWhite-Color_Selected;
+          Pen.Color      := clWhite-rConfig.SelectColor;//clWhite-Color_Selected;
+          Pen.Mode       := pmXor;
+          Rectangle(SelRect.Left,SelRect.Top ,SelRect.Right ,SelRect.Bottom);
+     end;
+     //>
+
+end;
+
+
+function TForm_Options.GetCurrentConfig: TWWConfig;
+begin
+end;
+
+procedure TForm_Options.ShowConfig(Config: TWWConfig);
+begin
+end;
+
+procedure LoadFromFile(FileName: String);
+var
+     fIni      : TIniFile;
+begin
+     //
+     fIni := TIniFile.Create(FileName);
+     grConfig.Scale      := 1;
+     //
+     grConfig.BaseWidth  := fIni.ReadInteger('Main','BaseWidth',_DefaultBW);
+     grConfig.BaseHeight := fIni.ReadInteger('Main','BaseHeight',_DefaultBH);
+     grConfig.SpaceHorz  := fIni.ReadInteger('Main','SpaceHorz',_DefaultSH);
+     grConfig.SpaceVert  := fIni.ReadInteger('Main','SpaceVert',_DefaultSV);
+     //
+     grConfig.LineColor  := fIni.ReadInteger('Main','LineColor',_DefaultLineColor);
+     grConfig.IFColor    := fIni.ReadInteger('Main','IFColor',_DefaultIFColor);
+     grConfig.SelectColor:= fIni.ReadInteger('Main','SelectedColor',_DefaultSelectColor);
+     //
+     grConfig.FontName   := fIni.ReadString('Main','FontName',_DefaultFontName);
+     grConfig.FontColor  := fIni.ReadInteger('Main','FontColor',_DefaultFontColor);
+     grConfig.FontSize   := fIni.ReadInteger('Main','FontSize',_DefaultFontSize);
+     //
+     grConfig.Indent     := fIni.ReadInteger('Main','Indent',_DefaultIndent);
+     //
+     grConfig.AddCaption := fIni.ReadBool('Main','AddCaption',True);
+     grConfig.AddComment := fIni.ReadBool('Main','AddComment',True);
+     //
+     grConfig.ShowDetailCode  := True;
+     //
+     fIni.Destroy;
+end;
+
+procedure TForm_Options.SaveToFile(FileName: string);
+var
+     fIni      : TIniFile;
+     I         : Integer;
+begin
+     try
+          //保存当前设置到INI文件
+          fIni     := TIniFile.Create(FileName);
+          //编辑器属性
+          fIni.WriteInteger('Main','Indent',grConfig.Indent);
+          //流程图尺寸配置
+          fIni.WriteInteger('Main','BaseWidth',grConfig.BaseWidth);
+          fIni.WriteInteger('Main','BaseHeight',grConfig.BaseHeight);
+          fIni.WriteInteger('Main','SpaceVert',grConfig.SpaceVert);
+          fIni.WriteInteger('Main','SpaceHorz',grConfig.SpaceHorz);
+          //流程图颜色
+          fIni.WriteInteger('Main','LineColor',grConfig.LineColor);
+          fIni.WriteInteger('Main','IFColor',grConfig.IFColor);
+          fIni.WriteInteger('Main','SelectedColor',grConfig.SelectColor);
+          //Font
+          fIni.WriteString('Main','FontName',grConfig.FontName);
+          fIni.WriteInteger('Main','FontSize',grConfig.FontSize);
+          fIni.WriteInteger('Main','FontColor',grConfig.FontColor);
+          //
+          fIni.WriteBool('Main','AddCaption',grConfig.AddCaption);
+          fIni.WriteBool('Main','AddComment',grConfig.AddComment);
+          //
+          fIni.Destroy;
+     except
+     end;
+end;
+
+procedure TForm_Options.FormCreate(Sender: TObject);
+begin
+     //从本地文件中得到当前设置
+     LoadFromFile(gsMainDir+'Options.ini');
+end;
+
+procedure TForm_Options.Button1Click(Sender: TObject);
+begin
+     if MessageDlg(#13+'Are you really want to restore the default ?'+#13,
+               mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+     begin
+          LoadFromFile('');
+          //
+          ShowConfig(grConfig);
+     end;
+end;
+
+end.

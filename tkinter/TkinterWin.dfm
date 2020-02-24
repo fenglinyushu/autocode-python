@@ -152,20 +152,20 @@ object Form_TkinterWindow: TForm_TkinterWindow
       ImageIndex = 23
       OnClick = ToolButton_DeleteClick
     end
-    object ToolButton4: TToolButton
+    object ToolButton_Generate: TToolButton
       Left = 939
+      Top = 0
+      Caption = 'Generate'
+      ImageIndex = 24
+      OnClick = ToolButton_GenerateClick
+    end
+    object ToolButton4: TToolButton
+      Left = 1010
       Top = 0
       Width = 8
       Caption = 'ToolButton4'
       ImageIndex = 8
       Style = tbsSeparator
-    end
-    object ToolButton_Generate: TToolButton
-      Left = 947
-      Top = 0
-      Caption = 'Generate'
-      ImageIndex = 24
-      OnClick = ToolButton_GenerateClick
     end
     object ToolButton_Cancel: TToolButton
       Left = 1018
@@ -782,7 +782,6 @@ object Form_TkinterWindow: TForm_TkinterWindow
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
-    ExplicitWidth = 778
     object Panel_Form: TPanel
       Left = 200
       Top = 89
@@ -914,7 +913,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
     Left = 326
     Top = 58
     Bitmap = {
-      494C01012C003000280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C0030002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

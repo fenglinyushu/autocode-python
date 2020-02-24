@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.175,=E:\Github\treeedit\Vcl\FloatSpinEdit\FloatSpinEdit.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.624,=VclSmp.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.605,=vcl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.847,=rtl.dcp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.435,C:\Users\Billows\Documents\Embarcadero\Studio\Projects\Package1.dproj=E:\Github\treeedit\Vcl\FloatSpinEdit\FSE.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

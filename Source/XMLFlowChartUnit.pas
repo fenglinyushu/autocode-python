@@ -370,7 +370,7 @@ const
      var
           II,JJ     : Integer;
      begin
-          //如果该节点合拢,则不必要分析其子节点的位置
+{          //如果该节点合拢,则不必要分析其子节点的位置
           if not Node.Attributes['Expanded'] then begin
                Exit;
           end;
@@ -522,13 +522,14 @@ const
           for II:=0 to Node.ChildNodes.Count-1 do begin
                SetNodePosition(Node.ChildNodes[II]);
           end;
+}
      end;
      //
      procedure DrawNodeFlowchart(Node:IXMLNode);
      var
           II,JJ     : Integer;
      begin
-          try
+{          try
                if not Node.HasAttribute('X') then begin
                     ShowMessage('Error not XYWHE! '#13#13+Node.XML);
                     Exit;
@@ -788,6 +789,7 @@ const
           except
                ShowMessage('Error when DrawNodeFlowchart! '+RTtoStr(Node.Attributes['Mode']));
           end;
+}
      end;
      procedure ClearNodeWHE(Node:IXMLNode);
      var

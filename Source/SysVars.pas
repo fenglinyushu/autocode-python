@@ -11,6 +11,10 @@ uses
      //×Ô±àÄ£¿é
      SysRecords,SysConsts,
      XMLGenCodeRecords,
+
+     //
+     JsonDataObjects,
+
      //
      Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
      Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons, ImgList, ToolWin,
@@ -66,13 +70,24 @@ var
 
      gbRegistered   : Boolean=True;
 
+     //
+     gjoProject     : TJsonObject;
+     gjoModules     : TJsonObject;
+     gjoChartRoot   : TJsonObject;
+     //
+     gsProjectName  : string = '';
+
+     //
+     gbShowDetailCode    : Boolean = False;
+
+
+
 const
      gsName         : string = 'AutoCode - Python';
      gsHomePage     : String = 'http://www.web0000.com';
-     gsOrderPage    : String = 'http://www.shareit.com/product.html?productid=300544745';
-     gsWebSite      : String = 'http://www.web0000.com';
      gsMail         : String = 'fenglinyushu@163.com';
 
+ 
 implementation
 
 

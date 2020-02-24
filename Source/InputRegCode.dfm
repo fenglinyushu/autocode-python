@@ -93,7 +93,6 @@ object Form_InputRegCode: TForm_InputRegCode
       Height = 25
       Caption = 'Order Now!'
       TabOrder = 1
-      OnClick = Button_OrderNowClick
     end
   end
   object Memo_RegCode: TMemo

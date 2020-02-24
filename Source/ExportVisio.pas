@@ -298,6 +298,7 @@ var
      var
           II,JJ     : Integer;
      begin
+{
           //赋给简单变量以便于书写
           X    := Node.Attributes['X'];
           Y    := Node.Attributes['Y'];
@@ -549,6 +550,7 @@ var
                     DrawNodeFlowchart(Node.ChildNodes[II]);
                end;
           end;
+}
      end;
 begin
      try

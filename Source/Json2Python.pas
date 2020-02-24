@@ -33,9 +33,12 @@ var
      //sIndent   : string;
      sCaption  : string;      //节点的Caption属性，但去除了其中的换行信息
      sName     : string;
+     sWin      : string;
+     sComp     : string;      // Component Name
      //
      xnElse    : TJsonObject;
      xnParent  : TJsonObject;
+     joChild   : TJsonObject;
 
      procedure AddChildCodeWithIndent(II:Integer);
      var
@@ -92,24 +95,27 @@ var
                end;
           end;
      end;
-     function _S(AName:string):String;
-     begin
-          Result    := _GetSProp(ANode,AName);
-     end;
-     function _B(AName:string):Boolean;
+     function _ItemsToStr(AItems:String):string;
      var
-          II   : Integer;
+          II        : Integer;
+          slItems   : TStringList;
      begin
-          Result    := false;
-          for II := 0 to ANode.A['property'].Count-1 do begin
-               if ANode.A['property'][II].S['name'] = AName then begin
-                    Result    := ANode.A['property'][II].B['value'];
-               end;
+          Result    := '';
+          //
+          slItems   := TStringList.Create;
+          slItems.Text   := AItems;
+          if slItems.Count>0 then begin
+               Result    := '"'+slItems[0]+'"';
+          end;
+
+          for II := 1 to slItems.Count-1 do begin
+               Result    := Result+',"'+slItems[II]+'"';
           end;
      end;
+
 begin
      //如果当前节点不使能，则不生成代码
-     if _B('disabled') then begin
+     if ANode.B['disabled'] then begin
           Result    := '';
           Exit;
      end;
@@ -128,13 +134,13 @@ begin
      end;
 
      //添加注释
-     if _S('comment')<>'' then begin
-          slDM.Add('# '+_S('comment'));
+     if ANode.S['comment']<>'' then begin
+          slDM.Add('# '+ANode.S['comment']);
      end;
 
      //生成代码
      sName     := ANode.S['name'];
-     if sName = 'file' then begin
+     if sName = 'root' then begin
 
           //添加当前节点代码
 
@@ -144,7 +150,7 @@ begin
           end;
      end else if sName = 'function' then begin
           //添加当前节点代码
-          slDM.Add('def '+_S('source')+':');
+          slDM.Add('def '+ANode.S['source']+':');
 
           //添加子代码
           for I:=0 to ANode.A['items'].Count-1 do begin
@@ -157,7 +163,7 @@ begin
      end else if sName = 'class' then begin
 
           //添加当前节点代码
-          slDM.Add('class '+_S('caption')+':');
+          slDM.Add('class '+ANode.S['caption']+':');
 
           //添加子代码
           for I:=0 to ANode.A['items'].Count-1 do begin
@@ -170,7 +176,7 @@ begin
      end else if acInStrings(sName, ['code']) then begin
 
           //添加当前节点代码
-          slDM.Add(_S('source'));
+          slDM.Add(ANode.S['source']);
 
           //
           AddSpaceLine;
@@ -198,7 +204,7 @@ begin
           AddSpaceLine;
      end else if acInStrings(sName, ['if']) then begin
           //添加当前节点代码
-          slDM.Add('if '+_S('source')+':');
+          slDM.Add('if '+ANode.S['source']+':');
 
           //
           AddChildCodeWithIndent(0);
@@ -222,7 +228,7 @@ begin
           end;
      end else if acInStrings(sName, ['for']) then begin
           //添加当前节点代码
-          slDM.Add('for '+_S('source')+':');
+          slDM.Add('for '+ANode.S['source']+':');
 
           //添加子节点代码
           AddChildCodeWithIndent(0);
@@ -231,7 +237,7 @@ begin
           AddSpaceLine;
      end else if acInStrings(sName, ['while']) then begin
           //添加当前节点代码
-          slDM.Add('while '+_S('source')+':');
+          slDM.Add('while '+ANode.S['source']+':');
 
           //添加子节点代码
           AddChildCodeWithIndent(0);
@@ -274,8 +280,129 @@ begin
           end;
           //
           AddSpaceLine;
+     end else if acInStrings(sName, ['tk_window']) then begin
+          sWin := ANode.S['compname'];
+          if sWin = '' then begin
+               sWin := 'win';
+          end;
+
+          slDM.Add('import tkinter as tk');
+          //
+          slDM.Add(sWin + ' = tk.Tk()');
+
+          //标题
+          slDM.Add('');
+          slDM.Add('# title');
+          slDM.Add(sWin + '.title('''+ANode.S['caption']+''')');
+
+          //设定窗口的大小(长 * 宽)
+          slDM.Add('');
+          slDM.Add('# width/height/left/top');
+          slDM.Add(Format('%s.geometry(''%dx%d+%d+%d'')',[sWin,Anode.I['width'],Anode.I['height'],Anode.I['left'],Anode.I['top']]));
+          slDM.Add(Format('%s.configure(background="#%.2x%.2x%.2x")',[sWin,ANode.A['color'].I[0],ANode.A['color'].I[1],ANode.A['color'].I[2]]));
+
+          //添加当前节点代码
+          for I:=0 to ANode.A['items'].Count-1 do begin
+               slDM.Add('');
+               joChild   := ANode.A['items'].O[I];
+               //
+               if joChild.S['name'] = 'tk_label' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'label'+IntToStr(I);
+                    end;
+                    //
+                    slDM.Add('labeltext = """');
+                    slDM.Add(joChild.S['caption']);
+                    slDM.Add('"""');
+                    slDM.Add(Format('%s = tk.Label('+sWin+', text=labeltext, bg="#%.2x%.2x%.2x", font=("%s", %d),justify="%s", anchor="%s")',
+                              [sComp,joChild.A['color'].I[0],joChild.A['color'].I[1],joChild.A['color'].I[2],
+                              joChild.O['font'].S['name'],joChild.O['font'].I['size'],joChild.S['justify'],joChild.S['anchor']  ]));
+
+               end else if joChild.S['name'] = 'tk_button' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'button'+IntToStr(I);
+                    end;
+                    //
+                    slDM.Add(Format('%s = tk.Button('+sWin+', text="%s",  font=("%s", %d))',
+                              [sComp,joChild.S['caption'],joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+
+               end else if joChild.S['name'] = 'tk_entry' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'entry'+IntToStr(I);
+                    end;
+                    //
+                    if joChild.B['password'] then begin
+                         slDM.Add(Format('%s = tk.Entry('+sWin+', show="*",  font=("%s", %d))',
+                                   [sComp,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+                    end else begin
+                         slDM.Add(Format('%s = tk.Entry('+sWin+',  font=("%s", %d))',
+                                   [sComp,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+                    end;
+                    if joChild.S['default']<>'' then begin
+                         slDM.Add(Format('%s.insert(0, "%s")', [sComp,joChild.S['default']]));
+                    end;
+
+               end else if joChild.S['name'] = 'tk_check' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'check'+IntToStr(I);
+                    end;
+                    //
+                    slDM.Add(Format('%s = tk.Checkbutton('+sWin+',text="%s",  font=("%s", %d), anchor="w")',
+                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+
+               end else if joChild.S['name'] = 'tk_radio' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'radio'+IntToStr(I);
+                    end;
+                    //
+                    slDM.Add(Format('%s = tk.Radiobutton('+sWin+',text="%s",  font=("%s", %d), anchor="w")',
+                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+
+               end else if joChild.S['name'] = 'tk_listbox' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'listbox'+IntToStr(I);
+                    end;
+
+                    //
+                    slDM.Add(Format('%s = tk.Listbox('+sWin+',  font=("%s", %d))',
+                              [sComp, joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+
+                    //
+                    slDM.Add('for item in ['+_ItemsToStr(joChild.S['lines'])+']:');
+                    slDM.Add('     '+sComp+'.insert("end", item)');
+
+
+               end else if joChild.S['name'] = 'tk_text' then begin
+                    sComp := joChild.S['compname'];
+                    if sComp = '' then begin
+                         sComp := 'text'+IntToStr(I);
+                    end;
+
+                    //
+                    slDM.Add(Format('%s = tk.Text('+sWin+',  font=("%s", %d))',
+                              [sComp, joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
+
+                    //
+                    slDM.Add('for item in ['+_ItemsToStr(joChild.S['caption'])+']:');
+                    slDM.Add('     '+sComp+'.insert("end", item)');
+
+               end;
+               slDM.Add(Format('%s.place(x=%d,y=%d, width=%d, height=%d)',
+                         [sComp,joChild.I['left'],joChild.I['top'],joChild.I['width'] ,joChild.I['height'] ]));
+          end;
+          //
+          slDM.Add('');
+          slDM.Add(sWin + '.mainloop()');
+          //
+          AddSpaceLine;
      end;
-     //slDM.Add('');  //空一行
+     slDM.Add('');  //空一行
      //
      Result    := slDM.Text;
      //

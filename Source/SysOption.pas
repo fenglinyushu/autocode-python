@@ -6,7 +6,7 @@ uses
      //自编模块
      SysRecords,SysConsts,SysVars,
      XMLGenCodeRecords,
-     XMLFlowChartUnit,
+     //XMLFlowChartUnit,
      
      //系统
      XMLDoc,XMLIntf,
@@ -155,7 +155,7 @@ begin
      //>
 
      //重绘流程图
-     DrawXmlToFlowChart(xnRoot,Image,rConfig);
+     //DrawXmlToFlowChart(xnRoot,Image,rConfig);
 
 
 

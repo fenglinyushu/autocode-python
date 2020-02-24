@@ -60,8 +60,6 @@ end;
 procedure TForm_About.FormShow(Sender: TObject);
 begin
 
-     //
-     Label_Website.Caption    := gsWebSite;
      Label_Mail.Caption       := gsMail;
 end;
 

@@ -8,7 +8,6 @@ uses
   SysConsts in 'SysConsts.pas',
   NodeEditConsts in 'NodeEditConsts.pas',
   ACBaseUnits in 'ACBaseUnits.pas',
-  XMLFlowChartUnit in 'XMLFlowChartUnit.pas',
   XMLNSChartUnit in 'XMLNSChartUnit.pas',
   SysRecords in '..\WWChart\SysRecords.pas',
   SysVars in 'SysVars.pas',
@@ -23,7 +22,8 @@ uses
   About in 'About.pas' {Form_About},
   Json2Python in 'Json2Python.pas',
   TkinterWin in '..\tkinter\TkinterWin.pas' {Form_TkinterWindow},
-  acVars in 'acVars.pas';
+  Json2Flowchart in 'Json2Flowchart.pas',
+  teUnit in 'teUnit.pas';
 
 {$R *.res}
 

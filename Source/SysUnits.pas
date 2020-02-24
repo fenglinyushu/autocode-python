@@ -8,6 +8,7 @@ uses
      SysConsts,SysRecords, xmldom,
      //
      GDIPAPI,
+     JsonDataObjects,
      //
      XMLDoc,XMLIntf, Types,ComCtrls,
      Math,Graphics,SysUtils,Dialogs,windows,Classes,ExtCtrls;
@@ -20,104 +21,103 @@ function  RTtoStr(RT:Integer):String;
 function  FoundNodeByID(xFile:TXMLDocument;ID:Integer):IXMLNode; //在XML节点中查找属性ID为指定值的节点
 function  GetFileFromDsp(sDsp:String):TStringDynArray;           //从VC的Dsp文件中得到工程的文件列表
 function  GetXMLNodeFromTreeNode(XML:TXMLDocument;Node:TTreeNode):IXMLNode;       //从树节点，得到相应的XML节点
-procedure SetNodeStatus(Node:TTreeNode;xnCur:IXMLNode);          //将树节点的开合状态信息写到XML节点中
 
 function WinExecAndWait32(FileName: string; Visibility: Integer): Longword;
 //得到节点的显示TEXT
-function  GetNodeText(Node:IXMLNode):string;
+function  GetNodeText(Node:TJsonObject):string;
 
-function _M(ANode:IXMLNode):Integer;
+function _M(ANode:TJsonObject):Integer;
 //
-function _X(ANode:IXMLNode):Integer;
-function _Y(ANode:IXMLNode):Integer;
-function _W(ANode:IXMLNode):Integer;
-function _H(ANode:IXMLNode):Integer;
-function _E(ANode:IXMLNode):Integer;
+function _X(ANode:TJsonObject):Integer;
+function _Y(ANode:TJsonObject):Integer;
+function _W(ANode:TJsonObject):Integer;
+function _H(ANode:TJsonObject):Integer;
+function _E(ANode:TJsonObject):Integer;
 //
-function _L(ANode:IXMLNode):Integer;    //左(含E)
-function _R(ANode:IXMLNode):Integer;    //右
-function _B(ANode:IXMLNode):Integer;    //底
-function _EW(ANode:IXMLNode):Integer;   //全宽(含E)
-function _EB(ANode:IXMLNode):Integer;   //底(不含最下面的下接线)
-function _EL(ANode:IXMLNode):Integer;   //左(不含E)
+function _L(ANode:TJsonObject):Integer;    //左(含E)
+function _R(ANode:TJsonObject):Integer;    //右
+function _B(ANode:TJsonObject):Integer;    //底
+function _EW(ANode:TJsonObject):Integer;   //全宽(含E)
+function _EB(ANode:TJsonObject):Integer;   //底(不含最下面的下接线)
+function _EL(ANode:TJsonObject):Integer;   //左(不含E)
 
 
 implementation
 
-function _M(ANode:IXMLNode):Integer;
+function _M(ANode:TJsonObject):Integer;
 begin
      if ANode = nil then begin
           Result    := -1;
      end else begin
-          Result    := ANode.Attributes['Mode'];
+          Result    := ANode.I['Mode'];
      end;
 end;
-function _X(ANode:IXMLNode):Integer;
+function _X(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['X'];
+     Result    := ANode.I['X'];
 end;
-function _Y(ANode:IXMLNode):Integer;
+function _Y(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['Y'];
+     Result    := ANode.I['Y'];
 end;
-function _W(ANode:IXMLNode):Integer;
+function _W(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['W'];
+     Result    := ANode.I['W'];
 end;
-function _H(ANode:IXMLNode):Integer;
+function _H(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['H'];
+     Result    := ANode.I['H'];
 end;
-function _E(ANode:IXMLNode):Integer;
+function _E(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['E'];
+     Result    := ANode.I['E'];
 end;
-function _L(ANode:IXMLNode):Integer;
+function _L(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['X']-Round(grConfig.BaseWidth*grConfig.Scale)-ANode.Attributes['E'];
+     Result    := ANode.I['X']-Round(grConfig.BaseWidth*grConfig.Scale)-ANode.I['E'];
 end;
-function _R(ANode:IXMLNode):Integer;
+function _R(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['X']-Round(grConfig.BaseWidth*grConfig.Scale)+ANode.Attributes['W'];
+     Result    := ANode.I['X']-Round(grConfig.BaseWidth*grConfig.Scale)+ANode.I['W'];
 end;
-function _B(ANode:IXMLNode):Integer;
+function _B(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['Y']+0+ANode.Attributes['H'];
+     Result    := ANode.I['Y']+0+ANode.I['H'];
 end;
-function _EB(ANode:IXMLNode):Integer;
+function _EB(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['Y']+0+ANode.Attributes['H']-Round(grConfig.SpaceVert*grConfig.Scale);
+     Result    := ANode.I['Y']+0+ANode.I['H']-Round(grConfig.SpaceVert*grConfig.Scale);
 end;
-function _EW(ANode:IXMLNode):Integer;
+function _EW(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['W'] + ANode.Attributes['E'];
+     Result    := ANode.I['W'] + ANode.I['E'];
 end;
-function _EL(ANode:IXMLNode):Integer;
+function _EL(ANode:TJsonObject):Integer;
 begin
-     Result    := ANode.Attributes['X']-0-Round(grConfig.BaseWidth*grConfig.Scale);
+     Result    := ANode.I['X']-Round(grConfig.BaseWidth*grConfig.Scale);
 end;
 
 
-function  GetNodeText(Node:IXMLNode):string;
+function  GetNodeText(Node:TJsonObject):string;
 var
      slSource  : TStringList;
 begin
 
-     if Trim(Node.Attributes['Caption'])='' then begin
-          if Node.HasAttribute('Source') then begin
-               if Trim(Node.Attributes['Source'])='' then begin
-                    Result    := RTtoStr(Node.Attributes['Mode']);
+     if Trim(Node.S['caption'])='' then begin
+          if Node.Contains('source') then begin
+               if Trim(Node.S['source'])='' then begin
+                    Result    := Node.S['name'];
                end else begin
                     slSource  := TStringList.Create;
-                    slSource.Text  := Node.Attributes['Source'];
+                    slSource.Text  := Node.S['source'];
                     Result    := slSource[0];
                     slSource.Destroy;
                end;
           end else begin
-               Result    := RTtoStr(Node.Attributes['Mode']);
+               Result    := Node.S['name'];
           end;
      end else begin
-          Result    := Node.Attributes['Caption'];
+          Result    := Node.S['caption'];
      end;
 end;
 
@@ -165,25 +165,6 @@ end; { WinExecAndWait32 }
 
 
 
-procedure SetNodeStatus(Node:TTreeNode;xnCur:IXMLNode);
-var
-     I    : Integer;
-begin
-     try
-          //
-          xnCur.Attributes['Expanded']  := Node.Expanded;
-          xnCur.AttributeNodes.Delete('X');
-          xnCur.AttributeNodes.Delete('Y');
-          xnCur.AttributeNodes.Delete('E');
-          xnCur.AttributeNodes.Delete('W');
-          xnCur.AttributeNodes.Delete('H');
-          for I:=0 to Min(Node.Count-1,xnCur.ChildNodes.Count-1) do begin
-               SetNodeStatus(Node.Item[I],xnCur.ChildNodes[I]);
-          end;
-     except
-          ShowMessageFmt('Error when SetNodeStatus! tnNode = %s, xnNode = %s',[Node.Text,xnCur.NodeName]);
-     end;
-end;
 
 
 function  GetXMLNodeFromTreeNode(XML:TXMLDocument;Node:TTreeNode):IXMLNode;

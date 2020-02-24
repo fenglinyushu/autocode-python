@@ -8,6 +8,8 @@ uses
      //
      Classes,Graphics;
 
+type
+     TPasteMode = (pmNone, pmNext, pmBefore, pmLast, pmPrevLast);
 
 var
      //
