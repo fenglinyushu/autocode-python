@@ -50,15 +50,11 @@ uses
      ExportVisio,
      ExportSVG,
 
-     //
-     SynEdit, SynEditHighlighter,SynHighlighterPython,SynEditCodeFolding,
-     SynHighlighterPas, SynHighlighterCpp, SynHighlighterJScript, SynHighlighterPHP, SynHighlighterJava,
 
      //
      mxClickSplitter,
 
      //
-     XMLDoc,XMLINTF,
      Clipbrd,XPMan, ShellAPI,
      Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
      Dialogs, ExtCtrls, ComCtrls, ToolWin, ImgList, Menus, ActnMan,
@@ -126,7 +122,6 @@ type
     ToolButton_Option: TToolButton;
     ScrollBox: TScrollBox;
     Image: TImage;
-    SynEdit: TSynEdit;
     ToolButton2: TToolButton;
     ToolButton_ExportToFile: TToolButton;
     ToolButton_SaveToWord: TToolButton;
@@ -141,17 +136,18 @@ type
     SaveDialog_Word: TSaveDialog;
     N1: TMenuItem;
     Copyselectedcode1: TMenuItem;
-    SynPythonSyn: TSynPythonSyn;
     mxClickSplitter_LeftBottom: TmxClickSplitter;
     mxClickSplitter_Left: TmxClickSplitter;
     Panel_LeftBottom: TPanel;
-    mxClickSplitter_ClientRight: TmxClickSplitter;
     Panel_Client: TPanel;
     Panel_Messages: TPanel;
-    mxClickSplitter2: TmxClickSplitter;
+    mxClickSplitter_ClientBottom: TmxClickSplitter;
     Memo_Messages: TMemo;
     ToolButton_RunWithWindow: TToolButton;
     ImageList_TextModes: TImageList;
+    ToolButton_EditWindow: TToolButton;
+    mxClickSplitter1: TmxClickSplitter;
+    Memo_Code: TMemo;
     procedure PopMenu_DeleteClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure PopMenu_CopyClick(Sender: TObject);
@@ -199,6 +195,11 @@ type
     procedure TreeViewCollapsed(Sender: TObject; Node: TTreeNode);
     procedure TreeViewExpanded(Sender: TObject; Node: TTreeNode);
     procedure MenuItem_EditClick(Sender: TObject);
+    procedure ToolButton_EditWindowClick(Sender: TObject);
+    procedure TreeViewDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
+      var Accept: Boolean);
+    procedure TreeViewStartDrag(Sender: TObject; var DragObject: TDragObject);
+    procedure TreeViewDragDrop(Sender, Source: TObject; X, Y: Integer);
      private
           iMoveX         : Integer;
           iMoveY         : Integer;
@@ -212,8 +213,9 @@ type
           //
           gsDragSrcText  : string;           //待复制/剪切节点的Text
           gsDragSrcMode  : string;           //待复制/剪切节点的类型
-          gjoCopy        : TJsonObject;
           //
+          gtnDragSource  : TTreeNode;        //开始拖动时的源节点
+          gjoCopy        : TJsonObject;
      public
 
           //
@@ -305,7 +307,7 @@ begin
      tnNode.Destroy;
 
      //
-     SynEdit.Text   := JsonToPython(gjoProject);
+     Memo_Code.Text   := JsonToPython(gjoProject);
 
      //设置已修改标识
      gbModified     := True;
@@ -513,7 +515,7 @@ begin
      bIsCreating    := False;
 
      //
-     SynEdit.Text   := JsonToPython(gjoProject);
+     Memo_Code.Text   := JsonToPython(gjoProject);
 
      //设置已修改标识
      gbModified     := True;
@@ -569,10 +571,10 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     SynEdit.Text    := JsonToPython(gjoProject);
+     Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
-     SynEdit.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
+     Memo_Code.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
 
      //
      ChDir(gsMainDir+'python\');
@@ -691,6 +693,11 @@ procedure TMainForm.MenuItem_ExitClick(Sender: TObject);
 begin
      Close;
 end;
+procedure TMainForm.ToolButton_EditWindowClick(Sender: TObject);
+begin
+     Form_TkinterEditor.ShowModal;
+end;
+
 procedure TMainForm.ToolButton_ExpandClick(Sender: TObject);
 begin
      if TreeView.Selected<>nil then begin
@@ -721,7 +728,7 @@ begin
      //
      teSetUpDownEnable(TreeView.Selected,ToolButton_Down,ToolButton_Up);
      //
-     SynEdit.Text   := JsonToPython(gjoProject);
+     Memo_Code.Text   := JsonToPython(gjoProject);
 end;
 
 procedure TMainForm.ToolButton_DownClick(Sender: TObject);
@@ -731,7 +738,7 @@ begin
      //
      teSetUpDownEnable(TreeView.Selected,ToolButton_Down,ToolButton_Up);
      //
-     SynEdit.Text   := JsonToPython(gjoProject);
+     Memo_Code.Text   := JsonToPython(gjoProject);
 end;
 
 
@@ -791,7 +798,7 @@ begin
           gjoCopySource  := nil;   //清空
 
           //
-          SynEdit.Text   := JsonToPython(gjoProject);
+          Memo_Code.Text   := JsonToPython(gjoProject);
 
           //设置为未修改状态
           gbModified     := False;
@@ -861,13 +868,13 @@ var
      tnNode    : TTreeNode;
      I         : Integer;
      L,T,W,H,E : Integer;
-     xnNode    : IXMLNode;
+     joNode    : TJsonObject;
      bFound    : Boolean;
 begin
-{     //默认返回值
+     //默认返回值
      Result    := nil;
      //
-     tnNode    := GetTreeNodeFromXMLNode(TreeView,gxnRootNode);
+     tnNode    := TreeView.Items[0];
      while True do begin
           //查找到
           if (tnNode.Count=0)or(not tnNode.Expanded) then begin
@@ -878,17 +885,12 @@ begin
           //
           bFound    := False;
           for I:=0 to tnNode.Count-1 do begin
-               xnNode    := GetXMLNodeFromTreeNode(gxdXML,tnNode.Item[I]);
-               L    := xnNode.Attributes['X'];
-               T    := xnNode.Attributes['Y'];
-               W    := xnNode.Attributes['W'];
-               H    := xnNode.Attributes['H'];
-               if xnNode.HasAttribute('E') then begin
-                    E    := xnNode.Attributes['E'];
-               end else begin
-                    E    := 0;
-               end;
-               //
+               joNode    := teTreeToJson(tnNode.Item[I]);
+               L    := joNode.I['X'];
+               T    := joNode.I['Y'];
+               W    := joNode.I['W'];
+               H    := joNode.I['H'];
+               E    := joNode.I['E'];
                //
                L    := L-E-Round(grConfig.BaseWidth*grConfig.Scale);
                W    := W+E;
@@ -907,7 +909,7 @@ begin
                Break;
           end;
      end;
-}end;
+end;
 
 
 
@@ -916,20 +918,20 @@ begin
 procedure TMainForm.PopMenu_SetRootClick(Sender: TObject);
 var
      tnCur     : TTreeNode;
-     xnCur     : IXMLNode;
+     xnCur     : TJsonObject;
      bDefault  : Boolean;      
      tnNode    : TTreeNode;
-     xnNode    : IXMLNode;
+     joNode    : TJsonObject;
 begin
 {     tnNode    := TreeView.Selected;
      if tnNode = nil then begin
           Exit;
      end;
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
-     if xnNode<>nil then begin
-          xnCur          := xnNode;    //GetXMLNodeFromTreeNode(gxdXML,gtnCurNode);
+     joNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
+     if joNode<>nil then begin
+          xnCur          := joNode;    //GetXMLNodeFromTreeNode(gxdXML,gtnCurNode);
           gxnRootNode    := xnCur;
-          xnNode        := xnCur;
+          joNode        := xnCur;
           //
           UpdateChart;
           //TreeView.OnClick(Self);
@@ -1048,11 +1050,11 @@ begin
 
 
           //根据当前节点类型确定父节点
-          if InModes(xnNode.Attributes['Mode'],gForceChildSet) then begin
-               xnPar     := xnNode;
+          if InModes(joNode.Attributes['Mode'],gForceChildSet) then begin
+               xnPar     := joNode;
                tnPar     := tnNode;
           end else begin
-               xnPar     := xnNode.ParentNode;
+               xnPar     := joNode.ParentNode;
                tnPar     := tnNode.Parent;
           end;
 
@@ -1083,7 +1085,7 @@ begin
           tnNew.Selected := True;
           //ShowNodeAttributes(joNew);
           //
-          xnNode   := joNew;
+          joNode   := joNew;
           //刷新流程图
           UpdateChart;
           //设置已修改标识
@@ -1100,7 +1102,7 @@ var
      tnRoot    : TTreeNode;
      L,T,E,W,H : Integer;
      bPar      : Boolean;
-     xnTmp     : IXMLNode;
+     xnTmp     : TJsonObject;
      tnCur     : TTreeNode;
 
      tnNode    : TTreeNode;
@@ -1138,7 +1140,7 @@ begin
      end;
 
      //如果当前节点不是流程图根节点的子孙节点，则退出
-//     xnTmp     := xnNode;
+//     xnTmp     := joNode;
 //     bPar      := False;
 //     while xnTmp<>nil do begin
 //          if xnTmp=gjoChartRoot then begin
@@ -1189,7 +1191,7 @@ procedure TMainForm.TreeViewMouseUp(Sender: TObject; Button: TMouseButton;
 var
      tnNode    : TTreeNode;
      rConfig   : TWWConfig;
-     xnNode    : IXMLNode;
+     joNode    : TJsonObject;
 begin
      Exit;
 {
@@ -1198,28 +1200,28 @@ begin
      if tnNode = nil then begin
           Exit;
      end;
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
+     joNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
      try
           tnNode    := TreeView.Selected;
           if tnNode= nil then Exit;
 
           //得到XML节点
-          xnNode   := GetXMLNodeFromTreeNode(gxdXML,tnNode);
+          joNode   := GetXMLNodeFromTreeNode(gxdXML,tnNode);
 
           //检测
-          if xnNode=nil then begin
+          if joNode=nil then begin
                ShowMessage('Error because GetXMLNodeFromTreeNode return nil when TreeViewChange');
                Exit;
           end;
 
           //根据树节点，设置XML节点的开合状态
-          SetNodeStatus(tnNode,xnNode);
+          SetNodeStatus(tnNode,joNode);
 
           //清除记忆的老选择数据
           SelectRect.Left     := -1;
 
           //
-          //ShowNodeAttributes(xnNode);
+          //ShowNodeAttributes(joNode);
 
           //恢复位置
           Image.Top      := 10;
@@ -1230,6 +1232,11 @@ begin
      except
      end;
 }
+end;
+
+procedure TMainForm.TreeViewStartDrag(Sender: TObject; var DragObject: TDragObject);
+begin
+     gtnDragSource  := TreeView.Selected;
 end;
 
 procedure TMainForm.ToolButton_ZoomInClick(Sender: TObject);
@@ -1255,39 +1262,33 @@ end;
 procedure TMainForm.ImageClick(Sender: TObject);
 var
      tnCur     : TTreeNode;
-     tnNode    : TTreeNode;
-     xnNode    : IXMLNode;
+     joNode    : TJsonObject;
 begin
-{
-     tnNode    := TreeView.Selected;
-     if tnNode = nil then begin
-          Exit;
-     end;
-     xnNode    := GetXMLNodeFromTreeNode(gxdXML,TreeView.Selected);
 
      //得到树节点
      tnCur    := GetNodeFromPos(iMoveX,iMoveY);
 
      //如果没找到树节点,则退出
      if tnCur=nil then begin
-          xnNode   := nil;
+          joNode   := nil;
 
           //刷新显示
           UpdateChart;
 
      end else begin
+          //
+          tnCur.Selected := True;
 
           //得到XML节点
-          xnNode   := GetXMLNodeFromTreeNode(gxdXML,tnCur);
+          joNode   := teTreeToJson(tnCur);
 
           //显示当前树节点信息
-          //ShowNodeAttributes(xnNode);
+          //teShowNodeProperty(joNode,TreeView,Panel_LeftBottom);
 
           //刷新显示
           UpdateChart;
 
      end;
-}
 end;
 
 procedure TMainForm.ToolButton_NewProjectClick(Sender: TObject);
@@ -1317,7 +1318,7 @@ begin
      TreeView.Items[0].Text   := '';
 
      //
-     SynEdit.Text   := '';
+     Memo_Code.Text   := '';
 
      //
      UpdateChart;
@@ -1374,10 +1375,10 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     SynEdit.Text    := JsonToPython(gjoProject);
+     Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
-     SynEdit.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
+     Memo_Code.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
 
      //
      ChDir(gsMainDir+'python\');
@@ -1401,7 +1402,7 @@ begin
           ShowMessage('Can not export to file when only one node! ');
           Exit;
      end else begin
-          if Trim(SynEdit.Lines.Text)='' then begin
+          if Trim(Memo_Code.Lines.Text)='' then begin
                ToolButton_GenerateCode.OnClick(Self);
           end;
      end;
@@ -1409,7 +1410,7 @@ begin
 
      //
      if SaveDialog_ExportToFile.Execute then begin
-          SynEdit.Lines.SaveToFile(SaveDialog_ExportToFile.FileName);
+          Memo_Code.Lines.SaveToFile(SaveDialog_ExportToFile.FileName);
      end;
 end;
 
@@ -1505,7 +1506,7 @@ begin
      teAddModule(TreeView.Selected,TMenuItem(Sender).MenuIndex);
 
      //
-     SynEdit.Text   := JsonToPython(gjoProject);
+     Memo_Code.Text   := JsonToPython(gjoProject);
      //
      UpdateChart;
      //
@@ -1519,7 +1520,7 @@ end;
 procedure TMainForm.Copyselectedcode1Click(Sender: TObject);
 begin
      //
-     clipboard.AsText    := SynEdit.SelText;
+     clipboard.AsText    := Memo_Code.SelText;
 end;
 
 
@@ -1544,6 +1545,207 @@ begin
      end;
      //
      UpdateChart;
+end;
+
+procedure TMainForm.TreeViewDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+     joSource  : TJsonObject;
+     joDest    : TJsonObject;
+     joParSrc  : TJsonObject;
+     joParDest : TJsonObject;
+
+     //
+     sNameSrc  : string;
+     sNameDest : string;
+     //
+     tnDest    : TTreeNode;
+     tnTemp    : TTreeNode;
+
+     //
+     iIdSrc    : Integer;
+     iIdDest   : Integer;
+
+     //
+     oAddMode  : TTEAddMode;
+begin
+     //
+     tnDest    := Treeview.GetNodeAt( X, Y );
+     if tnDest = nil then begin
+          Exit;
+     end;
+
+     if joSource = gjoProject then begin
+          Exit;
+     end;
+
+
+     //
+     joSource  := teTreeToJson(gtnDragSource);
+     joDest    := teTreeToJson(tnDest);
+     iIdSrc    := gtnDragSource.Index;
+     iIdDest   := tnDest.Index;
+     joParSrc  := teTreeToJson(gtnDragSource.Parent);  //得到父节点备用
+     if tnDest.Level > 0 then begin
+          joParDest := teTreeToJson(tnDest.Parent);
+     end else begin
+          joParDest := nil
+     end;
+
+     if joDest = nil then begin
+          Exit;
+     end;
+
+     //
+     sNameSrc  := joSource.S['name'];
+     sNameDest := joDest.S['name'];
+
+     //检查父子关系（父节点不能拖动到子节点,也就是不能：gtnDragSource是tnDest的祖先）
+     if tnDest.Level>gtnDragSource.Level then begin
+          tnTemp    := tnDest;
+          while tnTemp.Level >= gtnDragSource.Level do begin
+               if tnTemp = gtnDragSource then begin
+                    Exit;
+               end else begin
+                    tnTemp    := tnTemp.Parent;
+               end;
+          end;
+     end;
+
+     //
+     oAddMode  := teGetAddMode(sNameSrc,sNameDest);
+     //
+     bIsCreating    := True;
+     case oAddMode of
+          amNone : begin
+
+          end;
+          amNextSibling : begin    //拖动到当前节点的后面
+               if tnDest.getNextSibling<>nil then begin
+                    //移动树节点
+                    gtnDragSource.MoveTo(tnDest.getNextSibling,naInsert);
+
+                    //创建新JSON节点
+                    joParDest.A['items'].InsertObject(iIdDest+1).FromUtf8JSON(joSource.ToUtf8JSON);
+
+                    //删除旧JSON节点
+                    joParSrc.A['items'].Delete(iIdSrc);
+               end else begin
+                    //移动树节点
+                    gtnDragSource.MoveTo(tnDest,naAdd);
+
+                    //创建新JSON节点
+                    joParDest.A['items'].AddObject.FromUtf8JSON(joSource.ToUtf8JSON);
+
+                    //删除旧JSON节点
+                    joParSrc.A['items'].Delete(iIdSrc);
+               end;
+          end;
+
+          amOptionalSibling : begin     //作为当前的sibling, 如果当前节点为第一子固定节点, 则位置为下一个;如果当前为最后固定节点,则为倒数第二个
+               if tnDest.Index = 0 then begin     //当前节点为第一子固定节点
+                    //移动树节点
+                    if tnDest.getNextSibling<>nil then begin
+                         gtnDragSource.MoveTo(tnDest.getNextSibling,naInsert);
+                    end else begin
+                         gtnDragSource.MoveTo(tnDest,naAdd);
+                    end;
+
+                    //创建新JSON节点
+                    joParDest.A['items'].InsertObject(1).FromUtf8JSON(joSource.ToUtf8JSON);
+
+                    //删除旧JSON节点
+                    joParSrc.A['items'].Delete(iIdSrc);
+               end else begin      //当前为最后固定节点
+                    //移动树节点
+                    gtnDragSource.MoveTo(tnDest,naInsert);
+
+                    //创建新JSON节点
+                    joParDest.A['items'].InsertObject(iIdDest).FromUtf8JSON(joSource.ToUtf8JSON);
+
+                    //删除旧JSON节点
+                    joParSrc.A['items'].Delete(iIdSrc);
+               end;
+          end;
+          amLastChild : begin
+               //移动树节点
+               gtnDragSource.MoveTo(tnDest,naAddChild);
+
+               //创建新JSON节点
+               joDest.A['items'].AddObject.FromUtf8JSON(joSource.ToUtf8JSON);
+
+               //删除旧JSON节点
+               joParSrc.A['items'].Delete(iIdSrc);
+          end;
+          amPrevLastChild : begin
+               //移动树节点
+               gtnDragSource.MoveTo(tnDest.GetLastChild,naInsert);
+
+               //创建新JSON节点
+               joDest.A['items'].InsertObject(tnDest.Count-2).FromUtf8JSON(joSource.ToUtf8JSON);
+
+               //删除旧JSON节点
+               joParSrc.A['items'].Delete(iIdSrc);
+          end;
+     end;
+     //
+     bIsCreating    := False;
+     //
+     gtnDragSource.Selected   := True;
+     Memo_Code.Lines.Text := gjoProject.ToJSON(False);
+end;
+
+procedure TMainForm.TreeViewDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean);
+var
+     joSource  : TJsonObject;
+     joDest    : TJsonObject;
+     //
+     sNameSrc  : string;
+     sNameDest : string;
+     //
+     tnDest    : TTreeNode;
+     tnTemp    : TTreeNode;
+begin
+     //
+     tnDest    := Treeview.GetNodeAt( X, Y );
+     if tnDest = nil then begin
+          Accept    := False;
+          Exit;
+     end;
+     if joSource = gjoProject then begin
+          Accept    := False;
+          Exit;
+     end;
+
+     //
+     joSource  := teTreeToJson(gtnDragSource);
+     joDest    := teTreeToJson(tnDest);
+
+     if joDest = nil then begin
+          Accept    := False;
+          Exit;
+     end;
+
+     //
+     sNameSrc  := joSource.S['name'];
+     sNameDest := joDest.S['name'];
+
+     //检查父子关系（父节点不能拖动到子节点,也就是不能：gtnDragSource是tnDest的祖先）
+     if tnDest.Level>gtnDragSource.Level then begin
+          tnTemp    := tnDest;
+          while tnTemp.Level >= gtnDragSource.Level do begin
+               if tnTemp = gtnDragSource then begin
+                    Accept    := False;
+                    Exit;
+               end else begin
+                    tnTemp    := tnTemp.Parent;
+               end;
+          end;
+     end;
+
+     //
+     Accept    := teGetAddMode(sNameSrc,sNameDest) <> amNone;
+     //
+     //Caption   := IntToStr(Integer(teGetAddMode(sNameSrc,sNameDest)));
 end;
 
 procedure TMainForm.TreeViewExpanded(Sender: TObject; Node: TTreeNode);

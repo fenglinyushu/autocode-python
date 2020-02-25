@@ -149,7 +149,7 @@
         </DCCReference>
         <DCCReference Include="Json2Python.pas"/>
         <DCCReference Include="..\tkinter\TkinterWin.pas">
-            <Form>Form_TkinterWindow</Form>
+            <Form>Form_TkinterEditor</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Json2Flowchart.pas"/>

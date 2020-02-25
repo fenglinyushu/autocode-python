@@ -21,7 +21,7 @@ uses
   ExportVisio in 'ExportVisio.pas' {Form_ExportVisio},
   About in 'About.pas' {Form_About},
   Json2Python in 'Json2Python.pas',
-  TkinterWin in '..\tkinter\TkinterWin.pas' {Form_TkinterWindow},
+  TkinterWin in '..\tkinter\TkinterWin.pas' {Form_TkinterEditor},
   Json2Flowchart in 'Json2Flowchart.pas',
   teUnit in 'teUnit.pas';
 
@@ -37,7 +37,7 @@ begin
   Application.CreateForm(TForm_ExportWord, Form_ExportWord);
   Application.CreateForm(TForm_ExportVisio, Form_ExportVisio);
   Application.CreateForm(TForm_About, Form_About);
-  Application.CreateForm(TForm_TkinterWindow, Form_TkinterWindow);
+  Application.CreateForm(TForm_TkinterEditor, Form_TkinterEditor);
   //
      Application.Run;
 end.

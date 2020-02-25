@@ -1,4 +1,4 @@
-object Form_TkinterWindow: TForm_TkinterWindow
+object Form_TkinterEditor: TForm_TkinterEditor
   Left = 292
   Top = 120
   Caption = 'Tkinter Design'
@@ -30,42 +30,14 @@ object Form_TkinterWindow: TForm_TkinterWindow
     Height = 41
     AutoSize = True
     ButtonHeight = 39
-    ButtonWidth = 71
+    ButtonWidth = 63
     Caption = 'ToolBar1'
     EdgeBorders = [ebBottom]
     Images = ImageList
     ShowCaptions = True
     TabOrder = 0
-    object ToolButton_New: TToolButton
-      Left = 0
-      Top = 0
-      Caption = 'New'
-      ImageIndex = 20
-    end
-    object ToolButton_Open: TToolButton
-      Left = 71
-      Top = 0
-      Caption = 'Open'
-      ImageIndex = 21
-      OnClick = ToolButton_OpenClick
-    end
-    object ToolButton_Save: TToolButton
-      Left = 142
-      Top = 0
-      Caption = 'Save'
-      ImageIndex = 22
-      OnClick = ToolButton_SaveClick
-    end
-    object ToolButton6: TToolButton
-      Left = 213
-      Top = 0
-      Width = 8
-      Caption = 'ToolButton6'
-      ImageIndex = 23
-      Style = tbsSeparator
-    end
     object ToolButton3: TToolButton
-      Left = 221
+      Left = 0
       Top = 0
       Caption = 'Select'
       Grouped = True
@@ -73,7 +45,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Label: TToolButton
-      Left = 292
+      Left = 63
       Top = 0
       Caption = 'Label'
       Grouped = True
@@ -81,7 +53,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Button: TToolButton
-      Left = 363
+      Left = 126
       Top = 0
       Caption = 'Button'
       Grouped = True
@@ -89,7 +61,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Checkbutton: TToolButton
-      Left = 434
+      Left = 189
       Top = 0
       Caption = 'Check'
       Grouped = True
@@ -97,7 +69,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Radiobutton: TToolButton
-      Left = 505
+      Left = 252
       Top = 0
       Caption = 'Radio'
       Grouped = True
@@ -105,7 +77,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Entry: TToolButton
-      Left = 576
+      Left = 315
       Top = 0
       Caption = 'Entry'
       Grouped = True
@@ -113,7 +85,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Listbox: TToolButton
-      Left = 647
+      Left = 378
       Top = 0
       Caption = 'Listbox'
       Grouped = True
@@ -121,7 +93,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Text: TToolButton
-      Left = 718
+      Left = 441
       Top = 0
       Caption = 'Text'
       Grouped = True
@@ -129,7 +101,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsCheck
     end
     object ToolButton_Scale: TToolButton
-      Left = 789
+      Left = 504
       Top = 0
       Caption = 'Scale'
       Grouped = True
@@ -138,7 +110,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Visible = False
     end
     object ToolButton1: TToolButton
-      Left = 860
+      Left = 567
       Top = 0
       Width = 8
       Caption = 'ToolButton1'
@@ -146,29 +118,28 @@ object Form_TkinterWindow: TForm_TkinterWindow
       Style = tbsSeparator
     end
     object ToolButton_Delete: TToolButton
-      Left = 868
+      Left = 575
       Top = 0
       Caption = 'Delete'
       ImageIndex = 23
       OnClick = ToolButton_DeleteClick
     end
-    object ToolButton_Generate: TToolButton
-      Left = 939
-      Top = 0
-      Caption = 'Generate'
-      ImageIndex = 24
-      OnClick = ToolButton_GenerateClick
-    end
     object ToolButton4: TToolButton
-      Left = 1010
+      Left = 638
       Top = 0
       Width = 8
       Caption = 'ToolButton4'
       ImageIndex = 8
       Style = tbsSeparator
     end
+    object ToolButton_Generate: TToolButton
+      Left = 646
+      Top = 0
+      Caption = 'OK'
+      ImageIndex = 24
+    end
     object ToolButton_Cancel: TToolButton
-      Left = 1018
+      Left = 709
       Top = 0
       Caption = 'Cancel'
       ImageIndex = 25
@@ -182,595 +153,8 @@ object Form_TkinterWindow: TForm_TkinterWindow
     Height = 559
     Align = alLeft
     BevelOuter = bvNone
+    BorderWidth = 3
     TabOrder = 1
-    object PageControl_Detail: TPageControl
-      Left = 0
-      Top = 0
-      Width = 281
-      Height = 559
-      ActivePage = TabSheet_Listbox
-      Align = alClient
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      Font.Style = []
-      MultiLine = True
-      ParentFont = False
-      TabOrder = 0
-      object TabSheet_Listbox: TTabSheet
-        Caption = 'Listbox'
-        ImageIndex = 1
-        object Panel2: TPanel
-          Left = 0
-          Top = 193
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 0
-          object Label6: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Height'
-            Layout = tlCenter
-          end
-          object SpinEdit_ListBoxHeight: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel3: TPanel
-          Left = 0
-          Top = 0
-          Width = 273
-          Height = 97
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 1
-          object Label7: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 87
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Items'
-            Layout = tlCenter
-            ExplicitHeight = 22
-          end
-          object Memo: TMemo
-            Left = 105
-            Top = 5
-            Width = 163
-            Height = 87
-            Align = alClient
-            TabOrder = 0
-            OnChange = MemoChange
-          end
-        end
-        object Panel4: TPanel
-          Left = 0
-          Top = 161
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 2
-          object Label8: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Width'
-            Layout = tlCenter
-          end
-          object SpinEdit_ListBoxWidth: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel5: TPanel
-          Left = 0
-          Top = 129
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 3
-          object Label9: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Top'
-            Layout = tlCenter
-          end
-          object SpinEdit_ListBoxTop: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel6: TPanel
-          Left = 0
-          Top = 97
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 4
-          object Label10: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Left'
-            Layout = tlCenter
-          end
-          object SpinEdit_ListBoxLeft: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-      end
-      object TabSheet_Normal: TTabSheet
-        Caption = 'Window'
-        ImageIndex = 3
-        object Panel9: TPanel
-          Left = 0
-          Top = 128
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 0
-          object Label13: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Height'
-            Layout = tlCenter
-          end
-          object SpinEdit_Height: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel12: TPanel
-          Left = 0
-          Top = 0
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Caption = 'Panel1'
-          Color = clWhite
-          TabOrder = 1
-          object Label16: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Title'
-            Layout = tlCenter
-          end
-          object Edit_Title: TEdit
-            Left = 105
-            Top = 5
-            Width = 163
-            Height = 22
-            Align = alClient
-            TabOrder = 0
-            OnChange = Edit_TitleChange
-            ExplicitHeight = 24
-          end
-        end
-        object Panel11: TPanel
-          Left = 0
-          Top = 96
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 2
-          object Label15: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Width'
-            Layout = tlCenter
-          end
-          object SpinEdit_Width: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel32: TPanel
-          Left = 0
-          Top = 64
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 3
-          object Label25: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Top'
-            Layout = tlCenter
-          end
-          object SpinEdit_Top: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel33: TPanel
-          Left = 0
-          Top = 32
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 4
-          object Label32: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Left'
-            Layout = tlCenter
-          end
-          object SpinEdit_Left: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-      end
-      object TabSheet_Scale: TTabSheet
-        Caption = 'Scale'
-        ImageIndex = 5
-        object Panel1: TPanel
-          Left = 0
-          Top = 192
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 0
-          object Label1: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Height'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleHeight: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel7: TPanel
-          Left = 0
-          Top = 160
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 1
-          object Label2: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Width'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleWidth: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel8: TPanel
-          Left = 0
-          Top = 128
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 2
-          object Label3: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Top'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleTop: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel10: TPanel
-          Left = 0
-          Top = 96
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 3
-          object Label4: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Left'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleLeft: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel13: TPanel
-          Left = 0
-          Top = 0
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 4
-          object Label5: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'from'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleFrom: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel14: TPanel
-          Left = 0
-          Top = 32
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 5
-          object Label11: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'to'
-            Layout = tlCenter
-          end
-          object SpinEdit_ScaleTo: TSpinEdit
-            Left = 105
-            Top = 1
-            Width = 121
-            Height = 26
-            AutoSelect = False
-            AutoSize = False
-            MaxValue = 0
-            MinValue = 0
-            TabOrder = 0
-            Value = 0
-          end
-        end
-        object Panel15: TPanel
-          Left = 0
-          Top = 64
-          Width = 273
-          Height = 32
-          Align = alTop
-          BevelOuter = bvNone
-          BorderWidth = 5
-          Color = clWhite
-          TabOrder = 6
-          object Label12: TLabel
-            Left = 5
-            Top = 5
-            Width = 100
-            Height = 22
-            Align = alLeft
-            AutoSize = False
-            Caption = 'Direction'
-            Layout = tlCenter
-          end
-          object ComboBox_Direction: TComboBox
-            Left = 105
-            Top = 5
-            Width = 121
-            Height = 24
-            Align = alLeft
-            Style = csDropDownList
-            ItemIndex = 0
-            TabOrder = 0
-            Text = 'horizontal'
-            Items.Strings = (
-              'horizontal'
-              'vertical')
-          end
-        end
-      end
-    end
   end
   object Panel_Client: TPanel
     Left = 286
@@ -905,7 +289,6 @@ object Form_TkinterWindow: TForm_TkinterWindow
         BevelOuter = bvLowered
         ParentBackground = False
         TabOrder = 1
-        OnMouseDown = Panel_FormClientMouseDown
       end
     end
   end
@@ -913,7 +296,7 @@ object Form_TkinterWindow: TForm_TkinterWindow
     Left = 326
     Top = 58
     Bitmap = {
-      494C01012C0030002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003000300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

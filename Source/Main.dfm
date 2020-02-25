@@ -4,13 +4,13 @@ object MainForm: TMainForm
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   Caption = 'Auto Code - Python'
-  ClientHeight = 539
+  ClientHeight = 573
   ClientWidth = 1010
   Color = clWhite
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Height = -13
+  Font.Name = 'Consolas'
   Font.Style = []
   FormStyle = fsMDIForm
   Icon.Data = {
@@ -156,18 +156,19 @@ object MainForm: TMainForm
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object mxClickSplitter_Left: TmxClickSplitter
     Left = 360
     Top = 26
     Width = 6
-    Height = 494
+    Height = 528
     Cursor = crHSplit
     Color = clBtnFace
     ParentColor = False
     Version = 'Version 1.0'
     ExplicitLeft = 437
     ExplicitTop = 20
+    ExplicitHeight = 494
   end
   object Panel_ToolBar: TPanel
     Left = 0
@@ -254,8 +255,15 @@ object MainForm: TMainForm
         ImageIndex = 11
         Style = tbsSeparator
       end
-      object ToolButton_Expand: TToolButton
+      object ToolButton_EditWindow: TToolButton
         Left = 136
+        Top = 0
+        Hint = 'tkinter Editor'
+        ImageIndex = 44
+        OnClick = ToolButton_EditWindowClick
+      end
+      object ToolButton_Expand: TToolButton
+        Left = 159
         Top = 0
         Hint = 'Expand current node'
         Caption = 'Expand current node'
@@ -265,7 +273,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ExpandClick
       end
       object ToolButton_Collapse: TToolButton
-        Left = 159
+        Left = 182
         Top = 0
         Hint = 'Collapse current node'
         Caption = 'ToolButton_Collapse'
@@ -273,7 +281,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_CollapseClick
       end
       object ToolButton_ZoomIn: TToolButton
-        Left = 182
+        Left = 205
         Top = 0
         Hint = 'Zoom in'
         Caption = 'ToolButton_ZoomIn'
@@ -281,7 +289,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ZoomInClick
       end
       object ToolButton_ZoomOut: TToolButton
-        Left = 205
+        Left = 228
         Top = 0
         Hint = 'Zoom out'
         Caption = 'ToolButton_ZoomOut'
@@ -289,7 +297,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ZoomOutClick
       end
       object ToolButton_Up: TToolButton
-        Left = 228
+        Left = 251
         Top = 0
         Hint = 'Move up'
         Caption = 'ToolButton_Up'
@@ -300,7 +308,7 @@ object MainForm: TMainForm
       end
       object ToolButton_Down: TToolButton
         Tag = 1
-        Left = 251
+        Left = 274
         Top = 0
         Hint = 'Move down'
         Caption = 'ToolButton_ShowLineNo'
@@ -308,7 +316,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_DownClick
       end
       object ToolButton7: TToolButton
-        Left = 274
+        Left = 297
         Top = 0
         Width = 8
         Caption = 'ToolButton7'
@@ -316,7 +324,7 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object ToolButton_ExportToFile: TToolButton
-        Left = 282
+        Left = 305
         Top = 0
         Hint = 'Export to source code file'
         Caption = 'ToolButton_ExportToFile'
@@ -324,7 +332,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ExportToFileClick
       end
       object ToolButton_SaveToWord: TToolButton
-        Left = 305
+        Left = 328
         Top = 0
         Hint = 'Export chart as Word'
         Caption = 'ToolButton_SaveToWord'
@@ -333,7 +341,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToWordClick
       end
       object ToolButton_SaveToVisio: TToolButton
-        Left = 328
+        Left = 351
         Top = 0
         Hint = 'Export chart as Visio'
         Caption = 'ToolButton_SaveToVisio'
@@ -342,7 +350,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToVisioClick
       end
       object ToolButton_SaveToSVG: TToolButton
-        Left = 351
+        Left = 374
         Top = 0
         Hint = 'Export chart as SVG'
         Caption = 'ToolButton_SaveToSVG'
@@ -351,7 +359,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToSVGClick
       end
       object ToolButton_SaveToBmp: TToolButton
-        Left = 374
+        Left = 397
         Top = 0
         Hint = 'Export chart to Bmp'
         Caption = 'ToolButton_SaveToBmp'
@@ -359,7 +367,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToBmpClick
       end
       object ToolButton5: TToolButton
-        Left = 397
+        Left = 420
         Top = 0
         Width = 8
         Caption = 'ToolButton5'
@@ -367,7 +375,7 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object ToolButton_Option: TToolButton
-        Left = 405
+        Left = 428
         Top = 0
         Hint = 'Options'
         Caption = 'ToolButton_Option'
@@ -376,7 +384,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_OptionClick
       end
       object ToolButton3: TToolButton
-        Left = 428
+        Left = 451
         Top = 0
         Width = 8
         Caption = 'ToolButton3'
@@ -385,7 +393,7 @@ object MainForm: TMainForm
         Visible = False
       end
       object ToolButton_Help: TToolButton
-        Left = 436
+        Left = 459
         Top = 0
         Hint = 'Help'
         Caption = 'ToolButton_Help'
@@ -397,7 +405,7 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 520
+    Top = 554
     Width = 1010
     Height = 19
     Panels = <
@@ -414,20 +422,22 @@ object MainForm: TMainForm
       item
         Width = 200
       end>
+    ExplicitTop = 520
   end
   object Panel_Left: TPanel
     Left = 0
     Top = 26
     Width = 360
-    Height = 494
+    Height = 528
     Align = alLeft
     BevelOuter = bvNone
     Color = clAqua
     ParentBackground = False
     TabOrder = 2
+    ExplicitHeight = 494
     object mxClickSplitter_LeftBottom: TmxClickSplitter
       Left = 0
-      Top = 268
+      Top = 302
       Width = 360
       Height = 6
       Cursor = crVSplit
@@ -443,7 +453,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 0
       Width = 360
-      Height = 268
+      Height = 302
       Align = alClient
       BevelOuter = bvNone
       BorderStyle = bsNone
@@ -464,16 +474,20 @@ object MainForm: TMainForm
       ToolTips = False
       OnChange = TreeViewChange
       OnCollapsed = TreeViewCollapsed
+      OnDragDrop = TreeViewDragDrop
+      OnDragOver = TreeViewDragOver
       OnExpanded = TreeViewExpanded
       OnMouseDown = TreeViewMouseDown
       OnMouseUp = TreeViewMouseUp
+      OnStartDrag = TreeViewStartDrag
       Items.NodeData = {
         03010000001E0000000000000000000000FFFFFFFFFFFFFFFF00000000000000
         00000000000100}
+      ExplicitHeight = 268
     end
     object Panel_LeftBottom: TPanel
       Left = 0
-      Top = 274
+      Top = 308
       Width = 360
       Height = 220
       Align = alBottom
@@ -487,33 +501,21 @@ object MainForm: TMainForm
       ParentColor = True
       ParentFont = False
       TabOrder = 1
+      ExplicitTop = 274
     end
   end
   object Panel_Client: TPanel
     Left = 366
     Top = 26
     Width = 644
-    Height = 494
+    Height = 528
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
-    object mxClickSplitter_ClientRight: TmxClickSplitter
-      Left = 278
-      Top = 0
-      Width = 6
-      Height = 268
-      Cursor = crHSplit
-      Align = alRight
-      Color = clBtnFace
-      ParentColor = False
-      Version = 'Version 1.0'
-      ExplicitLeft = 238
-      ExplicitTop = -24
-      ExplicitHeight = 494
-    end
-    object mxClickSplitter2: TmxClickSplitter
+    ExplicitHeight = 494
+    object mxClickSplitter_ClientBottom: TmxClickSplitter
       Left = 0
-      Top = 268
+      Top = 302
       Width = 644
       Height = 6
       Cursor = crVSplit
@@ -521,59 +523,28 @@ object MainForm: TMainForm
       Version = 'Version 1.0'
       ExplicitTop = 344
     end
-    object SynEdit: TSynEdit
-      Left = 284
+    object mxClickSplitter1: TmxClickSplitter
+      Left = 338
       Top = 0
-      Width = 360
-      Height = 268
+      Width = 6
+      Height = 302
+      Cursor = crHSplit
       Align = alRight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      Font.Style = []
-      TabOrder = 0
-      CodeFolding.GutterShapeSize = 11
-      CodeFolding.CollapsedLineColor = clGrayText
-      CodeFolding.FolderBarLinesColor = clGrayText
-      CodeFolding.IndentGuidesColor = clGray
-      CodeFolding.IndentGuides = True
-      CodeFolding.ShowCollapsedLine = False
-      CodeFolding.ShowHintMark = True
-      UseCodeFolding = False
-      BorderStyle = bsNone
-      Gutter.Font.Charset = DEFAULT_CHARSET
-      Gutter.Font.Color = clWindowText
-      Gutter.Font.Height = -11
-      Gutter.Font.Name = 'Terminal'
-      Gutter.Font.Style = []
-      Gutter.Visible = False
-      Gutter.Width = 0
-      Highlighter = SynPythonSyn
-      ReadOnly = True
-      ScrollBars = ssVertical
-      FontSmoothing = fsmNone
-      RemovedKeystrokes = <
-        item
-          Command = ecCopy
-          ShortCut = 16451
-        end>
-      AddedKeystrokes = <
-        item
-          Command = ecCopy
-          ShortCut = 49219
-        end>
+      Version = 'Version 1.0'
+      ExplicitLeft = 333
     end
     object ScrollBox: TScrollBox
       Left = 0
       Top = 0
-      Width = 278
-      Height = 268
+      Width = 338
+      Height = 302
       Align = alClient
       BorderStyle = bsNone
       Color = clWindow
       ParentColor = False
-      TabOrder = 1
+      TabOrder = 0
+      ExplicitWidth = 638
+      ExplicitHeight = 268
       object Image: TImage
         Left = 6
         Top = 6
@@ -588,11 +559,12 @@ object MainForm: TMainForm
     end
     object Panel_Messages: TPanel
       Left = 0
-      Top = 274
+      Top = 308
       Width = 644
       Height = 220
       Align = alBottom
-      TabOrder = 2
+      TabOrder = 1
+      ExplicitTop = 274
       object Memo_Messages: TMemo
         Left = 1
         Top = 1
@@ -610,6 +582,16 @@ object MainForm: TMainForm
         TabOrder = 0
       end
     end
+    object Memo_Code: TMemo
+      Left = 344
+      Top = 0
+      Width = 300
+      Height = 302
+      Align = alRight
+      BorderStyle = bsNone
+      ScrollBars = ssBoth
+      TabOrder = 2
+    end
   end
   object ColorDialog: TColorDialog
     Left = 568
@@ -619,7 +601,7 @@ object MainForm: TMainForm
     Left = 816
     Top = 152
     Bitmap = {
-      494C010159005E00AC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010159005E00B00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000007001000001002000000000000070
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3673,7 +3655,7 @@ object MainForm: TMainForm
     Left = 360
     Top = 64
     Bitmap = {
-      494C010135003800400010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010135003800440010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000E0000000010020000000000000E0
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -5684,7 +5666,7 @@ object MainForm: TMainForm
     Left = 814
     Top = 218
     Bitmap = {
-      494C010116001800A40018001000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
+      494C010116001800A80018001000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000006000000001002000000000000090
       000000000000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -6909,13 +6891,6 @@ object MainForm: TMainForm
     Left = 648
     Top = 240
   end
-  object SynPythonSyn: TSynPythonSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 456
-    Top = 344
-  end
   object ImageList_TextModes: TImageList
     ColorDepth = cd32Bit
     Height = 12
@@ -6923,7 +6898,7 @@ object MainForm: TMainForm
     Left = 360
     Top = 120
     Bitmap = {
-      494C010122003000880014000C00FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101220030008C0014000C00FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000500000006C00000001002000000000000087
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -8,8 +8,9 @@ uses
 
      //
      JsonDataObjects,
+
      //
-     SynEdit, SynEditHighlighter,SynEditCodeFolding, SynHighlighterJSON,
+     //SynEdit, SynEditHighlighter,SynEditCodeFolding, SynHighlighterJSON,
 
      //
      Windows,
@@ -17,7 +18,13 @@ uses
      Graphics, Vcl.ExtCtrls, System.Classes, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.Buttons, FloatSpinEdit;
 
 type
-     TTEAddMode = (amNone, amNextSibling, amOptionalSibling, amLastChild, amPrevLastChild);
+     TTEAddMode = (
+          amNone,
+          amNextSibling,      //移动或新增到当前节点的下一兄弟节点
+          amOptionalSibling,  //如果当前节点为第一子固定节点, 则位置为下一个;如果当前为最后固定节点,则为倒数第二个
+          amLastChild,        //移动或新增到当前节点的最后子节点
+          amPrevLastChild     //移动或新增到当前节点的非最后子节点
+          );
 type
      TEventHandlers = class { 建一个虚拟类}
           procedure PropertyChange(Sender: TObject);
@@ -62,6 +69,16 @@ implementation
 
 uses
      Main;
+
+function  teCanMoveTo(ASource,ADest:TJsonObject):TTEAddMode;                    //是否可以移动Source到ADest
+var
+     joSource  : TJsonObject;
+     joDest    : TJsonObject;
+     joMdlSrc  : TJsonObject;
+     joMdlDest : TJsonObject;
+begin
+
+end;
 
 procedure teAddModule(ANode:TTreeNode;AIndex:Integer);
      procedure _AddNode(AtnParent:TTreeNode;AIndex:Integer;AjoModule:TJsonObject);
@@ -415,7 +432,6 @@ var
      oSpinEdit : TSpinEdit;
      oEdit     : TEdit;
      oMemo     : TMemo;
-     oSynEdit  : TSynEdit;
      oCheckBox : TCheckBox;
      oComboBox : TComboBox;
      oColorBox : TColorBox;
@@ -483,12 +499,11 @@ begin
                oSpinEdit.Value     := ANode.I[joProp.S['name']];
                oSpinEdit.OnChange  := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'source' then begin
-               oSynEdit       := TSynEdit.Create(oPanel);
-               oSynEdit.Parent:= oPanel;
-               oSynEdit.Align := alClient;
-               oSynEdit.Text  := ANode.S[joProp.S['name']];
-               oSynEdit.OnChange   := EvHandler.PropertyChange;
-               oSynEdit.Gutter.Visible  := False;
+               oMemo       := TMemo.Create(oPanel);
+               oMemo.Parent:= oPanel;
+               oMemo.Align := alClient;
+               oMemo.Text  := ANode.S[joProp.S['name']];
+               oMemo.OnChange   := EvHandler.PropertyChange;
                //
                bFoundSrc := True;
                oPanel.Align   := alClient;
@@ -553,7 +568,6 @@ var
      oEdit     : TEdit;
      oMemo     : TMemo;
      oSpinEdit : TSpinEdit;
-     oSynEdit  : TSynEdit;
      oCheckBox : TCheckBox;
      oComboBox : TComboBox;
      oColorBox : TColorBox;
@@ -583,8 +597,8 @@ begin
                oEdit     := TEdit(oPanel.Controls[1]);
                joNode.S[joProp.S['name']]    := oEdit.Text;
           end else if joProp.S['type'] = 'source' then begin
-               oSynEdit  := TSynEdit(oPanel.Controls[1]);
-               joNode.S[joProp.S['name']]    := oSynEdit.Text;
+               oMemo  := TMemo(oPanel.Controls[1]);
+               joNode.S[joProp.S['name']]    := oMemo.Text;
           end else if joProp.S['type'] = 'memo' then begin
                oMemo     := TMemo(oPanel.Controls[1]);
                joNode.S[joProp.S['name']]    := oMemo.Text;

@@ -402,7 +402,6 @@ begin
           //
           AddSpaceLine;
      end;
-     slDM.Add('');  //ø’“ª––
      //
      Result    := slDM.Text;
      //
