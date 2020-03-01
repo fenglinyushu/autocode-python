@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.999,C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\Unit1.pas=C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\TkinterWin.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.999,C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\Unit1.dfm=C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\TkinterWin.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.384,E:\Github\autocode-python\tkinter\TkinterWin.pas=</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.489,E:\Github\autocode-python\tkinter\TkinterWin.pas=</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.041,=E:\Github\autocode-python\tkinter\TkinterWin.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.895,=E:\Github\autocode-python\tkinter\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.224,=E:\Github\autocode-python\tkinter\TkinterWin.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.319,E:\Github\autocode-python\tkinter\Tkinter.dfm=E:\Github\autocode-python\tkinter\Unit1.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.319,E:\Github\autocode-python\tkinter\Tkinter.pas=E:\Github\autocode-python\tkinter\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.999,C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\TkinterWin.pas=C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.023,E:\Github\autocode-python\tkinter\TkinterWin.pas=</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.999,C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\TkinterWin.dfm=C:\Users\Billows\Desktop\Temp\CtrlMoveAndResize\Unit1.dfm</Transaction>
   </Transactions>
 </BorlandProject>

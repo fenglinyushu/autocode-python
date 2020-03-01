@@ -1,0 +1,54 @@
+unit tkUnit;
+
+interface
+
+uses
+     //
+     SysVars,
+
+     //
+     teUnit,
+
+     //
+     JsonDataObjects,
+     Handles,
+     FloatSpinEdit,
+
+     //
+     Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,ComObj,
+     Dialogs, ExtCtrls, StdCtrls, ComCtrls, ImgList, ToolWin, System.ImageList, Vcl.Buttons,
+     Vcl.Samples.Spin, mxClickSplitter, dxGDIPlusClasses;
+
+procedure tkUpdateComponent(ACtrl:TControl; ANode:TJsonObject);
+
+
+implementation
+
+procedure tkUpdateComponent(ACtrl:TControl; ANode:TJsonObject);
+var
+     sClass    : TClass;
+     //
+     oLabel         : TLabel;
+     oCheckbutton   : TCheckBox;
+     oRadiobutton   : TRadioButton;
+     oButton        : TButton;
+     oEntry         : TEdit;
+     oListBox       : TListBox;
+     oText          : TMemo;
+     oScale         : TProgressBar;
+begin
+     ACtrl.Left  := ANode.I['left'];
+     ACtrl.Top   := ANode.I['top'];
+     ACtrl.Width := ANode.I['width'];
+     ACtrl.Height:= ANode.I['height'];
+
+     //
+     sClass    := ACtrl.ClassType;
+     if sClass = TLabel then begin
+          oLabel    := TLabel(ACtrl);
+          //
+     end;
+end;
+
+
+end.

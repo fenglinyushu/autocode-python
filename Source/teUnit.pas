@@ -8,6 +8,7 @@ uses
 
      //
      JsonDataObjects,
+     FloatSpinEdit,
 
      //
      //SynEdit, SynEditHighlighter,SynEditCodeFolding, SynHighlighterJSON,
@@ -15,7 +16,7 @@ uses
      //
      Windows,
      Forms,SysUtils, System.ImageList, Vcl.Dialogs, Vcl.Menus, Vcl.ImgList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin,
-     Graphics, Vcl.ExtCtrls, System.Classes, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.Buttons, FloatSpinEdit;
+     Graphics, Vcl.ExtCtrls, System.Classes, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.Buttons;
 
 type
      TTEAddMode = (
@@ -25,10 +26,6 @@ type
           amLastChild,        //移动或新增到当前节点的最后子节点
           amPrevLastChild     //移动或新增到当前节点的非最后子节点
           );
-type
-     TEventHandlers = class { 建一个虚拟类}
-          procedure PropertyChange(Sender: TObject);
-     end;
 
 const
      __OnlyChild         = 'only child';          //不允许有兄弟模块,只有孩子
@@ -41,80 +38,148 @@ const
 
 //
 function  teTreeToJson(ANode:TTreeNode):TJsonObject;                            //从树节点，得到相应的Json节点
-function  teInModules(AName:string;AArray:TJsonArray):Boolean;                  //is AName is Array
-function  teInNames(AName:string;AArray:array of string):Boolean;               //is AName is strings
-function  teModuleNameToImageIndex(AName:string):Integer;                       //Module name to ImageIndex
-function  teFindModule(AName:string):TJsonObject;                               //Find Module by name
-function  teGetAddMode(ASource,ADest: String): TTEAddMode;                      //Get the Add mode
-procedure teJsonToTree(TV:TTreeView);                                           //create tree from json
-procedure teAddChild(TV:TTreeView;ATNode:TTreeNode;AJNode:TJsonObject);         //
+function  teInModules(AName:string;AArray:TJsonArray):Boolean;                  //判断当前name是否在JSON数组中 is AName is Array
+function  teInNames(AName:string;AArray:array of string):Boolean;               //判断当前name是否在string数组中 is AName is strings
+function  teModuleNameToImageIndex(AName:string):Integer;                       //根据name设置图标 Module name to ImageIndex
+function  teFindModule(AName:string):TJsonObject;                               //根据name,得到模块JSON  Find Module by name
+function  teGetAddMode(ASource,ADest: String): TTEAddMode;                      //根据两个模块名称,得到添加的模式   Get the Add mode
+procedure teJsonToTree(TV:TTreeView);                                           //根据JSON生成树 create tree from json
+procedure teAddChild(ATNode:TTreeNode;AJNode:TJsonObject);         //
 function  teColorToArray(AColor:TColor):TJsonArray;    //
 function  teArrayToColor(AArray:TJsonArray):TColor;
 function  teFontToJson(AFont:TFont):TJsonObject;
 function  teJsonToFont(AFont:TFont;AJson:TJsonObject):Integer;
-procedure teSaveNodeProperty(ATV:TTreeView;APanel:TPanel);
-procedure teShowNodeProperty(ANode: TJsonObject;ATV:TTreeView;APanel:TPanel);
+procedure teSaveNodeProperty(ANode:TJsonObject; APanel:TPanel);
+procedure teShowNodeProperty(ANode: TJsonObject;APanel:TPanel);
 procedure teSetUpDownEnable(ANode:TTreeNode;ADown,AUp:TToolButton);
 procedure teMoveTreeNodeUp(ANode:TTreeNode);
 procedure teMoveTreeNodeDown(ANode:TTreeNode);
-procedure teAddModule(ANode:TTreeNode;AIndex:Integer);
+procedure teAddModule(ANode:TTreeNode;AModuleIndex:Integer);                    //在ANode节点上添加 序号为AModuleIndex的模块
+function  teAddJsonModule(AParent:TJsonObject;AIndex:Integer;AName:String):TJsonObject;
+procedure teInitProject;
 
-
-var
-     EvHandler : TEventHandlers;
 
 
 
 implementation
 
-uses
-     Main;
-
-function  teCanMoveTo(ASource,ADest:TJsonObject):TTEAddMode;                    //是否可以移动Source到ADest
+procedure  teInitProject;
 var
-     joSource  : TJsonObject;
-     joDest    : TJsonObject;
-     joMdlSrc  : TJsonObject;
-     joMdlDest : TJsonObject;
+     iChild    : Integer;
+     iProp     : Integer;
+     joModule  : TJsonObject;
+     jaProps   : TJsonArray;
+     joProp    : TJsonObject;
+     sName     : string;
 begin
+     //创建根节点
+     gjoProject     := TJsonObject.Create;
+     gjoProject.S['name']     := gjoModules.A['items'][0].S['name'];
+     gjoProject.A['items']    := TJsonArray.Create;
 
+     //添加属性
+     joModule  := gjoModules.A['items'][0];
+     jaProps   := joModule.A['property'];
+     for iProp := 0 to jaProps.Count-1 do begin
+          joProp    := jaProps.O[iProp];
+          //
+          with gjoProject do begin
+               if joProp.S['type'] = 'string' then begin
+                    S[joProp.S['name']] := joProp.S['default'];
+               end else if joProp.S['type'] = 'source' then begin
+                    S[joProp.S['name']] := joProp.S['default'];
+               end else if joProp.S['type'] = 'memo' then begin
+                    S[joProp.S['name']] := joProp.S['default'];
+               end else if joProp.S['type'] = 'integer' then begin
+                    I[joProp.S['name']] := joProp.I['default'];
+               end else if joProp.S['type'] = 'boolean' then begin
+                    B[joProp.S['name']] := joProp.B['default'];
+               end else if joProp.S['type'] = 'list' then begin
+                    S[joProp.S['name']] := joProp.S['default'];
+               end else if joProp.S['type'] = 'color' then begin
+                    A[joProp.S['name']] := TJsonArray.Create;
+                    A[joProp.S['name']].FromUtf8JSON(joProp.A['default'].ToUtf8JSON);
+               end else if joProp.S['type'] = 'font' then begin
+                    O[joProp.S['name']] := TJsonObject.Create;
+                    if joProp.Contains('default') then begin
+                         O[joProp.S['name']].FromUtf8JSON(joProp.O['default'].ToUtf8JSON);
+                    end;
+               end else if joProp.S['type'] = 'float' then begin
+                    F[joProp.S['name']] := joProp.F['default'];
+               end;
+          end;
+     end;
+
+     //添加子块
+     for iChild := 0 to gjoModules.A['items'][0].A['child'].Count-1 do begin
+          sName     := gjoModules.A['items'][0].A['child'].S[iChild];
+          joModule  := teFindModule(sName);
+          //
+          jaProps   := joModule.A['property'];
+          for iProp := 0 to jaProps.Count-1 do begin
+               joProp    := jaProps.O[iProp];
+               with gjoProject.A['items'].AddObject do begin
+                    S['name'] := sName;
+                    //
+                    if joProp.S['type'] = 'string' then begin
+                         S[joProp.S['name']] := joProp.S['default'];
+                    end else if joProp.S['type'] = 'source' then begin
+                         S[joProp.S['name']] := joProp.S['default'];
+                    end else if joProp.S['type'] = 'memo' then begin
+                         S[joProp.S['name']] := joProp.S['default'];
+                    end else if joProp.S['type'] = 'integer' then begin
+                         I[joProp.S['name']] := joProp.I['default'];
+                    end else if joProp.S['type'] = 'boolean' then begin
+                         B[joProp.S['name']] := joProp.B['default'];
+                    end else if joProp.S['type'] = 'list' then begin
+                         S[joProp.S['name']] := joProp.S['default'];
+                    end else if joProp.S['type'] = 'color' then begin
+                         A[joProp.S['name']] := TJsonArray.Create;
+                         A[joProp.S['name']].FromUtf8JSON(joProp.A['default'].ToUtf8JSON);
+                    end else if joProp.S['type'] = 'font' then begin
+                         O[joProp.S['name']] := TJsonObject.Create;
+                         if joProp.Contains('default') then begin
+                              O[joProp.S['name']].FromUtf8JSON(joProp.O['default'].ToUtf8JSON);
+                         end;
+                    end else if joProp.S['type'] = 'float' then begin
+                         F[joProp.S['name']] := joProp.F['default'];
+                    end;
+               end;
+          end;
+     end;
 end;
 
-procedure teAddModule(ANode:TTreeNode;AIndex:Integer);
-     procedure _AddNode(AtnParent:TTreeNode;AIndex:Integer;AjoModule:TJsonObject);
-     var
-          joParent  : TJsonObject;
-          joNew     : TJsonObject;
-          joProp    : TJsonObject;
-          //
-          tnNew     : TTreeNode;
 
-          //
-          iProp     : Integer;
-          iChild    : Integer;
 
-          //
-          sCaption  : string;      //新节点的caption
-     begin
-          //get parent json node
-          joParent  := teTreeToJson(AtnParent);
+function teAddJsonModule(AParent:TJsonObject;AIndex:Integer;AName:String):TJsonObject;
+var
+     joModule  : TJsonObject;
+     joProp    : TJsonObject;
+     //
+     tnNew     : TTreeNode;
 
-          //new tree node default text
-          sCaption  := '';
+     //
+     iProp     : Integer;
+     iChild    : Integer;
 
+begin
+     try
           //add a new node. AIndex = -1 is lastchild
           if AIndex = -1 then begin
-               joNew     := joParent.A['items'].AddObject;
+               Result    := AParent.A['items'].AddObject;
           end else begin
-               joNew     := joParent.A['items'].InsertObject(AIndex);
+               Result    := AParent.A['items'].InsertObject(AIndex);
           end;
 
           //
-          with joNew do begin
-               S['name']      := AjoModule.S['name'];
+          joModule  := teFindModule(AName);
+
+          //
+          with Result do begin
+               S['name']      := joModule.S['name'];
                //add property
-               for iProp := 0 to AjoModule.A['property'].Count-1 do begin
-                    joProp    := AjoModule.A['property'][iProp];
+               for iProp := 0 to joModule.A['property'].Count-1 do begin
+                    joProp    := joModule.A['property'][iProp];
                     if joProp.S['type'] = 'string' then begin
                          S[joProp.S['name']] := joProp.S['default'];
                     end else if joProp.S['type'] = 'source' then begin
@@ -139,16 +204,39 @@ procedure teAddModule(ANode:TTreeNode;AIndex:Integer);
                          F[joProp.S['name']] := joProp.F['default'];
                     end;
 
-                    //get text of new node
-                    if joProp.S['name'] = 'caption' then begin
-                         sCaption  := joProp.S['default'];
-                    end;
                end;
 
           end;
+     except
+          ShowMessage('Error when teAddJsonModule!');
+     end;
+end;
+
+procedure teAddModule(ANode:TTreeNode;AModuleIndex:Integer);
+     procedure _AddNode(AtnParent:TTreeNode;AIndex:Integer;AjoModule:TJsonObject);
+     var
+          joParent  : TJsonObject;
+          joNew     : TJsonObject;
+          joProp    : TJsonObject;
+          //
+          tnNew     : TTreeNode;
+
+          //
+          iProp     : Integer;
+          iChild    : Integer;
+
+          //
+          sCaption  : string;      //新节点的caption
+     begin
+          //get parent json node
+          joParent  := teTreeToJson(AtnParent);
+
+          //
+
+          joNew     := teAddJsonModule(joParent,AIndex,AjoModule.S['name']);
 
           //new tree node
-          tnNew     := MainForm.TreeView.Items.AddChild(AtnParent,sCaption);
+          tnNew     := TTreeView(ANode.TreeView).Items.AddChild(AtnParent,sCaption);
           tnNew.ImageIndex    := teModuleNameToImageIndex(joNew.S['name']);
           tnNew.SelectedIndex := tnNew.ImageIndex;
           tnNew.MakeVisible;
@@ -174,16 +262,14 @@ var
      oAddMode  : TTEAddMode;     //
 
 begin
-     //get current treeview node 得到当前树节点
-
-     //get json node from treenode 得到当前工程节点
+     //得到当前工程节点get json node from treenode
      joCur     := teTreeToJson(ANode);
 
      //
      joSelMdl  := teFindModule(joCur.S['name']);
 
      //get the module jsonobject 得到模块节点
-     joModule  := gjoModules.A['items'][AIndex];
+     joModule  := gjoModules.A['items'][AModuleIndex];
 
      //get the new type : child/sibling
      oAddMode  := teGetAddMode(joModule.S['name'], joSelMdl.S['name']);
@@ -313,25 +399,6 @@ end;
 
 
 
-procedure TEventHandlers.PropertyChange(Sender: TObject);
-var
-     oSpeedBtn : TSpeedButton;
-     oFontDlg  : TFontDialog;
-begin
-     if Sender.ClassType = TSpeedButton then begin
-          oSpeedBtn := TSpeedButton(Sender);
-          oFontDlg  := TFontDialog.Create(MainForm);
-          if oFontDlg.Execute then begin
-               oSpeedBtn.Font := oFontDlg.Font;
-          end;
-     end;
-     teSaveNodeProperty(MainForm.TreeView,MainForm.Panel_LeftBottom);
-     gbModified     := True;
-
-     //
-     //MainForm.SynEdit.Text    := gjoProject.ToUtf8JSON(False);
-
-end;
 
 
 procedure teSetUpDownEnable(ANode:TTreeNode;ADown,AUp:TToolButton);
@@ -418,7 +485,7 @@ begin
      end;
 end;
 
-procedure teShowNodeProperty(ANode: TJsonObject;ATV:TTreeView;APanel:TPanel);
+procedure teShowNodeProperty(ANode: TJsonObject;APanel:TPanel);
 var
      iProp     : Integer;
      iCtrl     : Integer;
@@ -440,6 +507,13 @@ var
      //
      bFoundSrc : Boolean;     //found source property
 begin
+     LockWindowUpdate(APanel.Handle);
+     //
+     //保存以用于相互操作
+     if ANode.Contains('guid') then begin
+          APanel.Hint    := ANode.S['guid'];
+     end;
+
      //Clear All components of Panel_LeftBottom
      for iCtrl := APanel.ControlCount-1 downto 0 do begin
           APanel.Controls[iCtrl].Destroy;
@@ -483,13 +557,13 @@ begin
                oEdit.Parent   := oPanel;
                oEdit.Align    := alClient;
                oEdit.Text     := ANode.S[joProp.S['name']];
-               oEdit.OnChange := EvHandler.PropertyChange;
+               //oEdit.OnChange := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'memo' then begin
                oMemo          := TMemo.Create(oPanel);
                oMemo.Parent   := oPanel;
                oMemo.Align    := alClient;
                oMemo.Text     := ANode.S[joProp.S['name']];
-               oMemo.OnChange := EvHandler.PropertyChange;
+               //oMemo.OnChange := EvHandler.PropertyChange;
                //
                oPanel.Height  := 80;
           end else if joProp.S['type'] = 'integer' then begin
@@ -497,13 +571,13 @@ begin
                oSpinEdit.Parent    := oPanel;
                oSpinEdit.Align     := alClient;
                oSpinEdit.Value     := ANode.I[joProp.S['name']];
-               oSpinEdit.OnChange  := EvHandler.PropertyChange;
+               //oSpinEdit.OnChange  := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'source' then begin
                oMemo       := TMemo.Create(oPanel);
                oMemo.Parent:= oPanel;
                oMemo.Align := alClient;
                oMemo.Text  := ANode.S[joProp.S['name']];
-               oMemo.OnChange   := EvHandler.PropertyChange;
+               //oMemo.OnChange   := EvHandler.PropertyChange;
                //
                bFoundSrc := True;
                oPanel.Align   := alClient;
@@ -512,19 +586,19 @@ begin
                oCheckBox.Parent    := oPanel;
                oCheckBox.Align     := alClient;
                oCheckBox.Checked   := ANode.B[joProp.S['name']];
-               oCheckBox.OnClick   := EvHandler.PropertyChange;
+               //oCheckBox.OnClick   := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'list' then begin
                oComboBox           := TComboBox.Create(oPanel);
                oComboBox.Parent    := oPanel;
                oComboBox.Align     := alClient;
-               for iItem := 0 to joProp.A['items'].Count-1 do begin
-                    oComboBox.Items.Add(joProp.A['items'].S[iItem]);
+               for iItem := 0 to joProp.A['lists'].Count-1 do begin
+                    oComboBox.Items.Add(joProp.A['lists'].S[iItem]);
                end;
                if joProp.B['fixed'] then begin
                     oComboBox.Style     := csDropDownList;
                end;
                oComboBox.ItemIndex := oComboBox.Items.IndexOf(ANode.S[joProp.S['name']]);  //HERE! IndexOfName not work correct!
-               oComboBox.OnChange  := EvHandler.PropertyChange;
+               //oComboBox.OnChange  := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'color' then begin
                oColorBox           := TColorBox.Create(oPanel);
                oColorBox.Parent    := oPanel;
@@ -533,30 +607,29 @@ begin
                oColorBox.ItemIndex := 0;
                oColorBox.NoneColorColor := clWhite;
                oColorBox.Selected       := teArrayToColor(ANode.A[joProp.S['name']]);
-               oColorBox.OnChange       := EvHandler.PropertyChange;
+               //oColorBox.OnChange       := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'font' then begin
                oSpeedBtn           := TSpeedButton.Create(oPanel);
                oSpeedBtn.Parent    := oPanel;
                oSpeedBtn.Align     := alClient;
                oSpeedBtn.Caption   := 'Font';
                teJsonToFont(oSpeedBtn.Font,ANode.O[joProp.S['name']]);
-               oSpeedBtn.OnClick   := EvHandler.PropertyChange;
+               //oSpeedBtn.OnClick   := EvHandler.PropertyChange;
           end else if joProp.S['type'] = 'float' then begin
                oFloatSE           := TFloatSpinEdit.Create(oPanel);
                oFloatSE.Parent    := oPanel;
                oFloatSE.Align     := alClient;
                oFloatSE.Value     := ANode.F[joProp.S['name']];
-               oFloatSE.OnChange  := EvHandler.PropertyChange;
+               //oFloatSE.OnChange  := EvHandler.PropertyChange;
           end;
      end;
-
+     //
+     LockWindowUpdate(0);
 end;
 
 
-procedure teSaveNodeProperty(ATV:TTreeView;APanel:TPanel);
+procedure teSaveNodeProperty(ANode:TJsonObject; APanel:TPanel);
 var
-     tnNode    : TTreeNode;
-     joNode    : TJsonObject;
      //
      iProp     : Integer;
      //
@@ -576,17 +649,9 @@ var
      //
      sDebug    : string;
 begin
-     //get current selected treenode
-     tnNode    := ATV.Selected;
-     if tnNode = nil then begin
-          Exit;
-     end;
-
-     //get current project json node
-     joNode    := teTreeToJson(tnNode);
 
      //
-     joModule  := teFindModule(joNode.S['name']);
+     joModule  := teFindModule(ANode.S['name']);
 
      //
      for iProp := 0 to APanel.ControlCount-1 do begin
@@ -595,38 +660,38 @@ begin
           oPanel    := TPanel(APanel.Controls[iProp]);
           if joProp.S['type'] = 'string' then begin
                oEdit     := TEdit(oPanel.Controls[1]);
-               joNode.S[joProp.S['name']]    := oEdit.Text;
+               ANode.S[joProp.S['name']]    := oEdit.Text;
           end else if joProp.S['type'] = 'source' then begin
                oMemo  := TMemo(oPanel.Controls[1]);
-               joNode.S[joProp.S['name']]    := oMemo.Text;
+               ANode.S[joProp.S['name']]    := oMemo.Text;
           end else if joProp.S['type'] = 'memo' then begin
                oMemo     := TMemo(oPanel.Controls[1]);
-               joNode.S[joProp.S['name']]    := oMemo.Text;
+               ANode.S[joProp.S['name']]    := oMemo.Text;
           end else if joProp.S['type'] = 'integer' then begin
                oSpinEdit     := TSpinEdit(oPanel.Controls[1]);
-               joNode.I[joProp.S['name']]    := oSpinEdit.Value;
+               ANode.I[joProp.S['name']]    := oSpinEdit.Value;
           end else if joProp.S['type'] = 'boolean' then begin
                oCheckBox     := TCheckBox(oPanel.Controls[1]);
-               joNode.B[joProp.S['name']]    := oCheckBox.Checked;
+               ANode.B[joProp.S['name']]    := oCheckBox.Checked;
           end else if joProp.S['type'] = 'list' then begin
                oComboBox := TComboBox(oPanel.Controls[1]);
-               joNode.S[joProp.S['name']]    := oComboBox.Text;
+               ANode.S[joProp.S['name']]    := oComboBox.Text;
           end else if joProp.S['type'] = 'color' then begin
                oColorBox := TColorBox(oPanel.Controls[1]);
-               joNode.A[joProp.S['name']]    := TJsonArray.Create;
-               joNode.A[joProp.S['name']].FromUtf8JSON(teColorToArray(oColorBox.Selected).ToUtf8JSON(False));
+               ANode.A[joProp.S['name']]    := TJsonArray.Create;
+               ANode.A[joProp.S['name']].FromUtf8JSON(teColorToArray(oColorBox.Selected).ToUtf8JSON(False));
           end else if joProp.S['type'] = 'font' then begin
                oSpeedBtn := TSpeedButton(oPanel.Controls[1]);
-               joNode.O[joProp.S['name']]    := TJsonObject.Create;
-               joNode.O[joProp.S['name']].FromUtf8JSON(teFontToJson(oSpeedBtn.Font).ToUtf8JSON(False));
+               ANode.O[joProp.S['name']]    := TJsonObject.Create;
+               ANode.O[joProp.S['name']].FromUtf8JSON(teFontToJson(oSpeedBtn.Font).ToUtf8JSON(False));
           end else if joProp.S['type'] = 'float' then begin
                oFloatSE  := TFloatSpinEdit(oPanel.Controls[1]);
-               joNode.F[joProp.S['name']]    := oFloatSE.Value;
+               ANode.F[joProp.S['name']]    := oFloatSE.Value;
           end;
 
           //更新树节点显示
           if joProp.S['name'] = 'caption' then begin
-               ATV.Selected.Text   := joNode.S['caption'];
+               //ATV.Selected.Text   := ANode.S['caption'];
           end;
      end;
 
@@ -964,7 +1029,7 @@ begin
 
 end;
 
-procedure teAddChild(TV:TTreeView;ATNode:TTreeNode;AJNode:TJsonObject);
+procedure teAddChild(ATNode:TTreeNode;AJNode:TJsonObject);
 var
      ssName    : string;
      ssMode    : string;
@@ -986,9 +1051,9 @@ begin
      //
      for iiItem := 0 to AJNode.A['items'].Count-1 do begin
           jjItem    := AJNode.A['items'][iiItem];
-          tnChild   := TV.Items.AddChild(ATNode,jjItem.S['caption']);
+          tnChild   := TTreeView(ATNode.TreeView).Items.AddChild(ATNode,jjItem.S['caption']);
           //
-          teAddChild(TV,tnChild,jjItem);
+          teAddChild(tnChild,jjItem);
      end;
 end;
 
@@ -996,7 +1061,7 @@ procedure teJsonToTree(TV:TTreeView);
 
 begin
      TV.Items[0].DeleteChildren;
-     teAddChild(TV,TV.Items[0],gjoProject);
+     teAddChild(TV.Items[0],gjoProject);
 end;
 
 end.

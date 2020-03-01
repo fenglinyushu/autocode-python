@@ -247,23 +247,31 @@ object MainForm: TMainForm
         ImageIndex = 20
         OnClick = ToolButton_RunWithWindowClick
       end
-      object ToolButton2: TToolButton
+      object ToolButton4: TToolButton
         Left = 128
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton4'
+        ImageIndex = 11
+        Style = tbsSeparator
+      end
+      object ToolButton_TkinterWindow: TToolButton
+        Left = 136
+        Top = 0
+        Hint = 'tkinter Editor'
+        ImageIndex = 44
+        OnClick = ToolButton_TkinterWindowClick
+      end
+      object ToolButton2: TToolButton
+        Left = 159
         Top = 0
         Width = 8
         Caption = 'ToolButton2'
         ImageIndex = 11
         Style = tbsSeparator
       end
-      object ToolButton_EditWindow: TToolButton
-        Left = 136
-        Top = 0
-        Hint = 'tkinter Editor'
-        ImageIndex = 44
-        OnClick = ToolButton_EditWindowClick
-      end
       object ToolButton_Expand: TToolButton
-        Left = 159
+        Left = 167
         Top = 0
         Hint = 'Expand current node'
         Caption = 'Expand current node'
@@ -273,7 +281,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ExpandClick
       end
       object ToolButton_Collapse: TToolButton
-        Left = 182
+        Left = 190
         Top = 0
         Hint = 'Collapse current node'
         Caption = 'ToolButton_Collapse'
@@ -281,7 +289,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_CollapseClick
       end
       object ToolButton_ZoomIn: TToolButton
-        Left = 205
+        Left = 213
         Top = 0
         Hint = 'Zoom in'
         Caption = 'ToolButton_ZoomIn'
@@ -289,7 +297,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ZoomInClick
       end
       object ToolButton_ZoomOut: TToolButton
-        Left = 228
+        Left = 236
         Top = 0
         Hint = 'Zoom out'
         Caption = 'ToolButton_ZoomOut'
@@ -297,7 +305,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ZoomOutClick
       end
       object ToolButton_Up: TToolButton
-        Left = 251
+        Left = 259
         Top = 0
         Hint = 'Move up'
         Caption = 'ToolButton_Up'
@@ -308,7 +316,7 @@ object MainForm: TMainForm
       end
       object ToolButton_Down: TToolButton
         Tag = 1
-        Left = 274
+        Left = 282
         Top = 0
         Hint = 'Move down'
         Caption = 'ToolButton_ShowLineNo'
@@ -316,7 +324,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_DownClick
       end
       object ToolButton7: TToolButton
-        Left = 297
+        Left = 305
         Top = 0
         Width = 8
         Caption = 'ToolButton7'
@@ -324,7 +332,7 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object ToolButton_ExportToFile: TToolButton
-        Left = 305
+        Left = 313
         Top = 0
         Hint = 'Export to source code file'
         Caption = 'ToolButton_ExportToFile'
@@ -332,7 +340,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_ExportToFileClick
       end
       object ToolButton_SaveToWord: TToolButton
-        Left = 328
+        Left = 336
         Top = 0
         Hint = 'Export chart as Word'
         Caption = 'ToolButton_SaveToWord'
@@ -341,7 +349,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToWordClick
       end
       object ToolButton_SaveToVisio: TToolButton
-        Left = 351
+        Left = 359
         Top = 0
         Hint = 'Export chart as Visio'
         Caption = 'ToolButton_SaveToVisio'
@@ -350,7 +358,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToVisioClick
       end
       object ToolButton_SaveToSVG: TToolButton
-        Left = 374
+        Left = 382
         Top = 0
         Hint = 'Export chart as SVG'
         Caption = 'ToolButton_SaveToSVG'
@@ -359,7 +367,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToSVGClick
       end
       object ToolButton_SaveToBmp: TToolButton
-        Left = 397
+        Left = 405
         Top = 0
         Hint = 'Export chart to Bmp'
         Caption = 'ToolButton_SaveToBmp'
@@ -367,7 +375,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_SaveToBmpClick
       end
       object ToolButton5: TToolButton
-        Left = 420
+        Left = 428
         Top = 0
         Width = 8
         Caption = 'ToolButton5'
@@ -375,7 +383,7 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object ToolButton_Option: TToolButton
-        Left = 428
+        Left = 436
         Top = 0
         Hint = 'Options'
         Caption = 'ToolButton_Option'
@@ -384,7 +392,7 @@ object MainForm: TMainForm
         OnClick = ToolButton_OptionClick
       end
       object ToolButton3: TToolButton
-        Left = 451
+        Left = 459
         Top = 0
         Width = 8
         Caption = 'ToolButton3'
@@ -393,7 +401,7 @@ object MainForm: TMainForm
         Visible = False
       end
       object ToolButton_Help: TToolButton
-        Left = 459
+        Left = 467
         Top = 0
         Hint = 'Help'
         Caption = 'ToolButton_Help'
@@ -422,7 +430,6 @@ object MainForm: TMainForm
       item
         Width = 200
       end>
-    ExplicitTop = 520
   end
   object Panel_Left: TPanel
     Left = 0
@@ -434,7 +441,6 @@ object MainForm: TMainForm
     Color = clAqua
     ParentBackground = False
     TabOrder = 2
-    ExplicitHeight = 494
     object mxClickSplitter_LeftBottom: TmxClickSplitter
       Left = 0
       Top = 302
@@ -483,7 +489,6 @@ object MainForm: TMainForm
       Items.NodeData = {
         03010000001E0000000000000000000000FFFFFFFFFFFFFFFF00000000000000
         00000000000100}
-      ExplicitHeight = 268
     end
     object Panel_LeftBottom: TPanel
       Left = 0
@@ -501,7 +506,6 @@ object MainForm: TMainForm
       ParentColor = True
       ParentFont = False
       TabOrder = 1
-      ExplicitTop = 274
     end
   end
   object Panel_Client: TPanel
@@ -512,7 +516,6 @@ object MainForm: TMainForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitHeight = 494
     object mxClickSplitter_ClientBottom: TmxClickSplitter
       Left = 0
       Top = 302
@@ -543,8 +546,6 @@ object MainForm: TMainForm
       Color = clWindow
       ParentColor = False
       TabOrder = 0
-      ExplicitWidth = 638
-      ExplicitHeight = 268
       object Image: TImage
         Left = 6
         Top = 6
@@ -564,7 +565,6 @@ object MainForm: TMainForm
       Height = 220
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 274
       object Memo_Messages: TMemo
         Left = 1
         Top = 1
@@ -601,7 +601,7 @@ object MainForm: TMainForm
     Left = 816
     Top = 152
     Bitmap = {
-      494C010159005E00B00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010159005E00BC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000007001000001002000000000000070
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3655,7 +3655,7 @@ object MainForm: TMainForm
     Left = 360
     Top = 64
     Bitmap = {
-      494C010135003800440010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010135003800500010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000E0000000010020000000000000E0
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -5666,7 +5666,7 @@ object MainForm: TMainForm
     Left = 814
     Top = 218
     Bitmap = {
-      494C010116001800A80018001000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
+      494C010116001800B40018001000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000006000000001002000000000000090
       000000000000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -6898,7 +6898,7 @@ object MainForm: TMainForm
     Left = 360
     Top = 120
     Bitmap = {
-      494C0101220030008C0014000C00FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010122003000980014000C00FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000500000006C00000001002000000000000087
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -8024,5 +8024,14 @@ object MainForm: TMainForm
       7FDF0000F801FE290F0C061FFFFF0000FC03FF39FF9FFFFF7FDF0000FFFFFF29
       FF8FFFFF2A9F0000FFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF0000
       00000000000000000000000000000000000000000000}
+  end
+  object FontDialog: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Left = 566
+    Top = 242
   end
 end

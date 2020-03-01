@@ -37,7 +37,7 @@ var
      //----------------------------程序块---------------------------------------------------------//
      grFiles        : array of TWWFile;                   //打开的文件数组
      giCurCodeType  : Integer;
-     grBlocks       : TWWBlocks;   //所有程序块数组
+     //grBlocks       : TWWBlocks;   //所有程序块数组
      giOldBlockID   : Integer=-1;  //保存上次的程序块数组
 
      //----------------------------编辑器设置-----------------------------------------------------//
@@ -79,6 +79,7 @@ var
 
      //
      gbShowDetailCode    : Boolean = False;
+     gbModified          : Boolean = False;  //文件是否已被修改
 
 
 

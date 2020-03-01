@@ -1,0 +1,15 @@
+program MoveAndResize;
+
+uses
+  Forms,
+  TkinterWin in 'TkinterWin.pas' {Form_TkinterEditor},
+  Tkinter in 'Tkinter.pas' {Form_Tkinter};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TForm_TkinterEditor, Form_TkinterEditor);
+  Application.CreateForm(TForm_Tkinter, Form_Tkinter);
+  Application.Run;
+end.
