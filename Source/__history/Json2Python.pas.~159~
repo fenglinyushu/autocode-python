@@ -89,7 +89,7 @@ var
      begin
           Result    := '';
           for II := 0 to joNode.A['property'].Count-1 do begin
-               if joNode.A['property'][II].S['_m_'] = AName then begin
+               if joNode.A['property'][II].S['name'] = AName then begin
                     Result    := joNode.A['property'][II].S['value'];
                     Break;
                end;
@@ -139,7 +139,7 @@ begin
      end;
 
      //生成代码
-     sName     := ANode.S['_m_'];
+     sName     := ANode.S['name'];
      if sName = 'root' then begin
 
           //添加当前节点代码
@@ -211,7 +211,7 @@ begin
 
           //添加子节点代码
           for I:=1 to ANode.A['items'].Count-1 do begin
-               if ANode.A['items'][I].S['_m_'] = 'elif' then begin
+               if ANode.A['items'][I].S['name'] = 'elif' then begin
                     slDM.Add('elif '+_GetSProp(ANode.A['items'][I],'source')+':');
                end else begin
                     slDM.Add('else:');
@@ -306,7 +306,7 @@ begin
                slDM.Add('');
                joChild   := ANode.A['items'].O[I];
                //
-               if joChild.S['_m_'] = 'tk_label' then begin
+               if joChild.S['name'] = 'tk_label' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'label'+IntToStr(I);
@@ -317,18 +317,18 @@ begin
                     slDM.Add('"""');
                     slDM.Add(Format('%s = tk.Label('+sWin+', text=labeltext, bg="#%.2x%.2x%.2x", font=("%s", %d),justify="%s", anchor="%s")',
                               [sComp,joChild.A['color'].I[0],joChild.A['color'].I[1],joChild.A['color'].I[2],
-                              joChild.O['font'].S['_m_'],joChild.O['font'].I['size'],joChild.S['justify'],joChild.S['anchor']  ]));
+                              joChild.O['font'].S['name'],joChild.O['font'].I['size'],joChild.S['justify'],joChild.S['anchor']  ]));
 
-               end else if joChild.S['_m_'] = 'tk_button' then begin
+               end else if joChild.S['name'] = 'tk_button' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'button'+IntToStr(I);
                     end;
                     //
                     slDM.Add(Format('%s = tk.Button('+sWin+', text="%s",  font=("%s", %d))',
-                              [sComp,joChild.S['caption'],joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                              [sComp,joChild.S['caption'],joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
 
-               end else if joChild.S['_m_'] = 'tk_entry' then begin
+               end else if joChild.S['name'] = 'tk_entry' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'entry'+IntToStr(I);
@@ -336,34 +336,34 @@ begin
                     //
                     if joChild.B['password'] then begin
                          slDM.Add(Format('%s = tk.Entry('+sWin+', show="*",  font=("%s", %d))',
-                                   [sComp,joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                                   [sComp,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
                     end else begin
                          slDM.Add(Format('%s = tk.Entry('+sWin+',  font=("%s", %d))',
-                                   [sComp,joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                                   [sComp,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
                     end;
                     if joChild.S['default']<>'' then begin
                          slDM.Add(Format('%s.insert(0, "%s")', [sComp,joChild.S['default']]));
                     end;
 
-               end else if joChild.S['_m_'] = 'tk_check' then begin
+               end else if joChild.S['name'] = 'tk_check' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'check'+IntToStr(I);
                     end;
                     //
                     slDM.Add(Format('%s = tk.Checkbutton('+sWin+',text="%s",  font=("%s", %d), anchor="w")',
-                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
 
-               end else if joChild.S['_m_'] = 'tk_radio' then begin
+               end else if joChild.S['name'] = 'tk_radio' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'radio'+IntToStr(I);
                     end;
                     //
                     slDM.Add(Format('%s = tk.Radiobutton('+sWin+',text="%s",  font=("%s", %d), anchor="w")',
-                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                              [sComp,joChild.S['caption'] ,joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
 
-               end else if joChild.S['_m_'] = 'tk_listbox' then begin
+               end else if joChild.S['name'] = 'tk_listbox' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'listbox'+IntToStr(I);
@@ -371,14 +371,14 @@ begin
 
                     //
                     slDM.Add(Format('%s = tk.Listbox('+sWin+',  font=("%s", %d))',
-                              [sComp, joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                              [sComp, joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
 
                     //
                     slDM.Add('for item in ['+_ItemsToStr(joChild.S['lines'])+']:');
                     slDM.Add('     '+sComp+'.insert("end", item)');
 
 
-               end else if joChild.S['_m_'] = 'tk_text' then begin
+               end else if joChild.S['name'] = 'tk_text' then begin
                     sComp := joChild.S['compname'];
                     if sComp = '' then begin
                          sComp := 'text'+IntToStr(I);
@@ -386,7 +386,7 @@ begin
 
                     //
                     slDM.Add(Format('%s = tk.Text('+sWin+',  font=("%s", %d))',
-                              [sComp, joChild.O['font'].S['_m_'],joChild.O['font'].I['size']]));
+                              [sComp, joChild.O['font'].S['name'],joChild.O['font'].I['size']]));
 
                     //
                     slDM.Add('for item in ['+_ItemsToStr(joChild.S['caption'])+']:');

@@ -1485,7 +1485,7 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     Memo_Code.Text      := JsonToPython(gjoProject);
+     Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
      Memo_Code.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
@@ -1639,9 +1639,8 @@ end;
 
 procedure TMainForm.AddModule(Sender: TObject);
 var
-     I         : Integer;
+     I    : Integer;
      tnNode    : TTreeNode;
-     joNode    : TJsonObject;
 begin
      //
      bIsCreating    := True;
@@ -1649,6 +1648,10 @@ begin
      //新增节点
      teAddModule(TreeView.Selected,TMenuItem(Sender).MenuIndex);
 
+     //
+     for I:= 1 to TreeView.Items.Count-1 do begin
+          jo
+     end;
 
      //
      Memo_Code.Text   := JsonToPython(gjoProject);

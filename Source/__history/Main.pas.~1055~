@@ -654,9 +654,9 @@ begin
      DeleteFile(gsMainDir+'python\output.ap');
 
      //Éú³É´úÂë
-     grOption.AddCaption := grConfig.AddCaption;
-     grOption.AddComment := grConfig.AddComment;
-     grOption.Indent     := grConfig.Indent;
+     grOption.AddCaption := True;//grConfig.AddCaption;
+     grOption.AddComment := True;//grConfig.AddComment;
+     grOption.Indent     := 5;//grConfig.Indent;
      Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
@@ -1485,7 +1485,7 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     Memo_Code.Text      := JsonToPython(gjoProject);
+     Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
      Memo_Code.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);

@@ -700,7 +700,7 @@ const
                     DrawPoints([X,Y,  X+BH,Y+BH]);
                     DrawPoints([X+W,Y,  X+W-BH,Y+BH]);
                     //Ð´ÎÄ×Ö
-                    oGraph.DrawString(sTxt+' '+Node.Attributes['_m_'],-1,oFontB,MakeRect(X,Y,W,BH),oFormat,oFontBrh);
+                    oGraph.DrawString(sTxt+' '+Node.Attributes['Name'],-1,oFontB,MakeRect(X,Y,W,BH),oFormat,oFontBrh);
                end;
 
                rtCase_Item,rtCase_Default : begin
@@ -709,7 +709,7 @@ const
                     //º¬×Ó¿éµÄ¿ò
                     DrawPoints([X,Y,  X+W,Y,  X+W,Y+H,  X,Y+H,  X,Y]);
                     //Ð´ÎÄ×Ö
-                    oGraph.DrawString(Node.Attributes['_m_'],-1,oFontB,MakeRect(X,Y,W,BH),oFormat,oFontBrh);
+                    oGraph.DrawString(Node.Attributes['Name'],-1,oFontB,MakeRect(X,Y,W,BH),oFormat,oFontBrh);
                end;
 
                //

@@ -261,7 +261,7 @@ var
      joNode    : TJsonObject;
 begin
      if ToolBar1.Hint <> 'select' then begin
-{          //添加JSON
+          //添加JSON
           with gjoWindow.A['items'].AddObject do begin
                teAddJsonModule(gjoWindow,-1,ToolBar1.Hint);
           end;
@@ -274,7 +274,6 @@ begin
           //
           joNode.I['left']    := X;
           joNode.I['top']     := Y;
-}
      end;
 end;
 
@@ -282,7 +281,7 @@ procedure TForm_TkinterEditor.FormCreate(Sender: TObject);
 begin
      gjoWindow := TJsonObject.Create;
      //
-     gjoWindow.S['_m_']      := 'tk_window';
+     gjoWindow.S['name']      := 'tk_window';
      gjoWindow.S['caption']   := 'tkinter window';
      gjoWindow.I['left']      := 100;
      gjoWindow.I['top']       := 100;
@@ -342,7 +341,7 @@ var
      end;
 begin
      //
-     if ANode.S['_m_'] = 'tk_label' then begin
+     if ANode.S['name'] = 'tk_label' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -381,7 +380,7 @@ begin
           oLabel.Color        := teArrayToColor(ANode.A['color']);
 
           //
-     end else if ANode.S['_m_'] = 'tk_button' then begin
+     end else if ANode.S['name'] = 'tk_button' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -395,7 +394,7 @@ begin
           oButton.Tag         := 1;
           oButton.OnMouseDown := ControlMouseDown;
           oButton.OnMouseMove := ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_check' then begin
+     end else if ANode.S['name'] = 'tk_check' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -409,7 +408,7 @@ begin
           oCheckbutton.Tag         := 1;
           oCheckbutton.OnMouseDown := ControlMouseDown;
           oCheckbutton.OnMouseMove := ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_radio' then begin
+     end else if ANode.S['name'] = 'tk_radio' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -423,7 +422,7 @@ begin
           oRadiobutton.Tag         := 1;
           oRadiobutton.OnMouseDown := ControlMouseDown;
           oRadiobutton.OnMouseMove := ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_entry' then begin
+     end else if ANode.S['name'] = 'tk_entry' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -437,7 +436,7 @@ begin
           oEntry.Tag          := 1;
           oEntry.OnMouseDown  := ControlMouseDown;
           oEntry.OnMouseMove  := ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_listbox' then begin
+     end else if ANode.S['name'] = 'tk_listbox' then begin
           oPanel         := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -454,7 +453,7 @@ begin
           oListBox.Tag        := 1;
           oListBox.OnMouseDown:= ControlMouseDown;
           oListBox.OnMouseMove:= ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_text' then begin
+     end else if ANode.S['name'] = 'tk_text' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;
@@ -468,7 +467,7 @@ begin
           oText.Tag           := 1;
           oText.OnMouseDown   := ControlMouseDown;
           oText.OnMouseMove   := ControlMouseMove;
-     end else if ANode.S['_m_'] = 'tk_scale' then begin
+     end else if ANode.S['name'] = 'tk_scale' then begin
           oPanel    := CreateParentPanel(AIndex);
           //用于相互联系
           ANode.S['guid']     := oPanel.Name;

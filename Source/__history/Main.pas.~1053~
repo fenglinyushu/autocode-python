@@ -1485,7 +1485,7 @@ begin
      grOption.AddCaption := grConfig.AddCaption;
      grOption.AddComment := grConfig.AddComment;
      grOption.Indent     := grConfig.Indent;
-     Memo_Code.Text      := JsonToPython(gjoProject);
+     Memo_Code.Text    := JsonToPython(gjoProject);
 
      //
      Memo_Code.Lines.SaveToFile(gsMainDir+'python\_temp_.py',TEncoding.UTF8);
@@ -1649,6 +1649,19 @@ begin
      //新增节点
      teAddModule(TreeView.Selected,TMenuItem(Sender).MenuIndex);
 
+     HERE! 这里新增的节点没有图标
+     //
+     for I:= 1 to TreeView.Items.Count-1 do begin
+          tnNode    := TreeView.Items[I];
+          if tnNode.ImageIndex = 0 then begin
+               joNode    := teTreeToJson(tnNode);
+               //
+               tnNode.ImageIndex   := teModuleNameToImageIndex(joNode.S['_m_']);
+               tnNode.SelectedIndex     := tnNode.ImageIndex;
+
+          end;
+     end;
+     //TreeView.Update;
 
      //
      Memo_Code.Text   := JsonToPython(gjoProject);

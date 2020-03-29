@@ -1,4 +1,5 @@
 program AutoCodePython;
+//E:\编程参考\D7Vcl\MsgDlg;E:\编程参考\D7Vcl\XPStyle\Source;E:\编程参考\D7Vcl\RxLib\Rx\Units;E:\编程参考\D7Vcl\SynEdit\Source;E:\编程参考\D7Vcl\Tb2k\Source;E:\编程参考\D7Vcl\DBNavPlus;E:\编程参考\D7Vcl\EhLib36;E:\编程参考\D7Vcl\parser10
 uses
   ShareMem,
   Forms,

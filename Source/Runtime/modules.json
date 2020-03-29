@@ -4,21 +4,23 @@
 	"items":
 	[
 		{
-			"name":"root",
+			"_m_":"root",
+			"caption":"root",
 			"mode":"only child",
 			"allowsibling":[],
 			"allowchild":["class","function","code","if","for","while","try","tk_window"],
 			"parent":["none"]
 		},
 		{
-			"name":"block",
+			"_m_":"block",
 			"mode":"as fixed child",
 			"allowsibling":[],
 			"allowchild":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"parent":["none"]
 		},
 		{
-			"name":"function",
+			"_m_":"function",
+			"caption":"function",
 			"mode":"sibling and child",
 			"allowsibling":["function","code","if","for","while","try","tk_window"],
 			"allowchild":["code","if","for","while","try","tk_window"],
@@ -28,28 +30,33 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"newfunc(param)"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"newfunc(param)"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},
 		{
-			"name":"class",
+			"_m_":"class",
+			"caption":"class",
 			"mode":"sibling and child",
 			"allowsibling":["class","code","if","for","while","try","tk_window"],
 			"allowchild":["function","code","if","for","while","try","tk_window"],
@@ -60,28 +67,33 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"classname"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"classname"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},
 		{
-			"name":"code",
+			"_m_":"code",
+			"caption":"code",
 			"mode":"no child",
 			"allowsibling":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"allowchild":[],
@@ -89,27 +101,32 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"source",
 					"default":"print('hello,python!')"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},
 		{
-			"name":"if",
+			"_m_":"if",
+			"caption":"if",
 			"mode":"optional child",
 			"child":["if_yes","if_else"],
 			"allowsibling":["class","function","code","if","for","while","try","break","continue","tk_window"],
@@ -117,28 +134,33 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"1 > 0"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"1 > 0"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},
 		{
-			"name":"if_yes",
+			"_m_":"if_yes",
+			"caption":"if_yes",
 			"mode":"as fixed child",
 			"allowsibling":["elif"],
 			"allowchild":["function","code","if","for","while","try","break","continue","tk_window"],
@@ -148,7 +170,8 @@
 			]
 		},
 		{
-			"name":"if_else",
+			"_m_":"if_else",
+			"caption":"if_else",
 			"mode":"as fixed child",
 			"allowsibling":["elif"],
 			"allowchild":["function","code","if","for","while","try","break","continue","tk_window"],
@@ -158,7 +181,8 @@
 			]
 		},
 		{
-			"name":"for",
+			"_m_":"for",
+			"caption":"for",
 			"mode":"fixed child",
 			"allowsibling":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"allowchild":[],
@@ -166,28 +190,33 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"i in range(0,3)"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"i in range(0,3)"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},		
 		{
-			"name":"while",
+			"_m_":"while",
+			"caption":"while",
 			"mode":"fixed child",
 			"allowsibling":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"allowchild":[],
@@ -195,28 +224,33 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"0 > 0"
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"0 > 0"
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},		
 		{
-			"name":"try",
+			"_m_":"try",
+			"caption":"try",
 			"mode":"optional child",
 			"allowsibling":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"allowchild":["try_except"],
@@ -224,23 +258,27 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"comment",
+					"_m_":"comment",
+					"caption":"comment",
 					"type":"string"
 				},
 				{
-					"name":"disabled",
+					"_m_":"disabled",
+					"caption":"disabled",
 					"type":"boolean",
 					"default":false
 				}
 			]
 		},
 		{
-			"name":"elif",
+			"_m_":"elif",
+			"caption":"elif",
 			"mode":"as optional child",
 			"allowsibling":["elif"],
 			"allowchild":["function","code","if","for","while","try","break","continue","tk_window"],
@@ -248,19 +286,22 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"1>0"
 				}
 			]
 		},
 		{
-			"name":"try_body",
+			"_m_":"try_body",
+			"caption":"try_body",
 			"allowsibling":["try_except"],
 			"allowchild":["class","function","code","if","for","while","try","break","continue","tk_window"],
 			"mode":"as fixed child",
@@ -268,7 +309,8 @@
 			"property":[]
 		},
 		{
-			"name":"try_else",
+			"_m_":"try_else",
+			"caption":"try_else",
 			"mode":"as fixed child",
 			"allowsibling":["try_except"],
 			"allowchild":["class","function","code","if","for","while","try","break","continue","tk_window"],
@@ -276,7 +318,8 @@
 			"property":[]
 		},
 		{
-			"name":"try_except",
+			"_m_":"try_except",
+			"caption":"try_except",
 			"mode":"as optional child",
 			"allowsibling":["try_except"],
 			"allowchild":["class","function","code","if","for","while","try","break","continue","tk_window"],
@@ -284,22 +327,25 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"source",
+					"_m_":"source",
+					"caption":"source",
 					"type":"string",
 					"default":"IOError"
 				}
 			]
 		},
 		{
-			"name":"-"
+			"_m_":"-"
 		},
 		{
-			"name":"break",
+			"_m_":"break",
+			"caption":"break",
 			"allowsibling":["code","if","for","while","try","continue","tk_window"],
 			"allowchild":[],
 			"menu":[],
@@ -308,7 +354,8 @@
 			"property":[]
 		},
 		{
-			"name":"continue",
+			"_m_":"continue",
+			"caption":"continue",
 			"allowsibling":["code","if","for","while","try","break","tk_window"],
 			"allowchild":[],
 			"mode":"no child",
@@ -316,10 +363,11 @@
 			"property":[]
 		},
 		{
-			"name":"-"
+			"_m_":"-"
 		},
 		{
-			"name":"tk_window",
+			"_m_":"tk_window",
+			"caption":"tk_window",
 			"mode":"sibling and child",
 			"allowsibling":["tk_window","class","function","code","if","for","while","try","break","continue"],
 			"allowchild":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
@@ -327,44 +375,52 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tkinter window"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":"win"
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":100
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":100
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":400
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":300
 				},
 				{
-					"name":"color",
+					"_m_":"color",
+					"caption":"color",
 					"type":"color",
 					"default":[240,240,240]
 				}
 			]
 		},
 		{
-			"name":"tk_label",
+			"_m_":"tk_label",
+			"caption":"tk_label",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -372,62 +428,73 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"memo",
 					"default":"tk_label"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"justify",
+					"_m_":"justify",
+					"caption":"justify",
 					"type":"list",
-					"items":["left","center","right"],
+					"lists":["left","center","right"],
 					"fixed":true,
 					"default":"left"
 				},
 				{
-					"name":"anchor",
+					"_m_":"anchor",
+					"caption":"anchor",
 					"type":"list",
-					"items":["e","w","n","s","ne","se","sw","sn","center"],
+					"lists":["e","w","n","s","ne","se","sw","sn","center"],
 					"fixed":true,
 					"default":"w"
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":30
 				},
 				{
-					"name":"color",
+					"_m_":"color",
+					"caption":"color",
 					"type":"color",
 					"default":[240,240,240]
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_button",
+			"_m_":"tk_button",
+			"caption":"tk_button",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -435,48 +502,57 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tk_button"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":60
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":30
 				},
 				{
-					"name":"color",
+					"_m_":"color",
+					"caption":"color",
 					"type":"color",
 					"default":[240,240,240]
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_entry",
+			"_m_":"tk_entry",
+			"caption":"tk_entry",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -484,53 +560,63 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tk_entry"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":100
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":30
 				},
 				{
-					"name":"password",
+					"_m_":"password",
+					"caption":"password",
 					"type":"boolean",
 					"default":false
 				},
 				{
-					"name":"default",
+					"_m_":"default",
+					"caption":"default",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_check",
+			"_m_":"tk_check",
+			"caption":"tk_check",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -538,43 +624,51 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tk_check"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":140
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":30
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_radio",
+			"_m_":"tk_radio",
+			"caption":"tk_radio",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -582,43 +676,51 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tk_radio"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":180
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":30
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_listbox",
+			"_m_":"tk_listbox",
+			"caption":"tk_listbox",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -626,47 +728,56 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"string",
 					"default":"tk_listbox"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":220
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":60
 				},
 				{
-					"name":"lines",
+					"_m_":"lines",
+					"caption":"lines",
 					"type":"memo"
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"tk_text",
+			"_m_":"tk_text",
+			"caption":"tk_text",
 			"mode":"no child",
 			"allowsibling":["tk_label","tk_button","tk_entry","tk_radio","tk_check","tk_listbox","tk_text","tk_scale"],
 			"allowchild":[],
@@ -674,43 +785,50 @@
 			"property":
 			[
 				{
-					"name":"caption",
+					"_m_":"caption",
+					"caption":"caption",
 					"type":"memo",
 					"default":"tk_text"
 				},
 				{
-					"name":"compname",
+					"_m_":"compname",
+					"caption":"compname",
 					"type":"string",
 					"default":""
 				},
 				{
-					"name":"left",
+					"_m_":"left",
+					"caption":"left",
 					"type":"integer",
 					"default":200
 				},
 				{
-					"name":"top",
+					"_m_":"top",
+					"caption":"top",
 					"type":"integer",
 					"default":20
 				},
 				{
-					"name":"width",
+					"_m_":"width",
+					"caption":"width",
 					"type":"integer",
 					"default":150
 				},
 				{
-					"name":"height",
+					"_m_":"height",
+					"caption":"height",
 					"type":"integer",
 					"default":60
 				},
 				{
-					"name":"font",
+					"_m_":"font",
+					"caption":"font",
 					"type":"font"
 				}
 			]
 		},
 		{
-			"name":"-"
+			"_m_":"-"
 		}
 	]
 }

@@ -409,7 +409,7 @@ const
           end;
           
           //<根据当前节点的类型计算子节点位置
-          if Node.s['_m_'] = 'if' then begin
+          if Node.s['name'] = 'if' then begin
                //YES块
                joChild   := Node.A['items'][0];
                joChild.I['X']  := Node.I['X'];
@@ -423,18 +423,18 @@ const
                     //
                     joChild   := joExtra;
                end;
-          end else if Node.s['_m_'] = 'for' then begin
+          end else if Node.s['name'] = 'for' then begin
                //子块
                joChild   := Node.A['items'][0];
                joChild.I['X']  := Node.I['X'];
                joChild.I['Y']  := Node.I['Y']+ BH+Sv;
 
-          end else if Node.s['_m_'] = 'while' then begin
+          end else if Node.s['name'] = 'while' then begin
                //子块
                joChild   := Node.A['items'][0];
                joChild.I['X']  := Node.I['X'];
                joChild.I['Y']  := Node.I['Y']+ BH*2+Sv*2;
-          end else if Node.s['_m_'] = 'try' then begin
+          end else if Node.s['name'] = 'try' then begin
                iTop := 0;
                for JJ:=0 to Node.A['items'].Count-1 do begin
                     if JJ=0 then begin
@@ -452,7 +452,7 @@ const
                          iTop := joChild.I['Y']+joChild.I['H'];
                     end;
                end;
-          end else if (Node.s['_m_'] = 'try_except') or (Node.s['_m_'] = 'try_else') then begin
+          end else if (Node.s['name'] = 'try_except') or (Node.s['name'] = 'try_else') then begin
 
                iTop := 0;
                for JJ:=0 to Node.A['items'].Count-1 do begin
@@ -513,15 +513,15 @@ const
                //<绘制子节点数为0的节点和合拢的节点
                if (Node.A['items'].Count=0) then begin
                     //处理无子块节点(不包括跳转及分支)
-                    if (Node.S['_m_']='code') and gbShowDetailCode  then begin
+                    if (Node.S['name']='code') and gbShowDetailCode  then begin
                          //节点(矩形)
                          DrawCodeBlock(X,Y,W,H-SV,Node.S['Text']);
                          //下接线
                          DrawPoints([X,Y+H-SV,  X,Y+H]);
                          //
                          Exit;
-                    end else if not teInNames(Node.S['_m_'],['try_except','try_else']) then begin
-                         if teInNames(Node.S['_m_'],['if_else','elif']) then begin
+                    end else if not teInNames(Node.S['name'],['try_except','try_else']) then begin
+                         if teInNames(Node.S['name'],['if_else','elif']) then begin
 
                               //下接线
                               DrawPoints([X,Y,  X,Y+BH+SV]);
@@ -538,7 +538,7 @@ const
                     end;
                end else if (Node.B['Expanded']=False) then begin
                     //处理合拢的节点(不包括分支)
-                    if not teInNames(Node.S['_m_'],['try_except','try_else']) then begin
+                    if not teInNames(Node.S['name'],['try_except','try_else']) then begin
                          //合拢节点(矩形)
                          DrawBlock(X,Y,GetNodeText(Node),False);  //RTtoStr(Node.Attributes['Mode'])
                          //下接线
@@ -551,13 +551,13 @@ const
 
 
                //
-               if Node.S['_m_'] = 'if' then begin
+               if Node.S['name'] = 'if' then begin
                     //菱形框
                     DrawDiamond(X,Y,Format('%s',[GetNodeText(Node)]));
                     DrawPoints([X,Y+BH*2,  X,Y+BH*2+SV]); //向下线
                     //菱形框向右延伸线
                     joChild   := Node.A['items'][0];
-                    if Node.A['items'][1].S['_m_'] = 'elif' then begin
+                    if Node.A['items'][1].S['name'] = 'elif' then begin
                          //如果第1个子块为elif,则到左边距EL
                          DrawPoints([joChild.I['X']+BW,Y+BH,  _EL(Node.A['items'][1]),Y+BH]);
                     end else begin
@@ -568,7 +568,7 @@ const
                     //
                     for JJ:=1 to Node.A['items'].Count-1 do begin
                          joChild   := Node.A['items'][JJ];
-                         if joChild.S['_m_'] = 'elif' then begin
+                         if joChild.S['name'] = 'elif' then begin
                               //菱形框
                               DrawDiamond(joChild.I['X'],_Y(joChild)-BH*2-SV,GetNodeText(joChild));
                               //菱形框向下线
@@ -590,7 +590,7 @@ const
                     //YES块的下接线
                     DrawPoints([X,_B(Node.A['items'][0]),  X,Y+H]);
 
-               end else if Node.S['_m_'] = 'for' then begin
+               end else if Node.S['name'] = 'for' then begin
                     //FOR框
                     DrawPoints([X-BW,Y,  X+W-BW-Sh-BH,Y,  X+W-BW-Sh,Y+BH/2,  X+W-BW-Sh-BH,Y+BH,  X-BW,Y+BH,  X-BW,Y],Config.IFColor);
                     DrawText(''+GetNodeText(Node),X-BW,Y,W-Sh-BH/2,BH);
@@ -604,7 +604,7 @@ const
                     DrawPoints([X,Y+H-SV*3,  X,Y+H-SV*2,  X-BW-E,Y+H-SV*2,  X-BW-E,Y+BH/2,  X-BW,Y+BH/2]);
                     DrawArrow(X-BW-E,Y+H / 2, False);
 
-               end else if Node.S['_m_'] = 'while' then begin
+               end else if Node.S['name'] = 'while' then begin
                     //菱形框
                     DrawDiamond(X,Y+SV,Format('%s',[GetNodeText(Node)]));
                     DrawPoints([X,Y+BH*2+SV,  X,Y+BH*2+SV*2]);
@@ -618,7 +618,7 @@ const
                               X,Y+H-SV*2,  X-BW-E,Y+H-SV*2,  X-BW-E,Y,  X,Y,  X,Y+SV]);
                     DrawArrow(X-BW-E,Y+H / 2, False);
 
-               end else if Node.S['_m_'] = 'elif' then begin
+               end else if Node.S['name'] = 'elif' then begin
                     //如果当前子块未展开,则绘制一个
                     if (Node.B['Expanded']=False) then begin
                          if Node.Contains('items') then begin
@@ -630,7 +630,7 @@ const
                          end;
                     end ;
 
-               end else if Node.S['_m_'] = 'try' then begin
+               end else if Node.S['name'] = 'try' then begin
                     //绘制Try
                     DrawTry(X,Y,'try',True,0);
 
@@ -638,10 +638,10 @@ const
                     //iTmp := Y+H-BH-SV;
                     //DrawTry(X,iTmp,'TRY END',True,2);
 
-               end else if Node.S['_m_'] = 'try_except' then begin
+               end else if Node.S['name'] = 'try_except' then begin
                     //绘制
                     DrawTry(X,Y,Node.S['source'],not Node.B['Expanded'],1);
-               end else if Node.S['_m_'] = 'try_else' then begin
+               end else if Node.S['name'] = 'try_else' then begin
                     //绘制
                     DrawTry(X,Y,'else',not Node.B['Expanded'],1);
                end;
@@ -654,7 +654,7 @@ const
                     end;
                end;
           except
-               ShowMessage('Error when DrawNodeFlowchart! '+Node.S['_m_']);
+               ShowMessage('Error when DrawNodeFlowchart! '+Node.S['name']);
           end;
 
      end;
@@ -692,7 +692,7 @@ const
           Result.W  := -1;
           Result.H  := -1;
           Result.E  := -1;
-          if Node.S['_m_'] = 'code' then begin
+          if Node.S['name'] = 'code' then begin
                //处理代码
                if gbShowDetailCode=False then begin
                     Node.I['W']   := BW*2;
@@ -733,7 +733,7 @@ const
                Result.W  := Node.I['W'];
                Result.H  := Node.I['H'];
                Result.E  := Node.I['E'];
-          end else if (Node.Contains('items')=False)and (not teInNames(Node.S['_m_'],['try_except','try_else'])) then begin
+          end else if (Node.Contains('items')=False)and (not teInNames(Node.S['name'],['try_except','try_else'])) then begin
                //处理简单模块
                Node.I['W']   := BW*2;
                Node.I['H']   := BH+Sv;
@@ -762,7 +762,7 @@ const
                Node.I['E']   := 0;
 
                //根据父块类型得到父块的W,H,E
-               if Node.S['_m_'] = 'if' then begin
+               if Node.S['name'] = 'if' then begin
                     //对多分支语句是否展开分开进行处理
                     for KK:=0 to Node.A['items'].Count-1 do begin
                          if KK = 0 then begin
@@ -780,17 +780,17 @@ const
                          end;
                     end;
 
-               end else if Node.S['_m_'] = 'for' then begin
+               end else if Node.S['name'] = 'for' then begin
                     Node.I['W']   := rChild.W + Sh;
                     Node.I['H']   := rChild.H + BH+Sv*3;
                     Node.I['E']   := rChild.E + Sh;
                     //>
-               end else if Node.S['_m_'] = 'while' then begin
+               end else if Node.S['name'] = 'while' then begin
                     Node.I['W']   := rChild.W + Sh;
                     Node.I['H']   := rChild.H + BH*2+Sv*4;
                     Node.I['E']   := rChild.E + Sh;
 
-               end else if Node.S['_m_'] = 'try' then begin
+               end else if Node.S['name'] = 'try' then begin
                     for KK:=0 to Node.A['items'].Count-1 do begin
                          if KK=0 then begin
                               joFirst   := Node.A['items'][0];
@@ -808,7 +808,7 @@ const
                          end;
                     end;
 
-               end else if (Node.S['_m_'] = 'try_except') or (Node.S['_m_'] = 'try_else') then begin
+               end else if (Node.S['name'] = 'try_except') or (Node.S['name'] = 'try_else') then begin
                     if Node.B['Expanded'] then begin
                          for KK:=0 to Node.A['items'].Count-1 do begin
                               if KK=0 then begin

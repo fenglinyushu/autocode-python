@@ -127,7 +127,6 @@
         <DCCReference Include="SysConsts.pas"/>
         <DCCReference Include="NodeEditConsts.pas"/>
         <DCCReference Include="ACBaseUnits.pas"/>
-        <DCCReference Include="XMLNSChartUnit.pas"/>
         <DCCReference Include="..\WWChart\SysRecords.pas"/>
         <DCCReference Include="SysVars.pas"/>
         <DCCReference Include="XMLTreeViewUnits.pas"/>
@@ -148,10 +147,6 @@
             <Form>Form_About</Form>
         </DCCReference>
         <DCCReference Include="Json2Python.pas"/>
-        <DCCReference Include="..\tkinter\TkinterWin.pas">
-            <Form>Form_TkinterEditor</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="Json2Flowchart.pas"/>
         <DCCReference Include="teUnit.pas"/>
         <BuildConfiguration Include="Debug">

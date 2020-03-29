@@ -88,10 +88,6 @@ type
           Scale          : Single;      //缩放,默认为-1
           ShowDetailCode : Boolean;     //显示详细代码,默认为True
           //
-          AddCaption     : Boolean;
-          AddComment     : Boolean;
-          Indent         : Integer;
-          //
           ChartType      : Byte;        //0:FlowChart, 1: NSChart
      end;
      TACSearchOption = record

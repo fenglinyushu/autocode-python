@@ -242,7 +242,7 @@ var
 begin
      Result    := nil;
      for iModule := 0 to gjoModules.A['items'].Count-1 do begin
-          if gjoModules.A['items'][iModule].S['_m_'] = AName then begin
+          if gjoModules.A['items'][iModule].S['name'] = AName then begin
                Result    := gjoModules.A['items'][iModule];
                Break;
           end;

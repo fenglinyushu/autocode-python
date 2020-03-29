@@ -1,8 +1,8 @@
 {
-	"name": "root",
+	"_m_": "root",
 	"items": [
 		{
-			"name": "tk_window",
+			"_m_": "tk_window",
 			"caption": "tkinter window",
 			"compname": "win",
 			"left": 100,
@@ -16,7 +16,7 @@
 			],
 			"items": [
 				{
-					"name": "tk_label",
+					"_m_": "tk_label",
 					"caption": "ACP System",
 					"compname": "",
 					"justify": "center",
@@ -26,12 +26,12 @@
 					"width": 360,
 					"height": 30,
 					"color": [
-						128,
-						0,
-						0
+						240,
+						240,
+						240
 					],
 					"font": {
-						"name": "Consolas",
+						"_m_": "Consolas",
 						"size": 14,
 						"b": 1,
 						"i": 0,
@@ -39,36 +39,15 @@
 						"s": 0
 					},
 					"Expanded": false,
-					"items": []
+					"items": [],
+					"W": 100,
+					"H": 44,
+					"E": 0,
+					"X": 65,
+					"Y": 64
 				},
 				{
-					"name": "tk_label",
-					"caption": "Name",
-					"compname": "",
-					"justify": "left",
-					"anchor": "w",
-					"left": 20,
-					"top": 40,
-					"width": 150,
-					"height": 30,
-					"color": [
-						200,
-						200,
-						200
-					],
-					"font": {
-						"name": "Courier New",
-						"size": 10,
-						"b": 0,
-						"i": 0,
-						"u": 0,
-						"s": 0
-					},
-					"Expanded": false,
-					"items": []
-				},
-				{
-					"name": "tk_label",
+					"_m_": "tk_label",
 					"caption": "Age",
 					"compname": "",
 					"justify": "left",
@@ -78,12 +57,12 @@
 					"width": 150,
 					"height": 30,
 					"color": [
-						200,
-						200,
-						200
+						240,
+						240,
+						240
 					],
 					"font": {
-						"name": "Courier New",
+						"_m_": "Courier New",
 						"size": 10,
 						"b": 0,
 						"i": 0,
@@ -91,14 +70,45 @@
 						"s": 0
 					},
 					"Expanded": false,
-					"items": []
+					"items": [],
+					"W": 100,
+					"H": 44,
+					"E": 0,
+					"X": 65,
+					"Y": 108
 				},
 				{
-					"name": "tk_button",
-					"caption": "tk_button",
+					"_m_": "tk_entry",
+					"caption": "tk_entry",
+					"compname": "",
+					"left": 200,
+					"top": 60,
+					"width": 150,
+					"height": 30,
+					"password": false,
+					"default": "",
+					"font": {
+						"_m_": "Courier New",
+						"size": 10,
+						"b": 0,
+						"i": 0,
+						"u": 0,
+						"s": 0
+					},
+					"Expanded": false,
+					"items": [],
+					"W": 100,
+					"H": 44,
+					"E": 0,
+					"X": 65,
+					"Y": 152
+				},
+				{
+					"_m_": "tk_button",
+					"caption": "LOGIN",
 					"compname": "",
 					"left": 20,
-					"top": 60,
+					"top": 100,
 					"width": 150,
 					"height": 30,
 					"color": [
@@ -107,7 +117,7 @@
 						200
 					],
 					"font": {
-						"name": "Courier New",
+						"_m_": "Courier New",
 						"size": 10,
 						"b": 0,
 						"i": 0,
@@ -115,11 +125,26 @@
 						"s": 0
 					},
 					"Expanded": false,
-					"items": []
+					"items": [],
+					"W": 100,
+					"H": 44,
+					"E": 0,
+					"X": 65,
+					"Y": 196
 				}
 			],
-			"Expanded": true
+			"Expanded": true,
+			"W": 100,
+			"H": 176,
+			"E": 0,
+			"X": 65,
+			"Y": 64
 		}
 	],
-	"Expanded": true
+	"Expanded": true,
+	"W": 100,
+	"H": 176,
+	"E": 0,
+	"X": 65,
+	"Y": 64
 }

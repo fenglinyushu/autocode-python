@@ -106,7 +106,7 @@ begin
      if Trim(Node.S['caption'])='' then begin
           if Node.Contains('source') then begin
                if Trim(Node.S['source'])='' then begin
-                    Result    := Node.S['_m_'];
+                    Result    := Node.S['name'];
                end else begin
                     slSource  := TStringList.Create;
                     slSource.Text  := Node.S['source'];
@@ -114,7 +114,7 @@ begin
                     slSource.Destroy;
                end;
           end else begin
-               Result    := Node.S['_m_'];
+               Result    := Node.S['name'];
           end;
      end else begin
           Result    := Node.S['caption'];
